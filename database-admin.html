@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛠️ CheckEasy - Administration Base de Données</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #495057;
+            border-bottom: 3px solid #007bff;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .content {
+            padding: 30px;
+            min-height: 600px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        
+        .btn.success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        }
+        
+        .btn.warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: black;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .data-table th {
+            background: #343a40;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .data-table tr:hover {
+            background: #e9ecef;
+        }
+        
+        .json-viewer {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-weight: 600;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+        }
+        
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert.info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b3d7ff;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .export-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .import-section {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .file-input {
+            margin: 10px 0;
+        }
+        
+        .key-value {
+            display: grid;
+            grid-template-columns: 1fr 2fr 100px;
+            gap: 10px;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .key-value:last-child {
+            border-bottom: none;
+        }
+        
+        .key {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .value {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            background: #f8f9fa;
+            padding: 5px 8px;
+            border-radius: 3px;
+            word-break: break-all;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ CheckEasy - Administration Base de Données</h1>
+            <p>Interface de gestion et consultation des données locales</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('overview')">📊 Vue d'ensemble</button>
+            <button class="tab" onclick="showTab('localStorage')">💾 LocalStorage</button>
+            <button class="tab" onclick="showTab('indexedDB')">🗄️ IndexedDB</button>
+            <button class="tab" onclick="showTab('tools')">🔧 Outils</button>
+            <button class="tab" onclick="showTab('export')">📤 Import/Export</button>
+        </div>
+        
+        <div class="content">
+            <!-- Vue d'ensemble -->
+            <div id="overview" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="localStorageCount">0</div>
+                        <div class="stat-label">Clés LocalStorage</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="indexedDBCount">0</div>
+                        <div class="stat-label">Stores IndexedDB</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="photosCount">0</div>
+                        <div class="stat-label">Photos stockées</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalSize">0 KB</div>
+                        <div class="stat-label">Taille totale</div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>📈 Analyse des données</h3>
+                    <div class="toolbar">
+                        <button class="btn" onclick="refreshOverview()">🔄 Actualiser</button>
+                        <button class="btn success" onclick="analyzeData()">🔍 Analyser</button>
+                    </div>
+                    <div id="analysisResult"></div>
+                </div>
+            </div>
+            
+            <!-- LocalStorage -->
+            <div id="localStorage" class="tab-content">
+                <div class="toolbar">
+                    <input type="text" class="search-box" id="localStorageSearch" placeholder="🔍 Rechercher une clé..." oninput="filterLocalStorage()">
+                    <div>
+                        <button class="btn" onclick="refreshLocalStorage()">🔄 Actualiser</button>
+                        <button class="btn danger" onclick="clearLocalStorage()">🗑️ Vider tout</button>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>💾 Contenu LocalStorage</h3>
+                    <div id="localStorageContent"></div>
+                </div>
+            </div>
+            
+            <!-- IndexedDB -->
+            <div id="indexedDB" class="tab-content">
+                <div class="toolbar">
+                    <select id="dbSelect" onchange="loadDatabase()">
+                        <option value="">Sélectionner une base de données</option>
+                    </select>
+                    <button class="btn" onclick="refreshIndexedDB()">🔄 Actualiser</button>
+                </div>
+                
+                <div class="section">
+                    <h3>🗄️ Contenu IndexedDB</h3>
+                    <div id="indexedDBContent"></div>
+                </div>
+            </div>
+            
+            <!-- Outils -->
+            <div id="tools" class="tab-content">
+                <div class="section">
+                    <h3>🧹 Nettoyage</h3>
+                    <button class="btn warning" onclick="cleanupPhotos()">🖼️ Nettoyer photos orphelines</button>
+                    <button class="btn warning" onclick="cleanupExpired()">⏰ Supprimer données expirées</button>
+                    <button class="btn danger" onclick="resetAll()">🔴 Reset complet</button>
+                </div>
+                
+                <div class="section">
+                    <h3>📊 Diagnostics</h3>
+                    <button class="btn" onclick="runDiagnostics()">🔍 Lancer diagnostics</button>
+                    <button class="btn" onclick="checkIntegrity()">✅ Vérifier intégrité</button>
+                    <div id="diagnosticsResult"></div>
+                </div>
+                
+                <div class="section">
+                    <h3>🎛️ Configuration</h3>
+                    <button class="btn" onclick="showConfig()">⚙️ Afficher config</button>
+                    <div id="configResult"></div>
+                </div>
+            </div>
+            
+            <!-- Import/Export -->
+            <div id="export" class="tab-content">
+                <div class="export-section">
+                    <h3>📤 Export</h3>
+                    <button class="btn success" onclick="exportAll()">📦 Exporter toutes les données</button>
+                    <button class="btn" onclick="exportLocalStorage()">💾 Exporter LocalStorage</button>
+                    <button class="btn" onclick="exportIndexedDB()">🗄️ Exporter IndexedDB</button>
+                </div>
+                
+                <div class="import-section">
+                    <h3>📥 Import</h3>
+                    <input type="file" id="importFile" class="file-input" accept=".json">
+                    <button class="btn warning" onclick="importData()">📥 Importer données</button>
+                </div>
+                
+                <div id="exportResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'overview';
+        let localStorageData = {};
+        let indexedDBData = {};
+        
+        // === GESTION DES ONGLETS ===
+        function showTab(tabName) {
+            // Masquer tous les onglets
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Afficher l'onglet sélectionné
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            currentTab = tabName;
+            
+            // Charger les données si nécessaire
+            if (tabName === 'localStorage') {
+                refreshLocalStorage();
+            } else if (tabName === 'indexedDB') {
+                refreshIndexedDB();
+            } else if (tabName === 'overview') {
+                refreshOverview();
+            }
+        }
+        
+        // === VUE D'ENSEMBLE ===
+        function refreshOverview() {
+            const localStorageCount = Object.keys(localStorage).length;
+            const photosCount = Object.keys(localStorage).filter(key => key.startsWith('uploaded_image_')).length;
+            
+            document.getElementById('localStorageCount').textContent = localStorageCount;
+            document.getElementById('photosCount').textContent = photosCount;
+            
+            // Calculer la taille approximative
+            let totalSize = 0;
+            for (let key in localStorage) {
+                totalSize += localStorage[key].length + key.length;
+            }
+            
+            document.getElementById('totalSize').textContent = Math.round(totalSize / 1024) + ' KB';
+            
+            // Compter IndexedDB
+            countIndexedDBStores();
+        }
+        
+        async function countIndexedDBStores() {
+            try {
+                const databases = await indexedDB.databases();
+                document.getElementById('indexedDBCount').textContent = databases.length;
+            } catch (error) {
+                console.error('Erreur comptage IndexedDB:', error);
+                document.getElementById('indexedDBCount').textContent = 'N/A';
+            }
+        }
+        
+        function analyzeData() {
+            const analysisDiv = document.getElementById('analysisResult');
+            analysisDiv.innerHTML = '<div class="loading"></div> Analyse en cours...';
+            
+            setTimeout(() => {
+                const analysis = {
+                    localStorage: analyzeLocalStorage(),
+                    photos: analyzePhotos(),
+                    checkSessions: analyzeCheckSessions(),
+                    userInfo: analyzeUserInfo()
+                };
+                
+                let html = '<div class="json-viewer">';
+                html += JSON.stringify(analysis, null, 2);
+                html += '</div>';
+                
+                analysisDiv.innerHTML = html;
+            }, 1000);
+        }
+        
+        function analyzeLocalStorage() {
+            const keys = Object.keys(localStorage);
+            const categories = {};
+            
+            keys.forEach(key => {
+                if (key.startsWith('uploaded_image_')) {
+                    categories.photos = (categories.photos || 0) + 1;
+                } else if (key.includes('check') || key.includes('session')) {
+                    categories.sessions = (categories.sessions || 0) + 1;
+                } else if (key.includes('user')) {
+                    categories.users = (categories.users || 0) + 1;
+                } else {
+                    categories.other = (categories.other || 0) + 1;
+                }
+            });
+            
+            return {
+                totalKeys: keys.length,
+                categories: categories,
+                oldestKey: keys.length > 0 ? keys[0] : null,
+                newestKey: keys.length > 0 ? keys[keys.length - 1] : null
+            };
+        }
+        
+        function analyzePhotos() {
+            const photoKeys = Object.keys(localStorage).filter(key => key.startsWith('uploaded_image_'));
+            let totalPhotos = 0;
+            let totalSize = 0;
+            let withMetadata = 0;
+            
+            photoKeys.forEach(key => {
+                try {
+                    const data = JSON.parse(localStorage[key]);
+                    totalPhotos++;
+                    totalSize += localStorage[key].length;
+                    if (data.metadata) withMetadata++;
+                } catch (e) {
+                    // Ignore invalid JSON
+                }
+            });
+            
+            return {
+                totalPhotos,
+                totalSizeKB: Math.round(totalSize / 1024),
+                withMetadata,
+                averageSizeKB: totalPhotos > 0 ? Math.round(totalSize / totalPhotos / 1024) : 0
+            };
+        }
+        
+        function analyzeCheckSessions() {
+            try {
+                const sessionsData = localStorage.getItem('checkeasy_check_sessions');
+                if (sessionsData) {
+                    const sessions = JSON.parse(sessionsData);
+                    return {
+                        totalSessions: Object.keys(sessions).length,
+                        hasData: true
+                    };
+                }
+            } catch (e) {
+                // Ignore
+            }
+            return { hasData: false };
+        }
+        
+        function analyzeUserInfo() {
+            try {
+                const userInfo = localStorage.getItem('userInfo');
+                if (userInfo) {
+                    const user = JSON.parse(userInfo);
+                    return {
+                        hasUserInfo: true,
+                        userName: user.name || 'N/A',
+                        userId: user.id || 'N/A'
+                    };
+                }
+            } catch (e) {
+                // Ignore
+            }
+            return { hasUserInfo: false };
+        }
+        
+        // === LOCALSTORAGE ===
+        function refreshLocalStorage() {
+            localStorageData = {};
+            for (let key in localStorage) {
+                try {
+                    localStorageData[key] = JSON.parse(localStorage[key]);
+                } catch (e) {
+                    localStorageData[key] = localStorage[key];
+                }
+            }
+            displayLocalStorage();
+        }
+        
+        function displayLocalStorage(filter = '') {
+            const container = document.getElementById('localStorageContent');
+            const keys = Object.keys(localStorageData).filter(key => 
+                key.toLowerCase().includes(filter.toLowerCase())
+            );
+            
+            if (keys.length === 0) {
+                container.innerHTML = '<p class="alert info">Aucune donnée trouvée.</p>';
+                return;
+            }
+            
+            let html = '<div class="data-grid">';
+            
+            keys.forEach(key => {
+                const value = localStorageData[key];
+                const valueStr = typeof value === 'object' ? 
+                    JSON.stringify(value, null, 2) : 
+                    String(value);
+                
+                html += `
+                    <div class="key-value">
+                        <div class="key">${key}</div>
+                        <div class="value">${truncateString(valueStr, 200)}</div>
+                        <div class="actions">
+                            <button class="btn btn-small" onclick="viewLocalStorageItem('${key}')">👁️</button>
+                            <button class="btn btn-small warning" onclick="editLocalStorageItem('${key}')">✏️</button>
+                            <button class="btn btn-small danger" onclick="deleteLocalStorageItem('${key}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function filterLocalStorage() {
+            const filter = document.getElementById('localStorageSearch').value;
+            displayLocalStorage(filter);
+        }
+        
+        function viewLocalStorageItem(key) {
+            const value = localStorageData[key];
+            const valueStr = typeof value === 'object' ? 
+                JSON.stringify(value, null, 2) : 
+                String(value);
+            
+            const modal = createModal(`Clé: ${key}`, `<div class="json-viewer">${valueStr}</div>`);
+            document.body.appendChild(modal);
+        }
+        
+        function editLocalStorageItem(key) {
+            const currentValue = localStorage.getItem(key);
+            const newValue = prompt(`Modifier la valeur pour "${key}":`, currentValue);
+            
+            if (newValue !== null) {
+                localStorage.setItem(key, newValue);
+                showAlert('Valeur mise à jour avec succès!', 'success');
+                refreshLocalStorage();
+            }
+        }
+        
+        function deleteLocalStorageItem(key) {
+            if (confirm(`Êtes-vous sûr de vouloir supprimer "${key}" ?`)) {
+                localStorage.removeItem(key);
+                showAlert('Clé supprimée avec succès!', 'success');
+                refreshLocalStorage();
+            }
+        }
+        
+        function clearLocalStorage() {
+            if (confirm('⚠️ ATTENTION: Cela va supprimer TOUTES les données LocalStorage. Continuer ?')) {
+                localStorage.clear();
+                showAlert('LocalStorage vidé avec succès!', 'success');
+                refreshLocalStorage();
+            }
+        }
+        
+        // === INDEXEDDB ===
+        async function refreshIndexedDB() {
+            try {
+                const databases = await indexedDB.databases();
+                const select = document.getElementById('dbSelect');
+                
+                select.innerHTML = '<option value="">Sélectionner une base de données</option>';
+                
+                databases.forEach(db => {
+                    const option = document.createElement('option');
+                    option.value = db.name;
+                    option.textContent = `${db.name} (v${db.version})`;
+                    select.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Erreur IndexedDB:', error);
+                showAlert('Erreur lors du chargement des bases de données', 'error');
+            }
+        }
+        
+        async function loadDatabase() {
+            const dbName = document.getElementById('dbSelect').value;
+            if (!dbName) return;
+            
+            const container = document.getElementById('indexedDBContent');
+            container.innerHTML = '<div class="loading"></div> Chargement de la base de données...';
+            
+            try {
+                const request = indexedDB.open(dbName);
+                
+                request.onsuccess = function(event) {
+                    const db = event.target.result;
+                    const storeNames = Array.from(db.objectStoreNames);
+                    
+                    let html = '<h4>Stores disponibles:</h4>';
+                    html += '<div class="stats-grid">';
+                    
+                    storeNames.forEach(storeName => {
+                        html += `
+                            <div class="stat-card">
+                                <button class="btn" onclick="loadStore('${dbName}', '${storeName}')">${storeName}</button>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    container.innerHTML = html;
+                    
+                    db.close();
+                };
+                
+                request.onerror = function() {
+                    container.innerHTML = '<p class="alert error">Erreur lors de l\'ouverture de la base de données</p>';
+                };
+                
+            } catch (error) {
+                container.innerHTML = '<p class="alert error">Erreur: ' + error.message + '</p>';
+            }
+        }
+        
+        async function loadStore(dbName, storeName) {
+            const container = document.getElementById('indexedDBContent');
+            container.innerHTML = '<div class="loading"></div> Chargement des données...';
+            
+            try {
+                const request = indexedDB.open(dbName);
+                
+                request.onsuccess = function(event) {
+                    const db = event.target.result;
+                    const transaction = db.transaction([storeName], 'readonly');
+                    const store = transaction.objectStore(storeName);
+                    const getAllRequest = store.getAll();
+                    
+                    getAllRequest.onsuccess = function() {
+                        const data = getAllRequest.result;
+                        
+                        let html = `<h4>Store: ${storeName} (${data.length} enregistrements)</h4>`;
+                        
+                        if (data.length > 0) {
+                            html += '<div class="json-viewer">';
+                            html += JSON.stringify(data, null, 2);
+                            html += '</div>';
+                        } else {
+                            html += '<p class="alert info">Aucun enregistrement trouvé.</p>';
+                        }
+                        
+                        container.innerHTML = html;
+                    };
+                    
+                    db.close();
+                };
+                
+            } catch (error) {
+                container.innerHTML = '<p class="alert error">Erreur: ' + error.message + '</p>';
+            }
+        }
+        
+        // === OUTILS ===
+        function cleanupPhotos() {
+            const photoKeys = Object.keys(localStorage).filter(key => key.startsWith('uploaded_image_'));
+            let cleaned = 0;
+            
+            photoKeys.forEach(key => {
+                try {
+                    const data = JSON.parse(localStorage[key]);
+                    // Logique de nettoyage personnalisée ici
+                    if (!data.url && !data.dataUrl) {
+                        localStorage.removeItem(key);
+                        cleaned++;
+                    }
+                } catch (e) {
+                    localStorage.removeItem(key);
+                    cleaned++;
+                }
+            });
+            
+            showAlert(`${cleaned} photos orphelines supprimées!`, 'success');
+        }
+        
+        function cleanupExpired() {
+            let cleaned = 0;
+            const now = Date.now();
+            const oneWeek = 7 * 24 * 60 * 60 * 1000; // 1 semaine en ms
+            
+            Object.keys(localStorage).forEach(key => {
+                try {
+                    const data = JSON.parse(localStorage[key]);
+                    if (data.timestamp && (now - data.timestamp) > oneWeek) {
+                        localStorage.removeItem(key);
+                        cleaned++;
+                    }
+                } catch (e) {
+                    // Ignore les erreurs de parsing
+                }
+            });
+            
+            showAlert(`${cleaned} éléments expirés supprimés!`, 'success');
+        }
+        
+        function resetAll() {
+            if (confirm('⚠️ DANGER: Cela va supprimer TOUTES les données (LocalStorage + IndexedDB). Cette action est IRRÉVERSIBLE!')) {
+                if (confirm('Êtes-vous ABSOLUMENT sûr? Tapez "CONFIRMER" dans la prochaine boîte de dialogue.')) {
+                    const confirmation = prompt('Tapez "CONFIRMER" pour continuer:');
+                    if (confirmation === 'CONFIRMER') {
+                        // Vider LocalStorage
+                        localStorage.clear();
+                        
+                        // Supprimer toutes les bases IndexedDB
+                        indexedDB.databases().then(databases => {
+                            databases.forEach(db => {
+                                indexedDB.deleteDatabase(db.name);
+                            });
+                        });
+                        
+                        showAlert('Reset complet effectué!', 'success');
+                        setTimeout(() => location.reload(), 2000);
+                    }
+                }
+            }
+        }
+        
+        function runDiagnostics() {
+            const container = document.getElementById('diagnosticsResult');
+            container.innerHTML = '<div class="loading"></div> Diagnostics en cours...';
+            
+            setTimeout(() => {
+                const diagnostics = {
+                    localStorage: {
+                        available: typeof(Storage) !== "undefined",
+                        keysCount: Object.keys(localStorage).length,
+                        storageUsed: JSON.stringify(localStorage).length
+                    },
+                    indexedDB: {
+                        available: 'indexedDB' in window,
+                        supported: typeof indexedDB !== 'undefined'
+                    },
+                    browser: {
+                        userAgent: navigator.userAgent,
+                        cookiesEnabled: navigator.cookieEnabled,
+                        language: navigator.language
+                    }
+                };
+                
+                container.innerHTML = '<div class="json-viewer">' + JSON.stringify(diagnostics, null, 2) + '</div>';
+            }, 1500);
+        }
+        
+        function checkIntegrity() {
+            let issues = [];
+            let checked = 0;
+            
+            // Vérifier les photos
+            Object.keys(localStorage).filter(key => key.startsWith('uploaded_image_')).forEach(key => {
+                try {
+                    const data = JSON.parse(localStorage[key]);
+                    checked++;
+                    
+                    if (!data.url && !data.dataUrl) {
+                        issues.push(`Photo ${key}: Manque URL ou dataUrl`);
+                    }
+                    if (!data.metadata) {
+                        issues.push(`Photo ${key}: Manque métadonnées`);
+                    }
+                } catch (e) {
+                    issues.push(`Photo ${key}: JSON invalide`);
+                }
+            });
+            
+            const container = document.getElementById('diagnosticsResult');
+            let html = `<h4>Vérification d'intégrité</h4>`;
+            html += `<p>✅ ${checked} éléments vérifiés</p>`;
+            
+            if (issues.length > 0) {
+                html += `<p>⚠️ ${issues.length} problèmes trouvés:</p>`;
+                html += '<div class="alert error"><ul>';
+                issues.forEach(issue => {
+                    html += `<li>${issue}</li>`;
+                });
+                html += '</ul></div>';
+            } else {
+                html += '<div class="alert success">Aucun problème détecté!</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function showConfig() {
+            const config = {
+                localStorage: {
+                    length: localStorage.length,
+                    remainingSpace: 'Estimation non disponible'
+                },
+                session: {
+                    sessionStorage: sessionStorage.length,
+                    cookies: document.cookie ? 'Activés' : 'Désactivés'
+                },
+                application: {
+                    url: window.location.href,
+                    protocol: window.location.protocol,
+                    domain: window.location.hostname
+                }
+            };
+            
+            const container = document.getElementById('configResult');
+            container.innerHTML = '<div class="json-viewer">' + JSON.stringify(config, null, 2) + '</div>';
+        }
+        
+        // === IMPORT/EXPORT ===
+        function exportAll() {
+            const data = {
+                localStorage: {},
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            // Exporter LocalStorage
+            for (let key in localStorage) {
+                try {
+                    data.localStorage[key] = JSON.parse(localStorage[key]);
+                } catch (e) {
+                    data.localStorage[key] = localStorage[key];
+                }
+            }
+            
+            downloadJSON(data, 'checkeasy-backup-' + new Date().toISOString().split('T')[0] + '.json');
+            showAlert('Export terminé!', 'success');
+        }
+        
+        function exportLocalStorage() {
+            const data = {};
+            for (let key in localStorage) {
+                try {
+                    data[key] = JSON.parse(localStorage[key]);
+                } catch (e) {
+                    data[key] = localStorage[key];
+                }
+            }
+            
+            downloadJSON(data, 'localstorage-backup-' + new Date().toISOString().split('T')[0] + '.json');
+        }
+        
+        function exportIndexedDB() {
+            // Implémentation simplifiée
+            showAlert('Export IndexedDB en cours de développement...', 'info');
+        }
+        
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('Veuillez sélectionner un fichier', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.localStorage) {
+                        Object.keys(data.localStorage).forEach(key => {
+                            const value = typeof data.localStorage[key] === 'object' ? 
+                                JSON.stringify(data.localStorage[key]) : 
+                                data.localStorage[key];
+                            localStorage.setItem(key, value);
+                        });
+                        
+                        showAlert('Import réussi!', 'success');
+                        refreshLocalStorage();
+                    } else {
+                        showAlert('Format de fichier invalide', 'error');
+                    }
+                } catch (error) {
+                    showAlert('Erreur lors de l\'import: ' + error.message, 'error');
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // === UTILITAIRES ===
+        function downloadJSON(data, filename) {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", filename);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+        
+        function truncateString(str, maxLength) {
+            if (str.length <= maxLength) return str;
+            return str.substring(0, maxLength) + '...';
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            alert.style.position = 'fixed';
+            alert.style.top = '20px';
+            alert.style.right = '20px';
+            alert.style.zIndex = '9999';
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+        
+        function createModal(title, content) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                max-width: 80%;
+                max-height: 80%;
+                overflow: auto;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            `;
+            
+            modalContent.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>${title}</h3>
+                    <button onclick="this.closest('[style*=\"fixed\"]').remove()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">✕</button>
+                </div>
+                ${content}
+            `;
+            
+            modal.appendChild(modalContent);
+            
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            };
+            
+            return modal;
+        }
+        
+        // === INITIALISATION ===
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshOverview();
+            console.log('🛠️ CheckEasy Database Admin Interface chargée');
+        });
+    </script>
+</body>
+</html>
+
+
+
+

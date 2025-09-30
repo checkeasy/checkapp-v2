@@ -1,0 +1,266 @@
+{
+  "user_types": ["AGENT", "GESTIONNAIRE", "CLIENT"],
+  
+  "flow_types": ["checkin", "checkout"],
+  
+  "rooms": {
+    "chambre": {
+      "id": "chambre",
+      "nom": "Chambre",
+      "ordre": 1,
+      "roomInfo": "Chambre principale avec lit double, placards intégrés et salle de bain attenante. Vérifier l'état des draps, des serviettes et l'ordre général de la pièce. Attention aux objets personnels qui pourraient avoir été oubliés.",
+      "cleaningInfo": "Aspirer sol et tapis. Changer les draps et taies d'oreiller. Nettoyer surfaces (tables de chevet, commodes). Vérifier placards et tiroirs. Aérer la pièce. Contrôler l'éclairage et climatisation.",
+      "photo_references": {
+        "checkin": [
+          {
+            "tache_id": "photos-etat-entree-chambre",
+            "url": "chambre-reference-3.jpg",
+            "expected_orientation": "paysage",
+            "overlay_enabled": true
+          },
+          {
+            "tache_id": "photos-etat-entree-chambre",
+            "url": "chambre-reference-2.jpg",
+            "expected_orientation": "portrait",
+            "overlay_enabled": true
+          },
+          {
+            "tache_id": "photos-etat-entree-chambre",
+            "url": "chambre-reference-new.jpg",
+            "expected_orientation": "paysage",
+            "overlay_enabled": true
+          }
+        ],
+        "checkout": [
+          {
+            "tache_id": "changer-draps",
+            "url": "chambre-reference-3.jpg",
+            "expected_orientation": "paysage",
+            "overlay_enabled": true
+          },
+          {
+            "tache_id": "nettoyer-surfaces",
+            "url": "chambre-reference-2.jpg",
+            "expected_orientation": "portrait",
+            "overlay_enabled": true
+          }
+        ]
+      }
+    },
+    "salon": {
+      "id": "salon",
+      "nom": "Salon",
+      "ordre": 2,
+      "roomInfo": "Salon spacieux avec canapé en cuir et télévision. Attention aux télécommandes et objets de valeur sur la table basse. Plantes à arroser si séjour > 7 jours. Vérifier le fonctionnement des équipements électroniques.",
+      "cleaningInfo": "Aspirateur sur tapis et moquette uniquement. Produit spécial cuir pour le canapé. Éviter l'eau sur les appareils électroniques. Dépoussiérage délicat des étagères. Nettoyer écrans avec produit adapté.",
+      "photo_references": {
+        "checkin": [
+          {
+            "tache_id": "photos-etat-entree-salon",
+            "url": "salon-reference.jpg",
+            "expected_orientation": "portrait",
+            "overlay_enabled": true
+          },
+          {
+            "tache_id": "photos-etat-entree-salon",
+            "url": "salon-reference-2.jpg",
+            "expected_orientation": "paysage",
+            "overlay_enabled": true
+          }
+        ],
+        "checkout": [
+          {
+            "tache_id": "aspirer-salon",
+            "url": "salon-reference.jpg",
+            "expected_orientation": "portrait",
+            "overlay_enabled": true
+          },
+          {
+            "tache_id": "nettoyer-canape",
+            "url": "salon-reference-2.jpg",
+            "expected_orientation": "paysage",
+            "overlay_enabled": true
+          }
+        ]
+      }
+    },
+    "cuisine": {
+      "id": "cuisine",
+      "nom": "Cuisine",
+      "ordre": 3,
+      "roomInfo": "Cuisine équipée avec électroménager intégré. Vérifier la propreté du four et du réfrigérateur. Robinetterie sensible aux calcaires. Plan de travail en granit nécessitant des produits spécifiques.",
+      "cleaningInfo": "Produits anti-calcaire obligatoires pour robinetterie. Dégraissant pour la hotte aspirante. Éviter l'eau sur les prises électriques. Nettoyer l'intérieur du micro-ondes et du réfrigérateur. Produit spécial granit pour le plan de travail.",
+      "photo_references": {
+        "checkin": [
+          {
+            "tache_id": "photo-etat-entree-cuisine",
+            "url": "cuisine-reference.jpg",
+            "expected_orientation": "portrait",
+            "overlay_enabled": true
+          }
+        ],
+        "single": {
+          "tache_id": "photo-etat-entree-cuisine",
+          "url": "cuisine-reference.jpg",
+          "expected_orientation": "portrait",
+          "overlay_enabled": true
+        },
+        "checkout": [
+          {
+            "tache_id": "nettoyer-electromenager",
+            "url": "cuisine-reference.jpg",
+            "expected_orientation": "portrait",
+            "overlay_enabled": true
+          }
+        ]
+      }
+    }
+  },
+
+  "task_types": ["checkbox", "photo_required", "photo_optional", "photo_multiple"],
+
+  "tasks": {
+    "checkin": {
+      "chambre": [
+        {
+          "id": "photos-etat-entree-chambre",
+          "piece_id": "chambre",
+          "ordre": 1,
+          "type": "photo_multiple",
+          "label": "📸 Photos état d'entrée - Chambre",
+          "description": "Prendre 3 photos de l'état de la chambre à l'entrée pour documenter l'état initial.",
+          "total_photos_required": 3
+        }
+      ],
+      "salon": [
+        {
+          "id": "photos-etat-entree-salon",
+          "piece_id": "salon",
+          "ordre": 1,
+          "type": "photo_multiple",
+          "label": "📸 Photos état d'entrée - Salon",
+          "description": "Prendre 2 photos similaires aux photos de référence du salon pour documenter l'aménagement.",
+          "total_photos_required": 2
+        }
+      ],
+      "cuisine": [
+        {
+          "id": "photo-etat-entree-cuisine",
+          "piece_id": "cuisine",
+          "ordre": 1,
+          "type": "photo_optional",
+          "label": "📸 Photo état d'entrée - Cuisine",
+          "description": "Prendre 1 photo similaire à la photo de référence de la cuisine pour vérifier l'aménagement.",
+          "total_photos_required": 1
+        }
+      ]
+    },
+    "checkout": {
+      "chambre": [
+        {
+          "id": "changer-draps",
+          "piece_id": "chambre",
+          "ordre": 1,
+          "type": "photo_required",
+          "label": "Changer draps & taies",
+          "description": "Parure propre, tirée au carré.",
+          "total_photos_required": 1
+        },
+        {
+          "id": "aspirer-sous-lit",
+          "piece_id": "chambre",
+          "ordre": 2,
+          "type": "checkbox",
+          "label": "🧹 Aspirer sous lit & meubles",
+          "description": "Aucune boule de poussière."
+        },
+        {
+          "id": "photos-chambre-similaires",
+          "piece_id": "chambre",
+          "ordre": 3,
+          "type": "photo_multiple",
+          "label": "📸 Prendre les photos similaires",
+          "description": "Prendre 3 photos de la chambre sous différents angles une fois terminée.",
+          "total_photos_required": 3
+        }
+      ],
+      "salon": [
+        {
+          "id": "photos-salon-similaires",
+          "piece_id": "salon",
+          "ordre": 1,
+          "type": "photo_multiple",
+          "label": "📸 Prendre les photos similaires",
+          "description": "Prendre 2 photos du salon sous différents angles.",
+          "total_photos_required": 2
+        }
+      ],
+      "cuisine": [
+        {
+          "id": "photo-cuisine",
+          "piece_id": "cuisine",
+          "ordre": 1,
+          "type": "photo_optional",
+          "label": "Prendre une photo similaire",
+          "description": "Photo de contrôle de la cuisine.",
+          "total_photos_required": 1
+        }
+      ]
+    }
+  },
+
+  "signalements": {
+    "status": ["A_TRAITER", "RESOLU"],
+    "origines": ["Voyageur", "Agent de ménage", "Gestionnaire"],
+    "pieces": ["Chambre", "Salon", "Cuisine"],
+    "initial_data": [
+      {
+        "id": "1",
+        "titre": "Tache sur le matelas, nécessite nettoyage spécialisé",
+        "piece": "Chambre",
+        "origine": "Voyageur",
+        "description": "Grande tache sur le matelas qui nécessite un nettoyage professionnel",
+        "status": "A_TRAITER",
+        "priorite": true,
+        "miniatures": ["/lovable-uploads/89051e63-c24a-46fd-a746-87109ac68d89.png"],
+        "created_at": "2025-01-07T14:30:00Z",
+        "updated_at": "2025-01-07T14:30:00Z"
+      },
+      {
+        "id": "2",
+        "titre": "Réfrigérateur ne fonctionne plus, aliments à risque",
+        "piece": "Cuisine",
+        "origine": "Agent de ménage",
+        "description": "Le réfrigérateur est complètement en panne, les aliments risquent de se gâter",
+        "status": "A_TRAITER",
+        "priorite": false,
+        "miniatures": [],
+        "created_at": "2025-01-07T09:15:00Z",
+        "updated_at": "2025-01-07T09:15:00Z"
+      },
+      {
+        "id": "3",
+        "titre": "Canapé endommagé, accoudoir déchiré",
+        "piece": "Salon",
+        "origine": "Gestionnaire",
+        "description": "L'accoudoir gauche du canapé est déchiré et nécessite une réparation",
+        "status": "A_TRAITER",
+        "priorite": false,
+        "miniatures": ["/lovable-uploads/8c04ee7e-d5f8-4b65-aed9-e6094b5cc244.png"],
+        "created_at": "2025-01-06T16:45:00Z",
+        "updated_at": "2025-01-06T16:45:00Z"
+      }
+    ]
+  },
+
+  "room_status": ["VALIDEE", "INCOMPLETE", "VIDE"],
+
+  "ui_colors": {
+    "origine_badges": {
+      "voyageur": "bg-blue-100 text-blue-700",
+      "agent de ménage": "bg-green-100 text-green-700",
+      "gestionnaire": "bg-orange-100 text-orange-700",
+      "default": "bg-gray-100 text-gray-700"
+    }
+  }
+}

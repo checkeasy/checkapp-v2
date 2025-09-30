@@ -1,0 +1,33 @@
+{
+  "name": "Photo Comparative",
+  "short_name": "PhotoComp",
+  "description": "Plugin de capture photo comparative pour inspections immobilières",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#4f8cff",
+  "orientation": "portrait",
+  "categories": ["productivity", "photo"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyNCIgZmlsbD0iIzRmOGNmZiIvPjxjaXJjbGUgY3g9Ijk2IiBjeT0iNzYiIHI9IjIwIiBmaWxsPSJ3aGl0ZSIvPjxyZWN0IHg9IjU2IiB5PSIxMTIiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSI2NiIgeT0iMTI4IiB3aWR0aD0iNjAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjgiLz48cmVjdCB4PSI3NiIgeT0iMTQyIiB3aWR0aD0iNDAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSI2NCIgZmlsbD0iIzRmOGNmZiIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjIwNCIgcj0iNTQiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMTUwIiB5PSIzMDAiIHdpZHRoPSIyMTIiIGhlaWdodD0iMjAiIHJ4PSIxMCIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSIxNzYiIHk9IjM0MCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNiIgcng9IjgiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjgiLz48cmVjdCB4PSIyMDIiIHk9IjM3NiIgd2lkdGg9IjEwOCIgaGVpZ2h0PSIxNiIgcng9IjgiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Charger rapports",
+      "short_name": "Rapports",
+      "description": "Accéder directement à la liste des rapports",
+      "url": "/?auto_load=true"
+    }
+  ]
+}

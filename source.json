@@ -1,0 +1,112 @@
+{
+    "logement_id": "1740994922622x114043931300462600",
+    "rapport_id": "1756715593045x956531999208374300",
+    "pieces": [
+      {
+        "piece_id": "1740994942254x165309979934080700",
+        "nom": "🛏️ Chambre",
+        "commentaire_ia": "",
+        "checkin_pictures": [
+          {
+            "piece_id": "1740994942254x165309979934080700",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1747579136216x303989080918923840/17475791119366201836609127863371.jpg"
+          },
+          {
+            "piece_id": "1740994942254x165309979934080700",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1747579159464x673010457488754300/17475791424945618964553882007106.jpg"
+          }
+        ],
+        "etapes": []
+      },
+      {
+        "piece_id": "1740994942264x313052433770802050",
+        "nom": "🍽️ Cuisine",
+        "commentaire_ia": "",
+        "checkin_pictures": [
+          {
+            "piece_id": "1740994942264x313052433770802050",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740994990596x693435057626814500/IMG_3115.jpeg"
+          },
+          {
+            "piece_id": "1740994942264x313052433770802050",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1741291373933x133570744729533120/IMG_1206.jpeg"
+          },
+          {
+            "piece_id": "1740994942264x313052433770802050",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1741291380741x572231417386131840/IMG_1203.jpeg"
+          },
+          {
+            "piece_id": "1740994942264x313052433770802050",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1741291386238x465606241907621900/IMG_1202.jpeg"
+          },
+          {
+            "piece_id": "1740994942264x313052433770802050",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1741291404170x478596134564252400/IMG_1196.jpeg"
+          }
+        ],
+        "etapes": [
+          {
+            "etape_id": "1740994942507x131412786413337420",
+            "task_name": "🔥 Nettoyer le micro-ondes",
+            "consigne": "Nettoyez l'intérieur et l'extérieur du four",
+            "checking_picture": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1749477764454x705192672560082100/Capture%20d%E2%80%99e%CC%81cran%202025-06-09%20a%CC%80%2016.02.15.png"
+          },
+          {
+            "etape_id": "1740994942525x270580551253773800",
+            "task_name": "🥶 Vider et nettoyer le frigo ",
+            "consigne": "Vider et nettoyer l’intérieur du réfrigérateur",
+            "checking_picture": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1749477749819x232570025516829020/Capture%20d%E2%80%99e%CC%81cran%202025-06-09%20a%CC%80%2016.02.07.png"
+          }
+        ]
+      },
+      {
+        "piece_id": "1740994942276x431494264675638140",
+        "nom": "🚿 Salle de Bain & Toilettes",
+        "commentaire_ia": "",
+        "checkin_pictures": [
+          {
+            "piece_id": "1740994942276x431494264675638140",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740995025044x803132531291236100/IMG_3117.jpeg"
+          },
+          {
+            "piece_id": "1740994942276x431494264675638140",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1741291413480x227329412439125700/IMG_1205.jpeg"
+          },
+          {
+            "piece_id": "1740994942276x431494264675638140",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1747579391514x643116754730191700/17475793681864787753197661078249.jpg"
+          },
+          {
+            "piece_id": "1740994942276x431494264675638140",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1747579406631x709638031693964300/17475793940343105367307891050040.jpg"
+          },
+          {
+            "piece_id": "1740994942276x431494264675638140",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1747579432815x946394797211098200/17475794079534261157876524197356.jpg"
+          }
+        ],
+        "etapes": []
+      },
+      {
+        "piece_id": "1740994942287x889462061025868300",
+        "nom": "🛋️ Salon",
+        "commentaire_ia": "",
+        "checkin_pictures": [
+          {
+            "piece_id": "1740994942287x889462061025868300",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740995038824x389154772599235700/IMG_3114.jpeg"
+          },
+          {
+            "piece_id": "1740994942287x889462061025868300",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1747579507933x965672611183745900/17475794819284252712369512931524.jpg"
+          },
+          {
+            "piece_id": "1740994942287x889462061025868300",
+            "url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1741291462444x879188954906532400/IMG_1199.jpeg"
+          }
+        ],
+        "etapes": []
+      }
+    ]
+  }
+  

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Photo Comparative</title>
+    <link rel="stylesheet" href="./styles.css" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#4f8cff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PhotoComp" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyNCIgZmlsbD0iIzRmOGNmZiIvPjxjaXJjbGUgY3g9Ijk2IiBjeT0iNzYiIHI9IjIwIiBmaWxsPSJ3aGl0ZSIvPjxyZWN0IHg9IjU2IiB5PSIxMTIiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSI2NiIgeT0iMTI4IiB3aWR0aD0iNjAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjgiLz48cmVjdCB4PSI3NiIgeT0iMTQyIiB3aWR0aD0iNDAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <div class="titles">
+          <h1>Photo Comparative</h1>
+          <p id="contextLabel" class="context"></p>
+        </div>
+        <div class="header-actions">
+          <button id="btnInstall" class="btn ghost install-btn" hidden title="Installer l'app">📱</button>
+          <button id="btnBack" class="btn secondary" hidden>Retour</button>
+        </div>
+      </header>
+
+      <main id="viewRoot" class="view-root"></main>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+  </html>
+
+

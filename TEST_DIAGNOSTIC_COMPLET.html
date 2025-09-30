@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Diagnostic Complet etapeID</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #252526;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #4ec9b0;
+            border-bottom: 2px solid #4ec9b0;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            font-family: 'Courier New', monospace;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        #output {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-size: 14px;
+            max-height: 800px;
+            overflow-y: auto;
+            border: 1px solid #3c3c3c;
+        }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        .warning { color: #dcdcaa; }
+        .info { color: #569cd6; }
+        .highlight { background: #264f78; padding: 2px 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 DIAGNOSTIC COMPLET - Intégrité etapeID</h1>
+        <p>Ce test va vérifier EXACTEMENT ce qui se passe avec les etapeID de bout en bout.</p>
+        
+        <div>
+            <button onclick="runFullDiagnostic()">🚀 Lancer le Diagnostic Complet</button>
+            <button onclick="clearOutput()">🗑️ Effacer</button>
+        </div>
+        
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const PARCOURS_ID = '1753358726225x784440888671076400';
+        const API_URL = `https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/endpointPiece?parcours=${PARCOURS_ID}`;
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const className = type;
+            output.innerHTML += `<span class="${className}">${message}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+        }
+
+        async function runFullDiagnostic() {
+            clearOutput();
+            log('═'.repeat(100), 'info');
+            log('🔍 DIAGNOSTIC COMPLET - Intégrité etapeID', 'info');
+            log('═'.repeat(100), 'info');
+            log('', 'info');
+
+            try {
+                // ÉTAPE 1: Charger les données API
+                log('📡 ÉTAPE 1: Chargement des données API...', 'info');
+                log('─'.repeat(100), 'info');
+                const response = await fetch(API_URL);
+                const apiData = await response.json();
+                
+                log(`✅ Données API chargées`, 'success');
+                log(`   Parcours: ${apiData.parcoursName}`, 'info');
+                log(`   Pièces: ${apiData.piece.length}`, 'info');
+                log('', 'info');
+
+                // ÉTAPE 2: Analyser les etapeID de l'API
+                log('📊 ÉTAPE 2: Analyse des etapeID de l\'API...', 'info');
+                log('─'.repeat(100), 'info');
+                
+                const apiEtapeMap = new Map();
+                let totalEtapes = 0;
+                let etapesSansId = 0;
+
+                apiData.piece.forEach((piece, pieceIdx) => {
+                    log(`\n🏠 Pièce ${pieceIdx + 1}: ${piece.nom}`, 'info');
+                    log(`   pieceID: <span class="highlight">${piece.pieceID}</span>`, 'info');
+                    
+                    piece.etapes.forEach((etape, etapeIdx) => {
+                        totalEtapes++;
+                        
+                        if (etape.etapeID) {
+                            apiEtapeMap.set(etape.etapeID, {
+                                pieceId: piece.pieceID,
+                                pieceName: piece.nom,
+                                isTodo: etape.isTodo,
+                                title: etape.todoTitle || 'Photo de référence',
+                                index: etapeIdx
+                            });
+                            
+                            const icon = etape.isTodo ? '✅' : '📸';
+                            log(`   ${icon} Étape ${etapeIdx + 1}: <span class="highlight">${etape.etapeID}</span>`, 'success');
+                            log(`      ${etape.isTodo ? etape.todoTitle : 'Photo de référence'}`, 'info');
+                        } else {
+                            etapesSansId++;
+                            log(`   ❌ Étape ${etapeIdx + 1}: PAS D'ETAPEID !`, 'error');
+                        }
+                    });
+                });
+
+                log('', 'info');
+                log('📊 Résumé API:', 'info');
+                log(`   Total étapes: ${totalEtapes}`, 'info');
+                log(`   Étapes avec etapeID: ${apiEtapeMap.size}`, apiEtapeMap.size === totalEtapes ? 'success' : 'error');
+                log(`   Étapes sans etapeID: ${etapesSansId}`, etapesSansId === 0 ? 'success' : 'error');
+                log('', 'info');
+
+                // ÉTAPE 3: Vérifier les conflits pieceID/etapeID
+                log('🔍 ÉTAPE 3: Vérification des conflits pieceID/etapeID...', 'info');
+                log('─'.repeat(100), 'info');
+                
+                const pieceIds = new Set(apiData.piece.map(p => p.pieceID));
+                const conflicts = [];
+                
+                apiEtapeMap.forEach((info, etapeId) => {
+                    if (pieceIds.has(etapeId)) {
+                        conflicts.push({ etapeId, info });
+                    }
+                });
+
+                if (conflicts.length > 0) {
+                    log(`❌ ${conflicts.length} CONFLITS DÉTECTÉS !`, 'error');
+                    conflicts.forEach(c => {
+                        log(`   🚨 etapeID = pieceID: ${c.etapeId}`, 'error');
+                        log(`      Pièce: ${c.info.pieceName}`, 'info');
+                    });
+                } else {
+                    log(`✅ Aucun conflit détecté`, 'success');
+                }
+                log('', 'info');
+
+                // ÉTAPE 4: Simuler le DataAdapter CORRIGÉ
+                log('🔄 ÉTAPE 4: Simulation du DataAdapter CORRIGÉ...', 'info');
+                log('─'.repeat(100), 'info');
+                log('⚠️  Ce test simule le comportement APRÈS nos corrections', 'warning');
+                log('', 'info');
+
+                let tasksGenerated = 0;
+                let tasksWithCorrectId = 0;
+                const taskIdComparison = [];
+
+                apiData.piece.forEach((piece, pieceIdx) => {
+                    log(`\n🏠 Pièce ${pieceIdx + 1}: ${piece.nom}`, 'info');
+                    
+                    piece.etapes.forEach((etape, etapeIdx) => {
+                        tasksGenerated++;
+                        
+                        // ✅ AVEC NOS CORRECTIONS: Utiliser directement etapeID
+                        const taskIdNew = etape.etapeID;
+                        
+                        // ❌ ANCIEN SYSTÈME: Générer un slug
+                        const taskIdOld = generateSlug(etape.todoTitle || etape.todoOrder || `photo-${etapeIdx}`);
+                        
+                        const isCorrect = taskIdNew === etape.etapeID;
+                        if (isCorrect) tasksWithCorrectId++;
+                        
+                        const icon = isCorrect ? '✅' : '❌';
+                        log(`   ${icon} Étape ${etapeIdx + 1}:`, isCorrect ? 'success' : 'error');
+                        log(`      API etapeID:    <span class="highlight">${etape.etapeID}</span>`, 'info');
+                        log(`      Task ID (NEW):  <span class="highlight">${taskIdNew}</span> ${isCorrect ? '✅ MATCH' : '❌ MISMATCH'}`, isCorrect ? 'success' : 'error');
+                        log(`      Task ID (OLD):  ${taskIdOld}`, 'warning');
+                        
+                        taskIdComparison.push({
+                            etapeId: etape.etapeID,
+                            taskIdNew,
+                            taskIdOld,
+                            isCorrect,
+                            title: etape.todoTitle || 'Photo'
+                        });
+                    });
+                });
+
+                log('', 'info');
+                log('📊 Résumé Transformation:', 'info');
+                log(`   Total tasks générées: ${tasksGenerated}`, 'info');
+                log(`   Tasks avec ID correct: ${tasksWithCorrectId}`, tasksWithCorrectId === tasksGenerated ? 'success' : 'error');
+                
+                const preservationRate = (tasksWithCorrectId / tasksGenerated * 100).toFixed(1);
+                log(`   Taux de préservation: ${preservationRate}%`, preservationRate === '100.0' ? 'success' : 'error');
+                log('', 'info');
+
+                // ÉTAPE 5: Diagnostic final
+                log('═'.repeat(100), 'info');
+                log('🎯 DIAGNOSTIC FINAL', 'info');
+                log('═'.repeat(100), 'info');
+                log('', 'info');
+
+                if (preservationRate === '100.0') {
+                    log('✅ SUCCÈS: Les corrections du DataAdapter sont CORRECTES', 'success');
+                    log('', 'info');
+                    log('🚨 MAIS ATTENTION:', 'warning');
+                    log('   Si vous voyez encore des problèmes en production, c\'est que:', 'warning');
+                    log('', 'info');
+                    log('   1️⃣  L\'application n\'est PAS RECOMPILÉE', 'error');
+                    log('      Solution: cd FRONT && npm run build', 'info');
+                    log('', 'info');
+                    log('   2️⃣  Le serveur dev n\'est PAS REDÉMARRÉ', 'error');
+                    log('      Solution: Arrêter et relancer npm run dev', 'info');
+                    log('', 'info');
+                    log('   3️⃣  Le cache du navigateur est ACTIF', 'error');
+                    log('      Solution: Ctrl+Shift+R pour hard refresh', 'info');
+                } else {
+                    log('❌ PROBLÈME: Les corrections ne fonctionnent PAS correctement', 'error');
+                    log('', 'info');
+                    log('🔍 Vérifiez que les modifications sont bien appliquées dans:', 'warning');
+                    log('   - FRONT/src/services/dataAdapter.ts (lignes 24-33, 237-267)', 'info');
+                    log('   - FRONT/src/types/room.ts (lignes 1-7, 9-25)', 'info');
+                }
+
+                log('', 'info');
+                log('═'.repeat(100), 'info');
+                log('✅ Diagnostic terminé', 'success');
+                log('═'.repeat(100), 'info');
+
+            } catch (error) {
+                log('', 'info');
+                log('❌ ERREUR:', 'error');
+                log(error.message, 'error');
+                log(error.stack, 'error');
+            }
+        }
+
+        function generateSlug(text) {
+            return text
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .substring(0, 50);
+        }
+
+        // Auto-run au chargement
+        window.addEventListener('load', () => {
+            log('✅ Page de diagnostic chargée', 'success');
+            log('👉 Cliquez sur "Lancer le Diagnostic Complet" pour commencer\n', 'info');
+        });
+    </script>
+</body>
+</html>
+

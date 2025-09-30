@@ -1,0 +1,17 @@
+{
+  "name": "photo-comparative-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static web plugin for comparative photo capture (Bubble iframe)",
+  "scripts": {
+    "start": "serve -s -l $PORT ."
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
+
