@@ -1,11 +1,10 @@
 # Stage 1: Build
 FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /app/FRONT
 
 # Copy package files
-COPY FRONT/package*.json ./FRONT/
-WORKDIR /app/FRONT
+COPY FRONT/package*.json ./
 RUN npm install
 
 # Copy source code
