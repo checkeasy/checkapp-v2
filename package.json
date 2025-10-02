@@ -1,0 +1,31 @@
+{
+  "name": "checkeasy-plugin-photo",
+  "version": "1.0.0",
+  "description": "CheckEasy Plugin Photo - Application de gestion de photos pour check-in/check-out",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:all": "cd FRONT && npm install && cd ../PLUGIN\\ PHOTO && npm install",
+    "dev": "cd FRONT && npm run dev",
+    "build": "cd FRONT && npm run build",
+    "start": "cd FRONT && npm run preview",
+    "preview": "cd FRONT && npm run preview",
+    "lint": "cd FRONT && npm run lint",
+    "test": "cd FRONT && npm run test"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "checkeasy",
+    "photo",
+    "checkin",
+    "checkout",
+    "react",
+    "vite"
+  ],
+  "author": "",
+  "license": "ISC"
+}
+

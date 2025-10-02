@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+FRONT/node_modules/
+PLUGIN PHOTO/node_modules/
+
+# Build outputs
+FRONT/dist/
+*.log
+
+# Documentation
+DOC/
+*.md
+!README.md
+
+# Test files
+TEST_*.html
+TEST_*.md
+*.spec.ts
+tests/
+
+# Development files
+*.backup
+temp_*
+*.patch
+test-*.js
+test-*.html
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
