@@ -2,11 +2,11 @@
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["cd FRONT && npm ci"]
+cmds = ["cd FRONT && npm install"]
 
 [phases.build]
 cmds = ["cd FRONT && npm run build"]
 
 [start]
-cmd = "cd FRONT && npx vite preview --host 0.0.0.0 --port $PORT"
+cmd = "npx --prefix FRONT vite preview --host 0.0.0.0 --port $PORT"
 
