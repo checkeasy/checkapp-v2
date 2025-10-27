@@ -37,6 +37,9 @@ const state = {
   selectedPieceId: /** @type {string|null} */(null),
   selectedRefIndex: 0,
   stream: /** @type {MediaStream|null} */(null),
+  cameraFacingMode: 'environment', // 'environment' (rear) or 'user' (front)
+  availableCameras: /** @type {MediaDeviceInfo[]} */(null), // detected cameras
+  hasMultipleCameras: false, // whether device has multiple cameras
   ghostOpacity: 0.5,
   showGrid: false,
   showHorizon: false,
@@ -55,6 +58,9 @@ const state = {
   reviewMode: false, // reviewing a captured photo
   reviewingRefIndex: -1, // which ref is being reviewed
   capturedPhotos: /** @type {Map<string, {blob: Blob, dataUrl: string, takenAt: string}>} */(new Map()),
+  // 🆕 Diagnostic logs visible
+  diagnosticLogs: /** @type {string[]} */([]),
+  showDiagnostic: false,
 };
 
 const dom = {
@@ -87,9 +93,111 @@ function showToast(message) {
   setTimeout(() => dom.toast.classList.remove('show'), 2200);
 }
 
+// 🆕 Diagnostic Log (visible sur iPhone)
+function diagLog(message, type = 'info') {
+  const timestamp = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const emoji = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '📝';
+  const logEntry = `[${timestamp}] ${emoji} ${message}`;
+  
+  state.diagnosticLogs.push(logEntry);
+  
+  // Garder seulement les 50 derniers logs
+  if (state.diagnosticLogs.length > 50) {
+    state.diagnosticLogs.shift();
+  }
+  
+  console.log(logEntry); // Aussi dans la console
+  
+  // Mettre à jour le panneau si visible
+  updateDiagnosticPanel();
+}
+
+function updateDiagnosticPanel() {
+  const panel = document.getElementById('diagnostic-panel');
+  if (panel && state.showDiagnostic) {
+    const logsDiv = panel.querySelector('.diagnostic-logs');
+    if (logsDiv) {
+      logsDiv.innerHTML = state.diagnosticLogs.map(log => `<div>${log}</div>`).join('');
+      logsDiv.scrollTop = logsDiv.scrollHeight;
+    }
+  }
+}
+
+function toggleDiagnostic() {
+  state.showDiagnostic = !state.showDiagnostic;
+  
+  let panel = document.getElementById('diagnostic-panel');
+  
+  if (state.showDiagnostic) {
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'diagnostic-panel';
+      panel.className = 'diagnostic-panel';
+      panel.innerHTML = `
+        <div class="diagnostic-header">
+          <h3>🔍 Diagnostic Camera</h3>
+          <button class="diagnostic-close" onclick="toggleDiagnostic()">✕</button>
+        </div>
+        <div class="diagnostic-logs"></div>
+        <div class="diagnostic-actions">
+          <button class="btn" onclick="state.diagnosticLogs = []; updateDiagnosticPanel();">Effacer</button>
+          <button class="btn" onclick="copyDiagnosticLogs();">Copier</button>
+        </div>
+      `;
+      document.body.appendChild(panel);
+    }
+    panel.style.display = 'flex';
+    updateDiagnosticPanel();
+  } else if (panel) {
+    panel.style.display = 'none';
+  }
+}
+
+function copyDiagnosticLogs() {
+  const logsText = state.diagnosticLogs.join('\n');
+  
+  // Créer un textarea temporaire pour copier
+  const textarea = document.createElement('textarea');
+  textarea.value = logsText;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  
+  try {
+    document.execCommand('copy');
+    showToast('✅ Logs copiés !');
+  } catch (err) {
+    showToast('❌ Erreur copie');
+  }
+  
+  document.body.removeChild(textarea);
+}
+
 // Data validation
 function isValidUrl(url) {
   try { const u = new URL(url); return u.protocol === 'http:' || u.protocol === 'https:'; } catch { return false; }
+}
+
+// ✅ Device orientation helper for fixing rotation bug
+function getDeviceOrientation() {
+  // Vérifier si l'API Screen Orientation est disponible
+  if (window.screen && window.screen.orientation) {
+    const angle = window.screen.orientation.angle || 0;
+    return angle;
+  }
+
+  // Fallback : utiliser window.orientation (déprécié mais encore supporté sur iOS)
+  if (typeof window.orientation !== 'undefined') {
+    return window.orientation;
+  }
+
+  // Fallback : détecter via les dimensions de l'écran
+  if (window.innerWidth > window.innerHeight) {
+    return 90; // Paysage
+  }
+
+  return 0; // Portrait par défaut
 }
 
 /**
@@ -201,6 +309,23 @@ function renderEmpty() {
   btnLoadSource.onclick = () => loadFromUrl('./source.json');
   actions.appendChild(btnLoadSource);
 
+  // 🆕 BOUTON DE TEST CAMÉRA
+  const btnTestCamera = document.createElement('button');
+  btnTestCamera.className = 'btn';
+  btnTestCamera.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a24)';
+  btnTestCamera.style.color = 'white';
+  btnTestCamera.style.fontWeight = 'bold';
+  btnTestCamera.textContent = '🎯 TEST CAMÉRA ARRIÈRE';
+  btnTestCamera.onclick = () => testCameraBackend();
+  actions.appendChild(btnTestCamera);
+  
+  // 🆕 BOUTON DIAGNOSTIC VISIBLE
+  const btnDiagnostic = document.createElement('button');
+  btnDiagnostic.className = 'btn secondary';
+  btnDiagnostic.textContent = '🔍 DIAGNOSTIC (iPhone)';
+  btnDiagnostic.onclick = () => toggleDiagnostic();
+  actions.appendChild(btnDiagnostic);
+
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'application/json,.json';
@@ -230,6 +355,24 @@ function renderRapportSelector() {
   
   const wrap = document.createElement('div');
   wrap.className = 'rapport-selector';
+  
+  // 🆕 BOUTON DE TEST CAMÉRA - EN HAUT
+  const testSection = document.createElement('div');
+  testSection.style.cssText = 'margin-bottom: 20px; text-align: center; padding: 16px; background: var(--panel); border-radius: var(--radius); border: 2px solid #ff6b6b;';
+  
+  const testTitle = document.createElement('h3');
+  testTitle.textContent = '🔧 DIAGNOSTIC CAMÉRA';
+  testTitle.style.cssText = 'margin: 0 0 12px 0; color: #ff6b6b; font-size: 16px;';
+  testSection.appendChild(testTitle);
+  
+  const btnTestCamera = document.createElement('button');
+  btnTestCamera.className = 'btn';
+  btnTestCamera.style.cssText = 'background: linear-gradient(45deg, #ff6b6b, #ee5a24); color: white; font-weight: bold; padding: 12px 24px; font-size: 16px;';
+  btnTestCamera.textContent = '🎯 TEST CAMÉRA ARRIÈRE';
+  btnTestCamera.onclick = () => testCameraBackend();
+  testSection.appendChild(btnTestCamera);
+  
+  wrap.appendChild(testSection);
   
   const header = document.createElement('div');
   header.style.marginBottom = '16px';
@@ -322,6 +465,24 @@ function renderHome() {
   const wrap = document.createElement('div');
   wrap.className = 'home-wrapper';
 
+  // 🆕 BOUTON DE TEST CAMÉRA - TOUJOURS VISIBLE
+  const testSection = document.createElement('div');
+  testSection.style.cssText = 'margin-bottom: 20px; text-align: center; padding: 16px; background: var(--panel); border-radius: var(--radius); border: 2px solid #ff6b6b;';
+  
+  const testTitle = document.createElement('h3');
+  testTitle.textContent = '🔧 DIAGNOSTIC CAMÉRA';
+  testTitle.style.cssText = 'margin: 0 0 12px 0; color: #ff6b6b; font-size: 16px;';
+  testSection.appendChild(testTitle);
+  
+  const btnTestCamera = document.createElement('button');
+  btnTestCamera.className = 'btn';
+  btnTestCamera.style.cssText = 'background: linear-gradient(45deg, #ff6b6b, #ee5a24); color: white; font-weight: bold; padding: 12px 24px; font-size: 16px;';
+  btnTestCamera.textContent = '🎯 TEST CAMÉRA ARRIÈRE';
+  btnTestCamera.onclick = () => testCameraBackend();
+  testSection.appendChild(btnTestCamera);
+  
+  wrap.appendChild(testSection);
+
   // Mode selection
   const modeSection = document.createElement('div');
   modeSection.className = 'mode-selection';
@@ -393,6 +554,24 @@ function renderHome() {
 }
 
 function renderFreeMode() {
+  // 🆕 BOUTON DE TEST CAMÉRA - EN HAUT
+  const testSection = document.createElement('div');
+  testSection.style.cssText = 'margin-bottom: 20px; text-align: center; padding: 16px; background: var(--panel); border-radius: var(--radius); border: 2px solid #ff6b6b;';
+  
+  const testTitle = document.createElement('h3');
+  testTitle.textContent = '🔧 DIAGNOSTIC CAMÉRA';
+  testTitle.style.cssText = 'margin: 0 0 12px 0; color: #ff6b6b; font-size: 16px;';
+  testSection.appendChild(testTitle);
+  
+  const btnTestCamera = document.createElement('button');
+  btnTestCamera.className = 'btn';
+  btnTestCamera.style.cssText = 'background: linear-gradient(45deg, #ff6b6b, #ee5a24); color: white; font-weight: bold; padding: 12px 24px; font-size: 16px;';
+  btnTestCamera.textContent = '🎯 TEST CAMÉRA ARRIÈRE';
+  btnTestCamera.onclick = () => testCameraBackend();
+  testSection.appendChild(btnTestCamera);
+  
+  dom.root.appendChild(testSection);
+
   const grid = document.createElement('div');
   grid.className = 'grid';
   
@@ -876,17 +1055,344 @@ function renderParcoursComplete() {
   dom.root.appendChild(wrap);
 }
 
-function ensureStream() {
-  if (state.stream) return Promise.resolve(state.stream);
-  return navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 } }, audio: false })
-    .then(s => { state.stream = s; return s; })
-    .catch(err => { emitError('CAMERA_DENIED', 'Accès caméra refusé', { err: String(err) }); throw err; });
+// 🆕 SOLUTION OPTIMISÉE iOS: Demander accès explicite aux DEUX caméras
+async function detectCameras() {
+  try {
+    diagLog('🎥 Starting camera detection (iOS optimized)...', 'info');
+    diagLog(`📱 User Agent: ${navigator.userAgent}`, 'info');
+    
+    const isiOS = isIOS();
+    diagLog(`📱 iOS detected: ${isiOS}`, isiOS ? 'success' : 'info');
+    
+    // ✅ ÉTAPE 1: Demander accès BACK camera d'abord (caméra principale)
+    diagLog('📱 Step 1: Requesting BACK camera access...', 'info');
+    try {
+      const backStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' }
+      });
+      diagLog('✅ Back camera permission granted', 'success');
+      backStream.getTracks().forEach(track => {
+        diagLog(`  📹 Back camera track: ${track.label}`, 'success');
+        track.stop();
+      });
+      
+      // Délai critique pour iOS (libérer ressources)
+      await new Promise(resolve => setTimeout(resolve, isiOS ? 500 : 200));
+    } catch (backErr) {
+      diagLog(`⚠️ Back camera access failed: ${backErr.name}`, 'warning');
+    }
+    
+    // ✅ ÉTAPE 2: Demander accès FRONT camera
+    diagLog('📱 Step 2: Requesting FRONT camera access...', 'info');
+    try {
+      const frontStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'user' }
+      });
+      diagLog('✅ Front camera permission granted', 'success');
+      frontStream.getTracks().forEach(track => {
+        diagLog(`  📹 Front camera track: ${track.label}`, 'success');
+        track.stop();
+      });
+      
+      // Délai critique pour iOS
+      await new Promise(resolve => setTimeout(resolve, isiOS ? 500 : 200));
+    } catch (frontErr) {
+      diagLog(`⚠️ Front camera access failed: ${frontErr.name}`, 'warning');
+    }
+    
+    // ✅ ÉTAPE 3: Énumérer les devices (maintenant iOS va donner les vrais labels)
+    diagLog('📱 Step 3: Enumerating devices...', 'info');
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+    
+    // Stocker les résultats
+    state.availableCameras = videoDevices;
+    state.hasMultipleCameras = videoDevices.length > 1;
+    
+    diagLog(`✅ Detected ${videoDevices.length} camera(s)`, 'success');
+    videoDevices.forEach(d => {
+      const facing = d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('face') ? '🤳 front' : 
+              d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('rear') ? '📷 back' : '❓ unknown';
+      diagLog(`  📹 ${d.label || 'Camera'} (${facing})`, 'success');
+    });
+    diagLog(`✅ Multiple cameras: ${state.hasMultipleCameras}`, 'success');
+    
+    // ✅ VÉRIFICATION: Afficher un avertissement si aucune caméra détectée
+    if (videoDevices.length === 0) {
+      diagLog('❌ NO CAMERAS DETECTED!', 'error');
+      diagLog('Check iOS Settings > Safari > Camera', 'error');
+      throw new Error('NO_CAMERAS_DETECTED');
+    }
+    
+    return videoDevices;
+  } catch (err) {
+    diagLog(`❌ Camera detection failed: ${err.message}`, 'error');
+    diagLog('💡 iOS Troubleshooting:', 'warning');
+    diagLog('  1. Settings > Safari > Camera > Allow', 'warning');
+    diagLog('  2. Settings > Privacy > Camera > Safari', 'warning');
+    diagLog('  3. Try reloading the page', 'warning');
+    
+    state.availableCameras = [];
+    state.hasMultipleCameras = false;
+    throw err; // Propager l'erreur pour UI
+  }
+}
+
+// Check if device is iOS
+function isIOS() {
+  const ua = window.navigator.userAgent;
+  return !!ua.match(/iPad|iPhone|iPod/);
+}
+
+// Check if Chrome on iOS (CriOS)
+function isChromeIOS() {
+  const ua = window.navigator.userAgent;
+  return isIOS() && !!ua.match(/CriOS/);
+}
+
+// Check if Safari on iOS
+function isSafariIOS() {
+  const ua = window.navigator.userAgent;
+  return isIOS() && !ua.match(/CriOS/) && !ua.match(/FxiOS/) && !ua.match(/EdgiOS/);
+}
+
+// 🆕 SOLUTION: Utiliser facingMode en priorité, deviceId en fallback
+async function ensureStream() {
+  if (state.stream) return state.stream;
+  
+  console.log(`🎥 Requesting camera stream: ${state.cameraFacingMode}`);
+  
+  const isiOS = isIOS();
+  let stream = null;
+  
+  // 🎯 STRATÉGIE 1: FacingMode avec ideal (compatible tous navigateurs)
+  if (!stream) {
+    try {
+      console.log(`📱 Strategy 1: facingMode "${state.cameraFacingMode}" with ideal...`);
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+          facingMode: { ideal: state.cameraFacingMode },
+          width: { ideal: isiOS ? 1280 : 1920 },
+          height: { ideal: isiOS ? 720 : 1080 }
+        }
+      });
+      console.log('✅ Stream started with ideal facingMode');
+    } catch (err) {
+      console.warn('⚠️ Strategy 1 failed:', err.message);
+    }
+  }
+  
+  // 🎯 STRATÉGIE 2: FacingMode direct (iOS compatible)
+  if (!stream) {
+    try {
+      console.log(`📱 Strategy 2: Direct facingMode "${state.cameraFacingMode}"...`);
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+          facingMode: state.cameraFacingMode,
+          width: { ideal: isiOS ? 1280 : 1920 }
+        }
+      });
+      console.log('✅ Stream started with direct facingMode');
+    } catch (err) {
+      console.warn('⚠️ Strategy 2 failed:', err.message);
+    }
+  }
+  
+  // 🎯 STRATÉGIE 3: Utiliser deviceId si disponible
+  if (!stream && state.availableCameras && state.availableCameras.length > 0) {
+    console.log('📱 Strategy 3: Using deviceId...');
+    const wantFront = state.cameraFacingMode === 'user';
+    
+    // Trouver la bonne caméra par son label
+    const targetCamera = state.availableCameras.find(cam => {
+      const label = cam.label.toLowerCase();
+      if (wantFront) {
+        return label.includes('front') || label.includes('face') || label.includes('user');
+      } else {
+        return label.includes('back') || label.includes('rear') || label.includes('environment');
+      }
+    });
+    
+    if (targetCamera) {
+      console.log(`📱 Trying deviceId for "${targetCamera.label}"`);
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: { deviceId: { exact: targetCamera.deviceId } }
+        });
+        console.log('✅ Stream started with deviceId');
+      } catch (err) {
+        console.warn('⚠️ DeviceId failed:', err.message);
+      }
+    } else {
+      console.warn(`⚠️ No camera found matching ${wantFront ? 'front' : 'rear'}`);
+    }
+  }
+  
+  // 🎯 STRATÉGIE 4: Dernier recours avec facingMode basic
+  if (!stream) {
+    try {
+      console.log('📱 Strategy 4: Basic facingMode...');
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: state.cameraFacingMode }
+      });
+      console.log('✅ Stream started with basic facingMode');
+    } catch (err) {
+      console.warn('⚠️ Strategy 4 failed:', err.message);
+    }
+  }
+  
+  // Erreur finale si aucune stratégie n'a fonctionné
+  if (!stream) {
+    const errorMessage = isiOS 
+      ? 'Impossible d\'accéder à la caméra. Vérifiez les autorisations dans Réglages > Safari > Caméra'
+      : 'Accès caméra refusé. Vérifiez les permissions dans les paramètres de votre navigateur.';
+    console.error('❌ All strategies failed');
+    emitError('CAMERA_DENIED', errorMessage);
+    throw new Error('Camera access failed');
+  }
+  
+  // Succès: stocker et logger
+  state.stream = stream;
+  
+  const videoTrack = stream.getVideoTracks()[0];
+  if (videoTrack) {
+    const settings = videoTrack.getSettings();
+    console.log('📹 Stream info:', {
+      facingMode: settings.facingMode || 'unknown',
+      width: settings.width,
+      height: settings.height,
+      label: videoTrack.label
+    });
+  }
+  
+  return stream;
 }
 
 function stopStream() {
   if (state.stream) {
     for (const tr of state.stream.getTracks()) tr.stop();
     state.stream = null;
+  }
+}
+
+async function switchCamera() {
+  // Don't switch if only one camera available
+  if (!state.hasMultipleCameras) {
+    showToast('Aucune autre caméra disponible');
+    return;
+  }
+
+  // Store previous mode for potential revert
+  const previousMode = state.cameraFacingMode;
+  
+  // Toggle between front and rear camera
+  state.cameraFacingMode = state.cameraFacingMode === 'environment' ? 'user' : 'environment';
+  
+  console.log('🔄 Switching camera to:', state.cameraFacingMode);
+  console.log('📱 Requesting EXPLICIT permission for:', state.cameraFacingMode === 'environment' ? 'BACK camera' : 'FRONT camera');
+
+  // Stop current stream
+  stopStream();
+
+  // Get the video element
+  const video = document.querySelector('video');
+  if (!video) {
+    console.warn('Video element not found');
+    return;
+  }
+
+  // iOS needs a small delay between stopping and starting stream
+  const isiOS = isIOS();
+  if (isiOS) {
+    await new Promise(resolve => setTimeout(resolve, 500)); // Augmenté pour iOS
+  } else {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  // 🆕 CRITICAL iOS: Demander EXPLICITEMENT la permission pour la nouvelle caméra
+  try {
+    console.log('📱 Step 1: Requesting permission for', state.cameraFacingMode, '...');
+    
+    // Demander explicitement la permission pour la caméra cible
+    const permissionStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: state.cameraFacingMode }
+    });
+    
+    console.log('✅ Permission granted for', state.cameraFacingMode);
+    console.log('  📹 Track label:', permissionStream.getVideoTracks()[0]?.label);
+    
+    // Arrêter le stream de permission (on va en créer un nouveau avec les bonnes contraintes)
+    permissionStream.getTracks().forEach(track => track.stop());
+    
+    // Délai pour iOS
+    await new Promise(resolve => setTimeout(resolve, isiOS ? 300 : 100));
+    
+    // Maintenant obtenir le vrai stream avec toutes les contraintes
+    console.log('📱 Step 2: Starting camera stream with full constraints...');
+    const stream = await ensureStream();
+    
+    // CRITICAL for iOS: Proper sequence to switch camera
+    console.log('📹 Assigning new stream to video element...');
+    
+    // Clear any existing srcObject first
+    video.srcObject = null;
+    
+    // Small delay for iOS to release previous stream
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    // Assign new stream
+    video.srcObject = stream;
+    
+    // CRITICAL for iOS: Explicitly call play() even with autoplay
+    try {
+      await video.play();
+      console.log('✅ Video playing');
+    } catch (playErr) {
+      console.warn('⚠️ Video play failed, but stream is assigned:', playErr.message);
+    }
+    
+    const cameraName = state.cameraFacingMode === 'user' ? '🤳 Caméra avant' : '📷 Caméra arrière';
+    showToast(cameraName);
+    console.log(`✅ Successfully switched to ${cameraName}`);
+    
+  } catch (err) {
+    console.error('❌ Failed to switch camera:', err);
+    console.error('Error name:', err.name);
+    console.error('Error message:', err.message);
+    
+    // Messages d'erreur spécifiques
+    if (err.name === 'NotAllowedError') {
+      const cameraType = state.cameraFacingMode === 'environment' ? 'arrière' : 'avant';
+      showToast(`⚠️ Permission refusée pour la caméra ${cameraType}`);
+      console.error(`❌ iOS a refusé l'accès à la caméra ${cameraType}`);
+      console.error('💡 Allez dans Réglages > Safari > Caméra pour autoriser');
+    } else if (err.name === 'NotFoundError') {
+      showToast('⚠️ Caméra non trouvée');
+      console.error('❌ La caméra demandée n\'existe pas sur cet appareil');
+    } else {
+      showToast('⚠️ Impossible de changer de caméra');
+    }
+    
+    // Revert to previous mode if switch fails
+    state.cameraFacingMode = previousMode;
+    
+    // Try to restart with previous mode
+    try {
+      console.log('🔄 Reverting to previous camera:', previousMode);
+      const stream = await ensureStream();
+      video.srcObject = null;
+      await new Promise(resolve => setTimeout(resolve, 50));
+      video.srcObject = stream;
+      await video.play().catch(e => console.warn('Play failed on retry:', e));
+      console.log('✅ Reverted to previous camera successfully');
+    } catch (retryErr) {
+      console.error('❌ Failed to restart camera:', retryErr);
+      emitError('CAMERA_SWITCH_FAILED', 'Erreur lors du changement de caméra', { err: String(retryErr) });
+    }
   }
 }
 
@@ -981,6 +1487,9 @@ function renderCompare() {
   const video = document.createElement('video');
   video.playsInline = true;
   video.autoplay = true;
+  video.muted = true; // CRITICAL for iOS Safari autoplay
+  video.setAttribute('playsinline', ''); // Additional attribute for iOS
+  video.setAttribute('webkit-playsinline', ''); // Legacy iOS support
   stage.appendChild(video);
 
   const ghost = document.createElement('img');
@@ -997,18 +1506,30 @@ function renderCompare() {
     // Native camera UI - floating capture button
     const captureOverlay = document.createElement('div');
     captureOverlay.className = 'capture-overlay-ui';
-    
+
     // Back button for capture mode
     const backBtn = document.createElement('button');
     backBtn.className = 'capture-back-btn';
     backBtn.innerHTML = '×';
     backBtn.onclick = () => {
-      stopStream(); 
+      stopStream();
       state.captureMode = false;
       state.showingPhotoList = true;
-      render(); 
+      render();
     };
     captureOverlay.appendChild(backBtn);
+
+    // Camera flip button (only show if multiple cameras available)
+    if (state.hasMultipleCameras) {
+      const flipBtn = document.createElement('button');
+      flipBtn.className = 'camera-flip-btn';
+      flipBtn.innerHTML = '⟲'; // Unicode circular arrow symbol
+      flipBtn.title = 'Changer de caméra';
+      flipBtn.onclick = () => {
+        switchCamera();
+      };
+      captureOverlay.appendChild(flipBtn);
+    }
     
     // Custom Vertical Ghost Control
     const ghostControl = document.createElement('div');
@@ -1089,20 +1610,20 @@ function renderCompare() {
       isDragging = false;
     });
     
-    // Touch events
+    // Touch events with passive: false to allow preventDefault
     sliderContainer.addEventListener('touchstart', (e) => {
       isDragging = true;
       handleMove(e.touches[0].clientY);
       e.preventDefault();
-    });
-    
+    }, { passive: false });
+
     document.addEventListener('touchmove', (e) => {
       if (isDragging) {
         handleMove(e.touches[0].clientY);
         e.preventDefault();
       }
-    });
-    
+    }, { passive: false });
+
     document.addEventListener('touchend', () => {
       isDragging = false;
     });
@@ -1210,8 +1731,288 @@ function renderCompare() {
 
   dom.root.appendChild(container);
 
-  // Initialize camera and ghost
-  ensureStream().then(stream => { video.srcObject = stream; }).catch(() => {});
+  // 🆕 CHANGEMENT CRITIQUE: Démarrage explicite sur iOS (nécessite interaction utilisateur)
+  const isiOS = isIOS();
+  const isInIframe = window !== window.top;
+  
+  const startCameraFlow = async () => {
+    try {
+      // 🔍 DIAGNOSTIC: Vérifier le contexte
+      const isChromeOnIOS = isChromeIOS();
+      const isSafariOnIOS = isSafariIOS();
+      
+      console.log('🔍 Camera initialization context:');
+      console.log('  - iOS:', isiOS);
+      console.log('  - Chrome iOS (CriOS):', isChromeOnIOS);
+      console.log('  - Safari iOS:', isSafariOnIOS);
+      console.log('  - In iframe:', isInIframe);
+      console.log('  - HTTPS:', window.location.protocol === 'https:');
+      console.log('  - User interaction:', true); // Si appelé depuis bouton
+      console.log('  - User Agent:', navigator.userAgent);
+      
+      // ⚠️ AVERTISSEMENT IFRAME
+      if (isInIframe && isiOS) {
+        console.warn('⚠️ WARNING: iOS + iframe detected - camera access may be restricted');
+        console.warn('   iOS Safari may block camera in iframes. Consider opening in new tab.');
+      }
+      
+      // Detect cameras if not done yet
+      if (state.availableCameras === null) {
+        console.log('🎥 Detecting cameras...');
+        await detectCameras();
+        
+        // Add flip button if multiple cameras detected
+        if (state.hasMultipleCameras && state.captureMode) {
+          const captureOverlayUi = container.querySelector('.capture-overlay-ui');
+          if (captureOverlayUi && !captureOverlayUi.querySelector('.camera-flip-btn')) {
+            const flipBtn = document.createElement('button');
+            flipBtn.className = 'camera-flip-btn';
+            flipBtn.innerHTML = '⟲';
+            flipBtn.title = 'Changer de caméra';
+            flipBtn.onclick = () => switchCamera();
+            const backBtn = captureOverlayUi.querySelector('.capture-back-btn');
+            if (backBtn && backBtn.nextSibling) {
+              captureOverlayUi.insertBefore(flipBtn, backBtn.nextSibling);
+            } else {
+              captureOverlayUi.appendChild(flipBtn);
+            }
+          }
+        }
+      }
+      
+      // Start stream
+      diagLog('📹 Starting camera stream...', 'info');
+      diagLog(`🎯 Requesting: ${state.cameraFacingMode} camera`, 'info');
+      const stream = await ensureStream();
+      video.srcObject = stream;
+      
+      // 🔍 CRITICAL: Vérifier quelle caméra a VRAIMENT démarré
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        const settings = videoTrack.getSettings();
+        const actualFacing = settings.facingMode || 'unknown';
+        const trackLabel = videoTrack.label || 'unknown';
+        
+        diagLog(`📹 Stream info:`, 'info');
+        diagLog(`  - Track label: ${trackLabel}`, 'info');
+        diagLog(`  - FacingMode: ${actualFacing}`, 'info');
+        diagLog(`  - Resolution: ${settings.width}x${settings.height}`, 'info');
+        
+        // ⚠️ VÉRIFICATION CRITIQUE : Est-ce la bonne caméra ?
+        if (state.cameraFacingMode === 'environment' && actualFacing === 'user') {
+          diagLog('⚠️⚠️⚠️ PROBLÈME DÉTECTÉ ⚠️⚠️⚠️', 'error');
+          diagLog('Vous avez demandé la caméra ARRIÈRE (back)', 'error');
+          diagLog(`Mais iOS a démarré la caméra AVANT (front): ${trackLabel}`, 'error');
+          diagLog('💡 CAUSE: Permission caméra arrière NON accordée', 'error');
+          diagLog('💡 SOLUTION: Settings > Safari > Caméra', 'error');
+        } else if (state.cameraFacingMode === 'environment' && trackLabel.toLowerCase().includes('front')) {
+          diagLog('⚠️⚠️⚠️ PROBLÈME DÉTECTÉ ⚠️⚠️⚠️', 'error');
+          diagLog(`iOS a démarré la FRONT au lieu de la BACK`, 'error');
+          diagLog(`Track: ${trackLabel}`, 'error');
+          diagLog('💡 Permission caméra arrière refusée par iOS', 'error');
+        } else if (state.cameraFacingMode === 'environment') {
+          diagLog(`✅ CORRECT: Caméra ARRIÈRE démarrée: ${trackLabel}`, 'success');
+        } else {
+          diagLog(`✅ CORRECT: Caméra AVANT démarrée: ${trackLabel}`, 'success');
+        }
+      }
+      
+      // CRITICAL for iOS: Explicitly call play()
+      try {
+        await video.play();
+        diagLog('✅ Video playing successfully', 'success');
+      } catch (playErr) {
+        diagLog(`⚠️ Video play() failed: ${playErr.message}`, 'warning');
+        setTimeout(() => video.play().catch(e => console.warn('Second play attempt failed:', e)), 100);
+      }
+      
+      diagLog('✅ Camera stream active', 'success');
+      return true;
+    } catch (err) {
+      diagLog(`❌ Camera initialization failed: ${err.name}`, 'error');
+      diagLog(`Error message: ${err.message}`, 'error');
+      
+      // 📝 DIAGNOSTIC DÉTAILLÉ DES ERREURS
+      if (err.name === 'NotAllowedError') {
+        diagLog('❌ Permission REFUSÉE par iOS', 'error');
+        if (isChromeOnIOS) {
+          diagLog('📱 Chrome iOS: Settings > Chrome > Camera', 'error');
+          diagLog('   Ou essayez Safari iOS', 'warning');
+        } else if (isSafariOnIOS) {
+          diagLog('📱 Safari iOS: Settings > Safari > Camera', 'error');
+          diagLog('   ET Settings > Privacy > Camera > Safari', 'error');
+        } else {
+          diagLog('📱 iOS: Settings > Safari > Camera', 'error');
+        }
+        diagLog('💡 Après avoir changé, rechargez la page', 'warning');
+      } else if (err.name === 'NotFoundError') {
+        diagLog('❌ Aucune caméra trouvée sur cet appareil', 'error');
+      } else if (err.name === 'NotReadableError') {
+        diagLog('❌ Caméra déjà utilisée par une autre app', 'error');
+        diagLog('💡 Fermez les autres apps qui utilisent la caméra', 'warning');
+      } else if (err.name === 'SecurityError') {
+        diagLog('❌ Erreur de sécurité', 'error');
+        if (isInIframe) {
+          diagLog('🚨 IFRAME DÉTECTÉE: iOS bloque les caméras dans les iframes', 'error');
+          diagLog('💡 SOLUTION: Ouvrez dans un nouvel onglet', 'warning');
+        } else {
+          diagLog('💡 Vérifiez que vous êtes en HTTPS', 'warning');
+        }
+      }
+      
+      throw err;
+    }
+  };
+  
+  if (isiOS) {
+    // 🆕 Sur iOS: Afficher un bouton pour démarrer (requis par iOS)
+    console.log('📱 iOS detected: Showing manual start button');
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'camera-init-overlay';
+    
+    // ⚠️ Avertissement spécial si dans iframe
+    const iframeWarning = isInIframe ? `
+      <div class="iframe-warning">
+        ⚠️ Vous êtes dans une iframe<br>
+        <small>iOS peut bloquer la caméra. Si ça ne marche pas, ouvrez dans un nouvel onglet.</small>
+      </div>
+    ` : '';
+    
+    // 📱 Avertissement Chrome iOS
+    const chromeIOSWarning = isChromeIOS() ? `
+      <div class="chrome-ios-warning">
+        📱 Chrome détecté sur iOS<br>
+        <small>Vérifiez Réglages > Chrome > Caméra. Si ça ne marche pas, essayez Safari.</small>
+      </div>
+    ` : '';
+    
+    overlay.innerHTML = `
+      ${iframeWarning}
+      ${chromeIOSWarning}
+      <button class="start-camera-btn" type="button">
+        <span class="icon">📷</span>
+        <span class="text">Démarrer la caméra ARRIÈRE</span>
+      </button>
+      <p class="hint">iOS va demander la permission pour la caméra ARRIÈRE</p>
+      <p class="sub-hint">Si seulement la caméra avant fonctionne, iOS a bloqué la caméra arrière</p>
+      <button class="force-back-camera-btn" type="button">
+        🔧 Forcer permission caméra ARRIÈRE
+      </button>
+    `;
+    
+    const btn = overlay.querySelector('.start-camera-btn');
+    btn.onclick = async () => {
+      btn.innerHTML = '<span class="spinner">⏳</span><span class="text">Demande d\'accès...</span>';
+      btn.disabled = true;
+      
+      try {
+        await startCameraFlow();
+        overlay.remove(); // Enlever l'overlay après succès
+      } catch (err) {
+        console.error('❌ Start camera flow failed:', err);
+        
+        // Message d'erreur détaillé selon le type
+        const isChromeOnIOS = isChromeIOS();
+        let errorMessage = 'Erreur - Réessayer';
+        let errorHint = '';
+        
+        if (err.name === 'NotAllowedError') {
+          errorMessage = 'Permission refusée';
+          if (isChromeOnIOS) {
+            errorHint = 'Réglages > Chrome > Caméra OU essayez Safari';
+          } else {
+            errorHint = 'Vérifiez Réglages > Safari > Caméra';
+          }
+        } else if (err.name === 'SecurityError' && isInIframe) {
+          errorMessage = 'Bloqué par iOS (iframe)';
+          errorHint = 'Ouvrez dans un nouvel onglet';
+        } else if (err.message === 'NO_CAMERAS_DETECTED') {
+          errorMessage = 'Aucune caméra détectée';
+          errorHint = 'Vérifiez les permissions iOS';
+        }
+        
+        btn.innerHTML = `<span class="icon">❌</span><span class="text">${errorMessage}</span>`;
+        btn.disabled = false;
+        
+        // Ajouter hint d'erreur
+        if (errorHint) {
+          const hintEl = overlay.querySelector('.hint');
+          if (hintEl) {
+            hintEl.textContent = errorHint;
+            hintEl.style.color = '#ff6b6b';
+          }
+        }
+      }
+    };
+    
+    // 🆕 Bouton pour FORCER la permission caméra ARRIÈRE
+    const forceBackBtn = overlay.querySelector('.force-back-camera-btn');
+    if (forceBackBtn) {
+      forceBackBtn.onclick = async () => {
+        diagLog('🔧 FORÇAGE permission caméra ARRIÈRE...', 'warning');
+        forceBackBtn.disabled = true;
+        forceBackBtn.textContent = '⏳ Demande en cours...';
+        
+        try {
+          diagLog('📱 Demande EXPLICITE: facingMode="environment"', 'info');
+          const backStream = await navigator.mediaDevices.getUserMedia({
+            video: { 
+              facingMode: { exact: 'environment' }  // EXACT = iOS DOIT donner la back
+            }
+          });
+          
+          diagLog('✅ Permission BACK accordée !', 'success');
+          const track = backStream.getVideoTracks()[0];
+          diagLog(`📹 Track: ${track.label}`, 'success');
+          diagLog(`📹 Settings: ${JSON.stringify(track.getSettings())}`, 'info');
+          
+          // Arrêter le stream
+          backStream.getTracks().forEach(t => t.stop());
+          
+          forceBackBtn.textContent = '✅ Permission BACK OK';
+          forceBackBtn.style.background = '#34C759';
+          
+          // Maintenant essayer de démarrer normalement
+          setTimeout(() => {
+            btn.click();
+          }, 500);
+          
+        } catch (err) {
+          diagLog(`❌ ÉCHEC force BACK: ${err.name}`, 'error');
+          diagLog(`Message: ${err.message}`, 'error');
+          
+          if (err.name === 'NotAllowedError') {
+            diagLog('🚨 iOS a REFUSÉ la caméra arrière', 'error');
+            diagLog('💡 Settings > Safari > Caméra', 'error');
+            diagLog('💡 Settings > Privacy > Camera > Safari', 'error');
+            forceBackBtn.textContent = '❌ Permission refusée';
+            forceBackBtn.style.background = '#ff6b6b';
+          } else if (err.name === 'OverconstrainedError') {
+            diagLog('⚠️ Caméra arrière non disponible', 'warning');
+            diagLog('Votre appareil n\'a peut-être qu\'une caméra', 'warning');
+            forceBackBtn.textContent = '⚠️ Pas de caméra arrière';
+          } else {
+            forceBackBtn.textContent = '❌ Erreur - Réessayer';
+          }
+          
+          forceBackBtn.disabled = false;
+        }
+      };
+    }
+    
+    container.appendChild(overlay);
+  } else {
+    // Sur autres plateformes: Démarrage automatique
+    (async () => {
+      try {
+        await startCameraFlow();
+      } catch (err) {
+        console.error('❌ Auto-start failed:', err);
+      }
+    })();
+  }
+  
   updateGhost();
   requestAnimationFrame(() => drawGrid(gridOverlay));
 
@@ -1273,18 +2074,43 @@ function doCapture(video, refUrl) {
     const settings = track ? track.getSettings() : {};
     const width = Number(settings.width) || video.videoWidth || 1080;
     const height = Number(settings.height) || video.videoHeight || 1440;
-    canvas.width = width; canvas.height = height;
+
+    // ✅ FIX ROTATION BUG: Détecter l'orientation de l'appareil
+    const deviceOrientation = getDeviceOrientation();
+    const needsRotation = deviceOrientation === 90 || deviceOrientation === -90 || deviceOrientation === 270;
+
+    // Ajuster les dimensions du canvas selon l'orientation
+    if (needsRotation) {
+      canvas.width = height;
+      canvas.height = width;
+    } else {
+      canvas.width = width;
+      canvas.height = height;
+    }
+
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('CTX');
+
+    // ✅ FIX ROTATION BUG: Appliquer la rotation selon l'orientation
+    if (needsRotation) {
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      if (deviceOrientation === 90 || deviceOrientation === -270) {
+        ctx.rotate(90 * Math.PI / 180);
+      } else if (deviceOrientation === -90 || deviceOrientation === 270) {
+        ctx.rotate(-90 * Math.PI / 180);
+      }
+      ctx.translate(-width / 2, -height / 2);
+    }
+
     ctx.drawImage(video, 0, 0, width, height);
     canvas.toBlob(async (blob) => {
       if (!blob) { emitError('CAPTURE_FAILED', 'Erreur lors de la capture'); return; }
       state.lastCaptureBlob = blob;
-      state.lastCaptureMeta = { width, height };
+      state.lastCaptureMeta = { width: canvas.width, height: canvas.height };
       const tempId = randomId();
       const piece = getSelectedPiece();
       postToParent('photo.capture.preview', { piece_id: piece ? piece.piece_id : null, temp_id: tempId });
-      
+
       // Direct capture without validation screen
       directConfirmCapture(piece ? piece.piece_id : null);
     }, 'image/jpeg', 0.85);
@@ -1640,11 +2466,307 @@ function isIOSSafari() {
   return iOS && webkit && !ua.match(/CriOS|Chrome/);
 }
 
+// 🆕 FONCTION DE TEST CAMÉRA COMPLÈTE
+async function testCameraBackend() {
+  console.log('\n🎯 === DÉBUT TEST CAMÉRA ARRIÈRE ===');
+  
+  // Créer un overlay de test
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: monospace;
+    padding: 20px;
+    box-sizing: border-box;
+  `;
+  
+  const title = document.createElement('h2');
+  title.textContent = '🎯 TEST CAMÉRA ARRIÈRE';
+  title.style.marginBottom = '20px';
+  overlay.appendChild(title);
+  
+  const logArea = document.createElement('div');
+  logArea.style.cssText = `
+    background: #1a1a1a;
+    color: #00ff41;
+    padding: 15px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    overflow-y: auto;
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+  `;
+  overlay.appendChild(logArea);
+  
+  const video = document.createElement('video');
+  video.style.cssText = `
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: #000;
+  `;
+  video.autoplay = true;
+  video.playsInline = true;
+  video.muted = true;
+  overlay.appendChild(video);
+  
+  const buttonGroup = document.createElement('div');
+  buttonGroup.style.cssText = 'display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;';
+  
+  const btnNative = document.createElement('button');
+  btnNative.textContent = '📷 Test Native iOS';
+  btnNative.style.cssText = 'padding: 10px 20px; background: #007AFF; color: white; border: none; border-radius: 6px; cursor: pointer;';
+  
+  const btnGetUserMedia = document.createElement('button');
+  btnGetUserMedia.textContent = '🎥 Test getUserMedia';
+  btnGetUserMedia.style.cssText = 'padding: 10px 20px; background: #34C759; color: white; border: none; border-radius: 6px; cursor: pointer;';
+  
+  const btnClose = document.createElement('button');
+  btnClose.textContent = '❌ Fermer';
+  btnClose.style.cssText = 'padding: 10px 20px; background: #FF3B30; color: white; border: none; border-radius: 6px; cursor: pointer;';
+  
+  buttonGroup.appendChild(btnNative);
+  buttonGroup.appendChild(btnGetUserMedia);
+  buttonGroup.appendChild(btnClose);
+  overlay.appendChild(buttonGroup);
+  
+  document.body.appendChild(overlay);
+  
+  let testLogs = [];
+  
+  function testLog(message, type = 'info') {
+    const timestamp = new Date().toLocaleTimeString();
+    const emoji = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '📝';
+    const logEntry = `[${timestamp}] ${emoji} ${message}`;
+    testLogs.push(logEntry);
+    logArea.textContent = testLogs.join('\n');
+    logArea.scrollTop = logArea.scrollHeight;
+    console.log(logEntry);
+  }
+  
+  // Détecter l'environnement
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /Android/.test(ua);
+  const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
+  const isInIframe = window !== window.top;
+  
+  testLog('🔍 ENVIRONNEMENT DÉTECTÉ:');
+  testLog(`  📱 iOS: ${isIOS}`);
+  testLog(`  🤖 Android: ${isAndroid}`);
+  testLog(`  🌐 Safari: ${isSafari}`);
+  testLog(`  🖼️ Dans iFrame: ${isInIframe}`);
+  testLog(`  🔗 URL: ${window.location.href}`);
+  
+  // TEST 1: Méthode native iOS
+  btnNative.onclick = () => {
+    testLog('\n🎬 === TEST 1: MÉTHODE NATIVE iOS ===');
+    
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.setAttribute('capture', 'environment');
+      input.style.display = 'none';
+      document.body.appendChild(input);
+      
+      testLog('📱 Création input[capture="environment"]');
+      
+      input.onchange = () => {
+        const file = input.files?.[0];
+        document.body.removeChild(input);
+        
+        if (file) {
+          testLog('✅ SUCCÈS: Photo prise avec la méthode native !', 'success');
+          testLog(`📝 Fichier: ${file.name}, Taille: ${(file.size/1024/1024).toFixed(2)}MB`);
+          testLog('🎯 CONCLUSION: La caméra arrière fonctionne via méthode native', 'success');
+          testLog('💡 Le problème est donc dans getUserMedia, pas dans les permissions iOS');
+        } else {
+          testLog('⚠️ Aucun fichier sélectionné (annulé par utilisateur)', 'warning');
+        }
+      };
+      
+      input.onerror = (e) => {
+        testLog('❌ Erreur input file: ' + e, 'error');
+        document.body.removeChild(input);
+      };
+      
+      testLog('📱 Ouverture interface caméra iOS...');
+      input.click();
+      
+    } catch (err) {
+      testLog(`❌ Erreur méthode native: ${err.message}`, 'error');
+    }
+  };
+  
+  // TEST 2: getUserMedia robuste
+  btnGetUserMedia.onclick = async () => {
+    testLog('\n🎬 === TEST 2: getUserMedia ROBUSTE ===');
+    
+    try {
+      // Étape 1: Permission générale
+      testLog('📱 ÉTAPE 1: Demande permission générale...');
+      let tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      testLog('✅ Permission accordée', 'success');
+      tempStream.getTracks().forEach(track => track.stop());
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Étape 2: Énumération
+      testLog('📱 ÉTAPE 2: Énumération des caméras...');
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter(d => d.kind === 'videoinput');
+      
+      testLog(`✅ ${cameras.length} caméra(s) détectée(s)`, 'success');
+      cameras.forEach((cam, i) => {
+        const label = cam.label || `Caméra ${i + 1}`;
+        const id = cam.deviceId.substring(0, 12);
+        const facing = label.toLowerCase().includes('front') || label.toLowerCase().includes('face') ? '🤳 AVANT' :
+                       label.toLowerCase().includes('back') || label.toLowerCase().includes('rear') ? '📷 ARRIÈRE' : '❓ Inconnue';
+        testLog(`  ${i+1}. ${facing} - "${label}" (${id}...)`);
+      });
+      
+      // Étape 3: Test des stratégies
+      let stream = null;
+      let successStrategy = null;
+      
+      // Stratégie 1: facingMode ideal
+      testLog('\n📱 STRATÉGIE 1: facingMode ideal "environment"');
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: isIOS ? 1280 : 1920 },
+            height: { ideal: isIOS ? 720 : 1080 }
+          }
+        });
+        successStrategy = 'Stratégie 1 (ideal facingMode)';
+        testLog('✅ STRATÉGIE 1 RÉUSSIE !', 'success');
+      } catch (err) {
+        testLog(`⚠️ Stratégie 1 échouée: ${err.message}`, 'warning');
+      }
+      
+      // Stratégie 2: facingMode direct
+      if (!stream) {
+        testLog('📱 STRATÉGIE 2: facingMode direct "environment"');
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: 'environment',
+              width: { ideal: isIOS ? 1280 : 1920 }
+            }
+          });
+          successStrategy = 'Stratégie 2 (direct facingMode)';
+          testLog('✅ STRATÉGIE 2 RÉUSSIE !', 'success');
+        } catch (err) {
+          testLog(`⚠️ Stratégie 2 échouée: ${err.message}`, 'warning');
+        }
+      }
+      
+      // Stratégie 3: deviceId
+      if (!stream && cameras.length > 0) {
+        testLog('📱 STRATÉGIE 3: deviceId exact');
+        const rearCamera = cameras.find(cam => {
+          const label = cam.label.toLowerCase();
+          return label.includes('back') || label.includes('rear') || label.includes('environment');
+        });
+        
+        if (rearCamera) {
+          testLog(`  🎯 Ciblage: "${rearCamera.label}"`);
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: { deviceId: { exact: rearCamera.deviceId } }
+            });
+            successStrategy = 'Stratégie 3 (deviceId exact)';
+            testLog('✅ STRATÉGIE 3 RÉUSSIE !', 'success');
+          } catch (err) {
+            testLog(`⚠️ Stratégie 3 échouée: ${err.message}`, 'warning');
+          }
+        } else {
+          testLog('⚠️ Aucune caméra arrière trouvée par label', 'warning');
+        }
+      }
+      
+      if (!stream) {
+        testLog('❌ TOUTES LES STRATÉGIES ONT ÉCHOUÉ !', 'error');
+        return;
+      }
+      
+      // Succès: afficher le stream
+      testLog(`\n🎉 === SUCCÈS avec ${successStrategy} ===`, 'success');
+      video.srcObject = stream;
+      
+      try {
+        await video.play();
+        testLog('✅ Vidéo en lecture', 'success');
+      } catch (playErr) {
+        testLog(`⚠️ Erreur video.play(): ${playErr.message}`, 'warning');
+      }
+      
+      // Informations du stream
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings();
+      
+      testLog('\n📹 === INFORMATIONS DU STREAM ===');
+      testLog(`📝 Label: ${track.label}`);
+      testLog(`📝 FacingMode: ${settings.facingMode || 'N/A'}`);
+      testLog(`📝 Résolution: ${settings.width}x${settings.height}`);
+      testLog(`📝 DeviceId: ${settings.deviceId?.substring(0, 15)}...`);
+      
+      const isBack = settings.facingMode && /environment|back/i.test(settings.facingMode);
+      if (isBack) {
+        testLog('🎯 CONFIRMATION: C\'est bien la caméra ARRIÈRE !', 'success');
+      } else {
+        testLog('⚠️ ATTENTION: Ce n\'est peut-être PAS la caméra arrière', 'warning');
+      }
+      
+    } catch (err) {
+      testLog(`❌ ERREUR TOTALE: ${err.message}`, 'error');
+    }
+  };
+  
+  // Fermer le test
+  btnClose.onclick = () => {
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    document.body.removeChild(overlay);
+    
+    // Copier les logs dans la console
+    console.log('\n📋 === LOGS COMPLETS DU TEST ===');
+    testLogs.forEach(log => console.log(log));
+    console.log('📋 === FIN DES LOGS ===\n');
+  };
+  
+  testLog('📱 Cliquez sur les boutons pour tester !');
+  testLog('⚠️ IMPORTANT: Copiez les logs de la console et envoyez-les moi');
+}
+
 // Startup
 window.addEventListener('message', handleParentMessage);
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   initFromQuery();
   initPWAInstall();
+  
+  // Note: Camera detection will happen on first camera access
+  // to avoid blocking the initial load with permission requests
+  // detectCameras() will be called when user opens capture view
+  
   render();
   // Announce ready
   postToParent('photo.ready', {});

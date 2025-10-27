@@ -1,0 +1,266 @@
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { FlowType } from '@/types/room';
+import { checkSessionManager, CheckSession as IDBCheckSession } from '@/services/checkSessionManager';
+
+/**
+ * 🎯 ActiveCheckIdContext
+ * 
+ * Gère le CheckID actif pour la session utilisateur
+ * Un CheckID est un identifiant unique pour chaque parcours utilisateur
+ * 
+ * ✅ MIGRÉ vers IndexedDB via checkSessionManager
+ */
+
+interface UserInfo {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  type: string;
+}
+
+interface ParcoursInfo {
+  id: string;
+  name: string;
+  type: string;
+  logement: string;
+  takePicture: string;
+}
+
+interface CheckSession {
+  checkId: string;
+  userId: string;
+  userInfo: UserInfo;
+  parcoursId: string;
+  parcoursInfo: ParcoursInfo;
+  flowType: FlowType;
+  status: 'active' | 'completed' | 'cancelled';
+  isFlowCompleted: boolean;
+  createdAt: string;
+  lastActiveAt: string;
+  completedAt?: string;
+  progress?: Record<string, unknown>;
+}
+
+interface ActiveCheckIdContextType {
+  currentCheckId: string | null;
+  isCheckIdActive: boolean;
+  createNewCheckId: (userInfo: UserInfo, parcoursInfo: ParcoursInfo, flowType: FlowType) => Promise<string>;
+  setActiveCheckId: (checkId: string | null) => Promise<void>; // ✅ Maintenant async
+  getCheckSession: (checkId: string) => Promise<CheckSession | null>;
+  completeCheckId: () => Promise<void>;
+  clearCheckId: () => void;
+}
+
+const ActiveCheckIdContext = createContext<ActiveCheckIdContextType | undefined>(undefined);
+
+const STORAGE_KEY_ACTIVE = 'activeCheckId';
+// ⚠️ DEPRECATED: Utilise maintenant IndexedDB via checkSessionManager
+// const STORAGE_KEY_SESSIONS = 'checkSessionData';
+
+export const ActiveCheckIdProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [currentCheckId, setCurrentCheckId] = useState<string | null>(() => {
+    // Charger le CheckID actif depuis localStorage
+    try {
+      return localStorage.getItem(STORAGE_KEY_ACTIVE);
+    } catch {
+      return null;
+    }
+  });
+
+  const isCheckIdActive = currentCheckId !== null;
+
+  /**
+   * 🔄 Convertit une session IDB vers format CheckSession
+   */
+  const convertIDBSessionToCheckSession = (idbSession: IDBCheckSession): CheckSession => {
+    return {
+      checkId: idbSession.checkId,
+      userId: idbSession.userId,
+      userInfo: {
+        firstName: '',
+        lastName: '',
+        phone: idbSession.userId,
+        type: 'AGENT'
+      },
+      parcoursId: idbSession.parcoursId,
+      parcoursInfo: {
+        id: idbSession.parcoursId,
+        name: '',
+        type: '',
+        logement: '',
+        takePicture: ''
+      },
+      flowType: idbSession.flowType,
+      status: idbSession.status,
+      isFlowCompleted: idbSession.isFlowCompleted,
+      createdAt: idbSession.createdAt,
+      lastActiveAt: idbSession.lastActiveAt,
+      completedAt: idbSession.completedAt,
+      progress: idbSession.progress
+    };
+  };
+
+  /**
+   * Crée un nouveau CheckID
+   * ✅ MIGRÉ: Utilise maintenant IndexedDB via checkSessionManager
+   */
+  const createNewCheckId = useCallback(async (
+    userInfo: UserInfo,
+    parcoursInfo: ParcoursInfo,
+    flowType: FlowType
+  ): Promise<string> => {
+    console.log('🆕 Création nouveau CheckID (IndexedDB):', { userInfo, parcoursInfo, flowType });
+
+    const userId = userInfo.phone; // Utiliser le téléphone comme ID utilisateur
+
+    try {
+      // ✅ Créer la session via checkSessionManager (IndexedDB)
+      // 🎯 CORRECTION: Passer userInfo et parcoursInfo pour la reprise de session
+      const idbSession = await checkSessionManager.createCheckSession(
+        userId,
+        parcoursInfo.id,
+        flowType,
+        {
+          firstName: userInfo.firstName,
+          lastName: userInfo.lastName,
+          phone: userInfo.phone,
+          type: userInfo.type
+        },
+        {
+          name: parcoursInfo.name,
+          type: parcoursInfo.type
+        }
+      );
+
+      const checkId = idbSession.checkId;
+
+      // Définir comme CheckID actif
+      setCurrentCheckId(checkId);
+      localStorage.setItem(STORAGE_KEY_ACTIVE, checkId);
+
+      console.log('✅ CheckID créé et activé (IndexedDB):', checkId);
+      return checkId;
+    } catch (error) {
+      console.error('❌ Erreur création CheckID:', error);
+      throw error;
+    }
+  }, []);
+
+  /**
+   * Définit le CheckID actif
+   * ✅ MIGRÉ: Utilise IndexedDB via checkSessionManager
+   */
+  const setActiveCheckId = useCallback(async (checkId: string | null) => {
+    console.log('🔄 Changement CheckID actif (IndexedDB):', checkId);
+    setCurrentCheckId(checkId);
+    
+    if (checkId) {
+      localStorage.setItem(STORAGE_KEY_ACTIVE, checkId);
+      
+      // Mettre à jour lastActiveAt dans IndexedDB
+      try {
+        const session = await checkSessionManager.getCheckSession(checkId);
+        if (session) {
+          await checkSessionManager.saveCheckSession({
+            ...session,
+            lastActiveAt: new Date().toISOString()
+          });
+        }
+      } catch (error) {
+        console.error('❌ Erreur mise à jour lastActiveAt:', error);
+      }
+    } else {
+      localStorage.removeItem(STORAGE_KEY_ACTIVE);
+    }
+  }, []);
+
+  /**
+   * Récupère une session CheckID
+   * ✅ MIGRÉ: Utilise IndexedDB via checkSessionManager
+   */
+  const getCheckSession = useCallback(async (checkId: string): Promise<CheckSession | null> => {
+    try {
+      const idbSession = await checkSessionManager.getCheckSession(checkId);
+      if (!idbSession) return null;
+      
+      return convertIDBSessionToCheckSession(idbSession);
+    } catch (error) {
+      console.error('❌ Erreur récupération session:', error);
+      return null;
+    }
+  }, []);
+
+  /**
+   * Marque le CheckID actuel comme complété
+   * ✅ MIGRÉ: Utilise IndexedDB via checkSessionManager
+   */
+  const completeCheckId = useCallback(async () => {
+    if (!currentCheckId) {
+      console.warn('⚠️ Aucun CheckID actif à compléter');
+      return;
+    }
+
+    console.log('✅ Complétion du CheckID (IndexedDB):', currentCheckId);
+
+    try {
+      await checkSessionManager.completeCheckSession(currentCheckId);
+    } catch (error) {
+      console.error('❌ Erreur complétion CheckID:', error);
+    }
+  }, [currentCheckId]);
+
+  /**
+   * Efface le CheckID actif
+   */
+  const clearCheckId = useCallback(() => {
+    console.log('🗑️ Effacement du CheckID actif');
+    setCurrentCheckId(null);
+    localStorage.removeItem(STORAGE_KEY_ACTIVE);
+  }, []);
+
+  // Mettre à jour lastActiveAt périodiquement dans IndexedDB
+  useEffect(() => {
+    if (!currentCheckId) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const session = await checkSessionManager.getCheckSession(currentCheckId);
+        if (session) {
+          await checkSessionManager.saveCheckSession({
+            ...session,
+            lastActiveAt: new Date().toISOString()
+          });
+        }
+      } catch (error) {
+        console.error('❌ Erreur mise à jour périodique lastActiveAt:', error);
+      }
+    }, 60000); // Toutes les minutes
+
+    return () => clearInterval(interval);
+  }, [currentCheckId]);
+
+  const contextValue: ActiveCheckIdContextType = {
+    currentCheckId,
+    isCheckIdActive,
+    createNewCheckId,
+    setActiveCheckId,
+    getCheckSession,
+    completeCheckId,
+    clearCheckId
+  };
+
+  return (
+    <ActiveCheckIdContext.Provider value={contextValue}>
+      {children}
+    </ActiveCheckIdContext.Provider>
+  );
+};
+
+export const useActiveCheckId = (): ActiveCheckIdContextType => {
+  const context = useContext(ActiveCheckIdContext);
+  if (!context) {
+    throw new Error('useActiveCheckId must be used within an ActiveCheckIdProvider');
+  }
+  return context;
+};
+

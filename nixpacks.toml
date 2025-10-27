@@ -2,7 +2,7 @@
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["cd FRONT && npm ci"]
+cmds = ["cd FRONT && npm ci --legacy-peer-deps"]
 
 [phases.build]
 cmds = ["cd FRONT && npm run build"]
