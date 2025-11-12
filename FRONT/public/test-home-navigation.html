@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Test Navigation Home Button</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 5px;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        
+        .results {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status-success { color: #059669; }
+        .status-error { color: #dc2626; }
+        .status-warning { color: #d97706; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Test Navigation Home Button</h1>
+            <p>Outil pour tester et déboguer la navigation du bouton Home</p>
+        </div>
+        
+        <div class="content">
+            <!-- Test Current State -->
+            <div class="test-section">
+                <h2>📊 État Actuel</h2>
+                <p>Vérifiez l'état actuel de navigation et les paramètres URL.</p>
+                <button class="button" onclick="checkCurrentState()">🔍 Vérifier État Actuel</button>
+                <div class="results" id="currentStateResults" style="display: none;"></div>
+            </div>
+            
+            <!-- Simulate Navigation -->
+            <div class="test-section">
+                <h2>🧪 Simuler Navigation Home</h2>
+                <p>Simulez le comportement du bouton Home selon la page actuelle.</p>
+                <button class="button" onclick="simulateCheckinHome()">🏠 Simuler CheckIn → Home</button>
+                <button class="button" onclick="simulateCheckoutHome()">🏠 Simuler CheckOut → Home</button>
+                <div class="results" id="simulationResults" style="display: none;"></div>
+            </div>
+            
+            <!-- Test Real Navigation -->
+            <div class="test-section">
+                <h2>🚀 Navigation Réelle</h2>
+                <p>Testez la navigation réelle vers les pages CheckIn et CheckOut.</p>
+                <button class="button" onclick="navigateToCheckin()">➡️ Aller à CheckIn</button>
+                <button class="button" onclick="navigateToCheckout()">➡️ Aller à CheckOut</button>
+                <button class="button" onclick="navigateToCheckinHome()">🏠 Aller à CheckIn Home</button>
+                <button class="button" onclick="navigateToCheckoutHome()">🏠 Aller à CheckOut Home</button>
+                <div class="results" id="navigationResults" style="display: none;"></div>
+            </div>
+            
+            <!-- Debug Info -->
+            <div class="test-section">
+                <h2>🔧 Debug Info</h2>
+                <p>Informations de débogage pour comprendre le problème.</p>
+                <button class="button" onclick="showDebugInfo()">🔍 Afficher Debug Info</button>
+                <button class="button" onclick="clearLocalStorage()">🗑️ Nettoyer localStorage</button>
+                <div class="results" id="debugResults" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour vérifier l'état actuel
+        function checkCurrentState() {
+            const container = document.getElementById('currentStateResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentPath = window.location.pathname;
+            const parcours = urlParams.get('parcours');
+            const checkid = urlParams.get('checkid');
+            const activeCheckId = localStorage.getItem('activeCheckId');
+            const lastPath = localStorage.getItem('checkeasy_last_path');
+            
+            let result = '📊 ÉTAT ACTUEL DE NAVIGATION\n';
+            result += '═══════════════════════════════\n\n';
+            result += `🌐 URL Actuelle: ${window.location.href}\n`;
+            result += `📍 Chemin: ${currentPath}\n`;
+            result += `🔗 Parcours: ${parcours || 'NON DÉFINI'}\n`;
+            result += `🆔 CheckId URL: ${checkid || 'NON DÉFINI'}\n`;
+            result += `💾 CheckId localStorage: ${activeCheckId || 'NON DÉFINI'}\n`;
+            result += `📂 Dernier chemin: ${lastPath || 'NON DÉFINI'}\n\n`;
+            
+            // Déterminer le flow attendu
+            let expectedFlow = 'INDÉTERMINÉ';
+            let expectedHome = 'INDÉTERMINÉ';
+            
+            if (currentPath.includes('/checkin')) {
+                expectedFlow = 'CHECKIN';
+                expectedHome = '/checkin-home';
+            } else if (currentPath.includes('/checkout')) {
+                expectedFlow = 'CHECKOUT';
+                expectedHome = '/checkout-home';
+            }
+            
+            result += `🎯 Flow Attendu: ${expectedFlow}\n`;
+            result += `🏠 Home Attendu: ${expectedHome}\n\n`;
+            
+            // Vérifier la cohérence
+            const isConsistent = checkid === activeCheckId;
+            result += `✅ Cohérence CheckId: ${isConsistent ? 'OUI' : 'NON'}\n`;
+            
+            if (!isConsistent) {
+                result += `⚠️ PROBLÈME: CheckId URL (${checkid}) ≠ localStorage (${activeCheckId})\n`;
+            }
+            
+            container.textContent = result;
+        }
+        
+        // Simuler navigation CheckIn Home
+        function simulateCheckinHome() {
+            const container = document.getElementById('simulationResults');
+            container.style.display = 'block';
+            
+            let result = '🧪 SIMULATION: CheckIn → Home\n';
+            result += '═══════════════════════════════\n\n';
+            
+            // Simuler la logique handleGoBack de CheckIn
+            const currentPath = '/checkin';
+            const expectedTarget = '/checkin-home';
+            
+            result += `📍 Page Actuelle: ${currentPath}\n`;
+            result += `🎯 Cible Attendue: ${expectedTarget}\n`;
+            result += `🔄 Action: handleGoBack() dans CheckIn.tsx\n\n`;
+            
+            // Vérifier les paramètres
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours');
+            const checkid = urlParams.get('checkid') || localStorage.getItem('activeCheckId');
+            
+            if (parcours && checkid) {
+                const simulatedUrl = `${expectedTarget}?parcours=${parcours}&checkid=${checkid}`;
+                result += `✅ URL Simulée: ${simulatedUrl}\n`;
+                result += `✅ Paramètres Préservés: OUI\n`;
+            } else {
+                result += `❌ Paramètres Manquants:\n`;
+                result += `   - Parcours: ${parcours || 'MANQUANT'}\n`;
+                result += `   - CheckId: ${checkid || 'MANQUANT'}\n`;
+            }
+            
+            container.textContent = result;
+        }
+        
+        // Simuler navigation CheckOut Home
+        function simulateCheckoutHome() {
+            const container = document.getElementById('simulationResults');
+            container.style.display = 'block';
+            
+            let result = '🧪 SIMULATION: CheckOut → Home\n';
+            result += '═══════════════════════════════\n\n';
+            
+            // Simuler la logique handleGoBack de CheckOut
+            const currentPath = '/checkout';
+            const expectedTarget = '/checkout-home';
+            
+            result += `📍 Page Actuelle: ${currentPath}\n`;
+            result += `🎯 Cible Attendue: ${expectedTarget}\n`;
+            result += `🔄 Action: handleGoBack() dans CheckOut.tsx\n\n`;
+            
+            // Vérifier les paramètres
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours');
+            const checkid = urlParams.get('checkid') || localStorage.getItem('activeCheckId');
+            
+            if (parcours && checkid) {
+                const simulatedUrl = `${expectedTarget}?parcours=${parcours}&checkid=${checkid}`;
+                result += `✅ URL Simulée: ${simulatedUrl}\n`;
+                result += `✅ Paramètres Préservés: OUI\n`;
+            } else {
+                result += `❌ Paramètres Manquants:\n`;
+                result += `   - Parcours: ${parcours || 'MANQUANT'}\n`;
+                result += `   - CheckId: ${checkid || 'MANQUANT'}\n`;
+            }
+            
+            container.textContent = result;
+        }
+        
+        // Navigation réelle vers CheckIn
+        function navigateToCheckin() {
+            const container = document.getElementById('navigationResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours') || 'test-parcours';
+            const checkid = urlParams.get('checkid') || localStorage.getItem('activeCheckId') || 'test-checkid';
+            
+            const targetUrl = `/checkin?parcours=${parcours}&checkid=${checkid}`;
+            
+            container.textContent = `🚀 Navigation vers: ${targetUrl}\n\nRedirection dans 2 secondes...`;
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Navigation réelle vers CheckOut
+        function navigateToCheckout() {
+            const container = document.getElementById('navigationResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours') || 'test-parcours';
+            const checkid = urlParams.get('checkid') || localStorage.getItem('activeCheckId') || 'test-checkid';
+            
+            const targetUrl = `/checkout?parcours=${parcours}&checkid=${checkid}`;
+            
+            container.textContent = `🚀 Navigation vers: ${targetUrl}\n\nRedirection dans 2 secondes...`;
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Navigation vers CheckIn Home
+        function navigateToCheckinHome() {
+            const container = document.getElementById('navigationResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours') || 'test-parcours';
+            const checkid = urlParams.get('checkid') || localStorage.getItem('activeCheckId') || 'test-checkid';
+            
+            const targetUrl = `/checkin-home?parcours=${parcours}&checkid=${checkid}`;
+            
+            container.textContent = `🚀 Navigation vers: ${targetUrl}\n\nRedirection dans 2 secondes...`;
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Navigation vers CheckOut Home
+        function navigateToCheckoutHome() {
+            const container = document.getElementById('navigationResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours') || 'test-parcours';
+            const checkid = urlParams.get('checkid') || localStorage.getItem('activeCheckId') || 'test-checkid';
+            
+            const targetUrl = `/checkout-home?parcours=${parcours}&checkid=${checkid}`;
+            
+            container.textContent = `🚀 Navigation vers: ${targetUrl}\n\nRedirection dans 2 secondes...`;
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Afficher debug info
+        function showDebugInfo() {
+            const container = document.getElementById('debugResults');
+            container.style.display = 'block';
+            
+            let result = '🔧 INFORMATIONS DE DEBUG\n';
+            result += '═══════════════════════════\n\n';
+            
+            // localStorage complet
+            result += '💾 localStorage:\n';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.includes('checkeasy') || key === 'activeCheckId') {
+                    const value = localStorage.getItem(key);
+                    result += `   ${key}: ${value ? value.substring(0, 100) + (value.length > 100 ? '...' : '') : 'null'}\n`;
+                }
+            }
+            
+            result += '\n🌐 URL Info:\n';
+            result += `   href: ${window.location.href}\n`;
+            result += `   pathname: ${window.location.pathname}\n`;
+            result += `   search: ${window.location.search}\n`;
+            result += `   hash: ${window.location.hash}\n`;
+            
+            result += '\n🕐 Timestamp: ' + new Date().toISOString();
+            
+            container.textContent = result;
+        }
+        
+        // Nettoyer localStorage
+        function clearLocalStorage() {
+            const container = document.getElementById('debugResults');
+            container.style.display = 'block';
+            
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.includes('checkeasy') || key === 'activeCheckId')) {
+                    keysToRemove.push(key);
+                }
+            }
+            
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            
+            container.textContent = `🗑️ localStorage nettoyé!\n\nClés supprimées:\n${keysToRemove.join('\n')}`;
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            checkCurrentState();
+        });
+    </script>
+</body>
+</html>

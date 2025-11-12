@@ -1,0 +1,622 @@
+import { Room, Task, PhotoReference, FlowType } from '@/types/room';
+import { Signalement } from '@/types/signalement';
+
+// Interface pour le Data.json réel
+interface RealParcours {
+  parcourID: string;
+  parcoursName: string;
+  parcoursType: "Ménage" | "Voyageur";
+  logementID: string;
+  logementName: string;
+  logementEntranceHour?: string;  // ✅ AJOUTÉ - Heure d'entrée du logement
+  logementExitHour?: string;       // ✅ AJOUTÉ - Heure de sortie du logement
+  logementContentview?: string;    // ✅ AJOUTÉ - Sections visibles du logement (ex: "Check-in/out, WiFi")
+  takePicture: "checkInOnly" | "checkInAndCheckOut" | "checkOutOnly";
+  piece: RealPiece[];
+  signalements?: RealSignalement[];  // ✅ AJOUTÉ - Signalements de l'API
+}
+
+interface RealPiece {
+  logementID: string;
+  pieceID: string;
+  nom: string;
+  travelerNote?: string;
+  cleanerNote?: string;
+  infoEntrance?: string;
+  etapes: RealEtape[];
+}
+
+interface RealEtape {
+  etapeID: string;  // ✅ AJOUTÉ - ID unique de l'étape depuis l'API
+  pieceID: string;
+  image?: string;
+  isTodo: boolean;
+  todoParam?: string;
+  todoTitle?: string;
+  todoOrder?: string;
+  todoImage?: string;
+}
+
+// ✅ NOUVEAU - Interface pour les signalements de l'API
+interface RealSignalement {
+  signalementID: string;
+  pieceID: string;
+  rapportRef?: string; // ✅ NOUVEAU - Référence du rapport pour dédupliquer
+  photo?: string;
+  commentaire: string;
+  commentaireTraitement?: string;
+}
+
+/**
+ * Service d'adaptation du Data.json vers le format existant
+ */
+export class DataAdapter {
+  
+  /**
+   * Convertit le Data.json en format compatible avec l'UX existante
+   */
+  static adaptRealDataToExistingFormat(realData: RealParcours, forceFlowType?: FlowType): {
+    roomsData: Record<string, Room>;
+    flowType: FlowType;
+  } {
+    const roomsData: Record<string, Room> = {};
+    
+    // Détermine le type de flux - utilise le forçage si fourni, sinon basé sur le parcours
+    const flowType: FlowType = forceFlowType || (realData.parcoursType === 'Ménage' ? 'checkout' : 'checkin');
+    
+    console.log('🔄 Mode déterminé:', { 
+      forceFlowType, 
+      parcoursType: realData.parcoursType, 
+      finalFlowType: flowType 
+    });
+    
+    // 🎯 DEBUG: Afficher l'ordre des pièces reçues de l'API
+    console.log('📋 Ordre des pièces reçues de l\'API:', realData.piece.map((p, i) => ({
+      index: i,
+      nom: p.nom,
+      pieceID: p.pieceID
+    })));
+
+    // Convertit chaque pièce
+    realData.piece.forEach((realPiece, index) => {
+      const adaptedRoom = this.adaptPieceToRoom(realPiece, index + 1);
+      if (adaptedRoom) {
+        roomsData[adaptedRoom.id] = adaptedRoom;
+      }
+    });
+
+    console.log('🔑 IDs de pièces générés:', Object.keys(roomsData));
+    return { roomsData, flowType };
+  }
+
+  /**
+   * Convertit une pièce réelle en Room compatible
+   */
+  private static adaptPieceToRoom(realPiece: RealPiece, ordre: number): Room | null {
+    // Utilise directement le pieceID du Data.json
+    const id = realPiece.pieceID;
+
+    // 🎯 DEBUG: Log détaillé des données de la pièce
+    console.log(`🏠 Pièce "${realPiece.nom}" → ID: "${id}"`, {
+      travelerNote: realPiece.travelerNote,
+      cleanerNote: realPiece.cleanerNote,
+      infoEntrance: realPiece.infoEntrance,
+      hasTravelerNote: !!realPiece.travelerNote,
+      hasCleanerNote: !!realPiece.cleanerNote,
+      hasInfoEntrance: !!realPiece.infoEntrance
+    });
+
+    // Sépare les étapes TODO et PHOTO
+    const todoEtapes = realPiece.etapes.filter(e => e.isTodo);
+    const photoEtapes = realPiece.etapes.filter(e => !e.isTodo);
+
+    // Crée les références photos
+    const photoReferences = this.createPhotoReferences(photoEtapes, todoEtapes);
+
+    // 🎯 FIX: INVERSION - Dans l'API, travelerNote contient les instructions de ménage et cleanerNote est vide
+    // Donc on inverse le mapping pour afficher les bonnes infos dans les bons onglets
+    const cleaningInfo = realPiece.travelerNote || `Instructions de nettoyage pour ${this.cleanRoomName(realPiece.nom)}`;
+    const roomInfo = realPiece.infoEntrance || realPiece.cleanerNote || `Informations pour ${this.cleanRoomName(realPiece.nom)}`;
+
+    console.log(`✅ Pièce adaptée "${realPiece.nom}":`, {
+      roomInfo: roomInfo.substring(0, 50) + '...',
+      cleaningInfo: cleaningInfo.substring(0, 50) + '...',
+      hasTravelerNote: !!realPiece.travelerNote,
+      hasCleanerNote: !!realPiece.cleanerNote,
+      hasInfoEntrance: !!realPiece.infoEntrance
+    });
+
+    return {
+      id,
+      nom: this.cleanRoomName(realPiece.nom),
+      ordre,
+      roomInfo,
+      cleaningInfo,
+      // 🎯 CORRECTION: Préserver les champs originaux de l'API
+      travelerNote: realPiece.travelerNote,
+      cleanerNote: realPiece.cleanerNote,
+      infoEntrance: realPiece.infoEntrance,
+      photoReferences
+    };
+  }
+
+  /**
+   * Génère un ID de pièce simple et cohérent avec le flow
+   */
+  private static generateRoomId(nom: string): string {
+    const cleanName = nom
+      .toLowerCase()
+      .replace(/[🛏️🚿🍽️🛋️🚽🏠]/g, '') // Supprime les emojis
+      .trim();
+    
+    // Mapping vers des IDs cohérents avec le FLOW_SEQUENCE
+    if (cleanName.includes('chambre')) {
+      if (cleanName.includes('1') || cleanName.includes('domino')) return 'chambre-1';
+      if (cleanName.includes('2') || cleanName.includes('tempo')) return 'chambre-2';
+      if (cleanName.includes('3') || cleanName.includes('ratio')) return 'chambre-3';
+      if (cleanName.includes('4') || cleanName.includes('ego')) return 'chambre-4';
+      return 'chambre';
+    }
+    
+    if (cleanName.includes('cuisine')) return 'cuisine';
+    if (cleanName.includes('salon')) return 'salon';
+    if (cleanName.includes('salle d\'eau') || cleanName.includes('salle d eau')) {
+      if (cleanName.includes('chambres vertes')) return 'salle-eau-vertes';
+      if (cleanName.includes('domino')) return 'salle-eau-domino';
+      if (cleanName.includes('ego')) return 'salle-eau-ego';
+      return 'salle-eau';
+    }
+    if (cleanName.includes('toilettes')) {
+      if (cleanName.includes('rdc')) return 'toilettes-rdc';
+      if (cleanName.includes('etage')) return 'toilettes-etage';
+      return 'toilettes';
+    }
+    if (cleanName.includes('ensemble du logement')) return 'ensemble-logement';
+    if (cleanName.includes('terrasse')) return 'terrasse';
+    if (cleanName.includes('buanderie')) return 'buanderie';
+    if (cleanName.includes('salle de reunion')) return 'salle-reunion';
+    
+    // Fallback générique
+    return cleanName
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .substring(0, 30) || 'piece';
+  }
+
+  /**
+   * Nettoie le nom de la pièce
+   */
+  private static cleanRoomName(nom: string): string {
+    return nom.replace(/[🛏️🚿🍽️🛋️🚽🏠]\s*/g, '').trim();
+  }
+
+  /**
+   * Crée les références photos pour checkin/checkout
+   */
+  private static createPhotoReferences(
+    photoEtapes: RealEtape[], 
+    todoEtapes: RealEtape[]
+  ): Room['photoReferences'] {
+    const photoReferences: Room['photoReferences'] = {};
+
+    // Photos de référence (étapes avec isTodo: false)
+    // ✅ CORRECTION: Filtrer les étapes qui ont une image réelle (pas de placeholder)
+    const photoEtapesWithImages = photoEtapes.filter(etape => etape.image);
+
+    if (photoEtapesWithImages.length > 0) {
+      const checkinPhotos: PhotoReference[] = photoEtapesWithImages.map((etape, index) => ({
+        tache_id: etape.etapeID,  // ✅ CORRECTION: Utiliser etapeID
+        etapeID: etape.etapeID,   // ✅ AJOUTÉ
+        url: etape.image,  // ✅ CORRECTION: Utiliser directement etape.image (filtré ci-dessus)
+        expected_orientation: index % 2 === 0 ? 'paysage' : 'portrait',
+        overlay_enabled: true,
+        isTodo: false  // ✅ AJOUTÉ: Photos de référence ne sont pas des TODO
+      }));
+
+      photoReferences.checkin = checkinPhotos;
+      photoReferences.checkout = checkinPhotos; // Réutilise les mêmes pour checkout
+    }
+
+    // ✅ CORRECTION: Ne pas ajouter les photos de validation aux photos de référence
+    // Les photos de validation sont gérées séparément dans les tâches TODO
+    // Cela évite les doublons et affiche seulement les photos de référence réelles
+
+    return photoReferences;
+  }
+
+  /**
+   * Génère les tâches pour une pièce selon le type de flux
+   * 🎯 ORDRE: Tâches TODO d'abord, puis photos de référence après
+   */
+  static generateTasksFromRealData(
+    realPiece: RealPiece,
+    flowType: FlowType
+  ): Task[] {
+    const tasks: Task[] = [];
+    const todoEtapes = realPiece.etapes.filter(e => e.isTodo);
+    const photoEtapes = realPiece.etapes.filter(e => !e.isTodo);
+
+    console.log(`📋 Pièce ${realPiece.nom}:`, {
+      totalEtapes: realPiece.etapes.length,
+      todoEtapes: todoEtapes.length,
+      photoEtapes: photoEtapes.length
+    });
+
+    // 1. D'ABORD : Ajouter les tâches de vérification pour TOUS les modes (checkin ET checkout)
+    // 🎯 FIX: Les tâches de ménage doivent être visibles dans CleaningInstructionsModal même en mode checkin
+    todoEtapes.forEach((etape, index) => {
+      const task = this.createTaskFromEtape(etape, realPiece.pieceID, index);
+      if (task) {
+        tasks.push(task);
+        console.log(`✅ Tâche todo créée (${flowType}):`, {
+          id: task.id,
+          label: task.label,
+          type: task.type,
+          isTodo: task.isTodo,
+          piece_id: task.piece_id
+        });
+      }
+    });
+
+    // 2. ENSUITE : Créer une tâche spéciale pour les photos de référence (isTodo=false)
+    // 🎯 NOUVEAU: Les photos de référence s'affichent APRÈS les tâches TODO
+    if (photoEtapes.length > 0) {
+      const referencePhotoTask = this.createReferencePhotoTask(
+        photoEtapes,
+        realPiece.pieceID,
+        tasks.length // Ordre après les tâches TODO
+      );
+      if (referencePhotoTask) {
+        tasks.push(referencePhotoTask);
+        console.log(`📸 Tâche photos de référence créée: ${photoEtapes.length} images`);
+      }
+    }
+
+    console.log(`📋 Total tâches créées pour ${realPiece.nom} (mode ${flowType}):`, tasks.length);
+    return tasks;
+  }
+
+  /**
+   * Crée une tâche à partir d'une étape TODO
+   */
+  private static createTaskFromEtape(
+    etape: RealEtape,
+    pieceId: string,
+    index: number
+  ): Task | null {
+    const title = etape.todoTitle || etape.todoOrder;
+    if (!title) return null;
+
+    // ✅ CORRECTION: Utiliser directement l'etapeID de l'API au lieu de générer un slug
+    const taskId = etape.etapeID;
+
+    // 🎯 FIX: Gérer correctement les instructions selon le type de todoParam
+    // - Si todoParam = "photoRequired" → C'est un FLAG, utiliser todoOrder comme description
+    // - Sinon → Utiliser todoParam comme description
+    let instructions: string | undefined;
+    if (etape.todoParam === 'photoRequired') {
+      // photoRequired est un flag, pas une instruction → utiliser todoOrder
+      instructions = etape.todoOrder;
+    } else {
+      // todoParam contient les vraies instructions
+      instructions = etape.todoParam || etape.todoOrder;
+    }
+
+    // 🎯 DEBUG: Log détaillé de chaque étape TODO
+    console.log('📋 DataAdapter: Étape TODO reçue de l\'API:', {
+      title,
+      todoTitle: etape.todoTitle,
+      todoOrder: etape.todoOrder,
+      todoParam: etape.todoParam,
+      todoImage: etape.todoImage,
+      instructions,
+      etapeID: etape.etapeID
+    });
+
+    // 🎯 CRITICAL FIX: Vérifier si la tâche nécessite une photo OBLIGATOIRE
+    // Une photo est OBLIGATOIRE UNIQUEMENT si:
+    // 1. todoParam a une valeur non-vide (ex: "photoRequired" ou toute autre instruction)
+    // 2. ET (todoImage existe OU todoParam === "photoRequired")
+    //
+    // IMPORTANT: Si todoParam est vide (""), la photo n'est JAMAIS obligatoire,
+    // même si todoImage existe. Dans ce cas:
+    // - todoImage est affiché comme référence visuelle
+    // - Mais l'utilisateur peut valider la tâche sans prendre de photo (simple checkbox)
+    const hasPhotoRequirement = etape.todoParam && etape.todoParam.trim() !== '';
+    const requiresPhoto = hasPhotoRequirement && (!!etape.todoImage || etape.todoParam === 'photoRequired');
+    const taskType = requiresPhoto ? 'photo_required' : 'checkbox';
+
+    // 🎯 NOUVEAU: La description est maintenant correctement définie ci-dessus
+    const taskDescription = instructions?.trim();
+
+    // 🎯 CRITICAL FIX: Créer une photo_reference SEULEMENT si une vraie image existe
+    // ✅ CORRECTION: Ne pas créer de placeholder si todoImage n'existe pas
+    // Les photos obligatoires sans référence (todoParam === "photoRequired") n'affichent pas de placeholder
+    let photoReference = undefined;
+    if (etape.todoImage) {
+      // Photo de référence fournie (affichée même si todoParam est vide)
+      // Si todoParam est vide, c'est juste une référence visuelle, pas une obligation
+      photoReference = {
+        tache_id: etape.etapeID,
+        etapeID: etape.etapeID,
+        url: etape.todoImage.startsWith('//') ? 'https:' + etape.todoImage : etape.todoImage,
+        expected_orientation: 'paysage' as const,
+        overlay_enabled: true,
+        isTodo: true,
+        todoTitle: title.trim()
+      };
+    }
+    // ✅ CORRECTION: Ne pas créer de placeholder pour photoRequired sans image
+    // Les photos obligatoires sans référence n'affichent rien (pas de placeholder)
+
+    return {
+      id: taskId,
+      etapeID: etape.etapeID,  // ✅ AJOUTÉ: Stocker aussi dans un champ dédié
+      piece_id: pieceId,
+      ordre: index + 1,
+      type: taskType,
+      label: title.trim(),
+      description: taskDescription,  // 🎯 FIX: Utiliser todoParam pour les instructions
+      completed: false,
+      isTodo: true,  // ✅ AJOUTÉ: Marquer comme tâche de ménage pour le filtre dans CleaningInstructionsModal
+      ...(photoReference && {
+        photo_reference: photoReference
+      })
+    };
+  }
+
+  /**
+   * Crée une tâche spéciale pour les photos de référence (isTodo=false)
+   */
+  private static createReferencePhotoTask(
+    photoEtapes: RealEtape[],
+    pieceId: string,
+    ordre: number
+  ): Task | null {
+    // ✅ CORRECTION: Filtrer les étapes qui ont une image réelle (pas de placeholder)
+    const photoEtapesWithImages = photoEtapes.filter(etape => etape.image);
+
+    if (photoEtapesWithImages.length === 0) return null;
+
+    // ✅ CORRECTION: Utiliser le premier etapeID pour la tâche photo
+    const firstPhotoEtapeId = photoEtapesWithImages[0]?.etapeID || `reference-photos-${pieceId}`;
+
+    const photoReferences: PhotoReference[] = photoEtapesWithImages.map((etape, index) => {
+      // Corriger les URLs qui commencent par //
+      let imageUrl = etape.image;
+      if (imageUrl.startsWith('//')) {
+        imageUrl = 'https:' + imageUrl;
+      }
+
+      console.log(`📸 Création photo référence ${index + 1}/${photoEtapesWithImages.length}:`, {
+        etapeID: etape.etapeID,  // ✅ AJOUTÉ
+        originalUrl: etape.image,
+        correctedUrl: imageUrl,
+        hasImage: !!etape.image
+      });
+
+      return {
+        tache_id: etape.etapeID,  // ✅ CORRECTION: Utiliser etapeID au lieu de générer un ID
+        etapeID: etape.etapeID,   // ✅ AJOUTÉ
+        url: imageUrl,
+        expected_orientation: index % 2 === 0 ? 'paysage' : 'portrait',
+        overlay_enabled: true
+      };
+    });
+
+    const referenceTask = {
+      id: firstPhotoEtapeId,  // ✅ CORRECTION: Utiliser le premier etapeID
+      etapeID: firstPhotoEtapeId,  // ✅ AJOUTÉ
+      piece_id: pieceId,
+      ordre: ordre + 1,
+      type: 'reference_photos' as const,
+      label: `📸 Photos de référence (${photoReferences.length})`,  // ✅ CORRECTION: Utiliser photoReferences.length au lieu de photoEtapes.length
+      description: `Consultez les ${photoReferences.length} photo${photoReferences.length > 1 ? 's' : ''} de référence pour cette pièce`,  // ✅ CORRECTION: Utiliser photoReferences.length
+      completed: false,
+      total_photos_required: 0, // Pas de photos à prendre, juste à consulter
+      photos_done: 0,
+      photo_references: photoReferences
+    };
+
+    console.log('📋 Tâche photos de référence créée:', {
+      id: referenceTask.id,
+      etapeID: referenceTask.etapeID,  // ✅ AJOUTÉ
+      type: referenceTask.type,
+      photoCount: photoReferences.length,
+      urls: photoReferences.map(ref => ref.url)
+    });
+
+    return referenceTask;
+  }
+
+  /**
+   * Crée une tâche photo à partir des étapes photo
+   */
+  private static createPhotoTaskFromEtapes(
+    photoEtapes: RealEtape[],
+    pieceId: string,
+    flowType: FlowType,
+    ordre: number
+  ): Task | null {
+    // ✅ CORRECTION: Filtrer les étapes qui ont une image réelle (pas de placeholder)
+    const photoEtapesWithImages = photoEtapes.filter(etape => etape.image);
+
+    if (photoEtapesWithImages.length === 0) return null;
+
+    // ✅ CORRECTION: Utiliser le premier etapeID pour la tâche photo
+    const firstPhotoEtapeId = photoEtapesWithImages[0]?.etapeID || `photos-${pieceId}`;
+
+    const photoReferences: PhotoReference[] = photoEtapesWithImages.map((etape, index) => {
+      // Corriger les URLs qui commencent par //
+      let imageUrl = etape.image;
+      if (imageUrl.startsWith('//')) {
+        imageUrl = 'https:' + imageUrl;
+      }
+
+      console.log(`📸 Création photo référence ${index + 1}/${photoEtapesWithImages.length}:`, {
+        etapeID: etape.etapeID,  // ✅ AJOUTÉ
+        originalUrl: etape.image,
+        correctedUrl: imageUrl,
+        hasImage: !!etape.image
+      });
+
+      return {
+        tache_id: etape.etapeID,  // ✅ CORRECTION: Utiliser etapeID au lieu de générer un ID
+        etapeID: etape.etapeID,   // ✅ AJOUTÉ
+        url: imageUrl,
+        expected_orientation: index % 2 === 0 ? 'paysage' : 'portrait',
+        overlay_enabled: true
+      };
+    });
+
+    const taskType = photoEtapesWithImages.length === 1 ? 'photo_optional' : 'photo_multiple';
+    const label = flowType === 'checkin'
+      ? `📸 Photos d'état d'entrée`
+      : `📸 Photos finales`;
+
+    const photoTask = {
+      id: firstPhotoEtapeId,  // ✅ CORRECTION: Utiliser le premier etapeID
+      etapeID: firstPhotoEtapeId,  // ✅ AJOUTÉ
+      piece_id: pieceId,
+      ordre: ordre + 1,
+      type: taskType,
+      label,
+      description: `Prendre ${photoReferences.length} photo${photoReferences.length > 1 ? 's' : ''} de référence`,  // ✅ CORRECTION: Utiliser photoReferences.length
+      completed: false,
+      total_photos_required: photoReferences.length,  // ✅ CORRECTION: Utiliser photoReferences.length
+      photos_done: 0,
+      photo_references: photoReferences
+    };
+
+    console.log('📋 Tâche photo créée:', {
+      id: photoTask.id,
+      etapeID: photoTask.etapeID,  // ✅ AJOUTÉ
+      type: taskType,
+      photoCount: photoReferences.length,
+      urls: photoReferences.map(ref => ref.url)
+    });
+
+    return photoTask;
+  }
+
+  /**
+   * Génère un ID de tâche
+   */
+  private static generateTaskId(etape: RealEtape, index: number): string {
+    const title = etape.todoTitle || etape.todoOrder || `task-${index}`;
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .substring(0, 30)
+      .replace(/-+$/, '') || `task-${index}`;
+  }
+
+  /**
+   * ✅ NOUVEAU - Adapte les signalements de l'API
+   */
+  static adaptSignalements(realData: RealParcours, flowType: FlowType): Signalement[] {
+    if (!realData.signalements || !Array.isArray(realData.signalements)) {
+      console.log('ℹ️ Aucun signalement dans les données API');
+      return [];
+    }
+
+    console.log('🔄 Adaptation des signalements:', realData.signalements.length);
+
+    return realData.signalements.map((sig) => {
+      // Trouver le nom de la pièce correspondante
+      const piece = realData.piece.find(p => p.pieceID === sig.pieceID);
+      const pieceName = piece ? this.cleanRoomName(piece.nom) : 'Pièce inconnue';
+
+      // Générer un titre court à partir du commentaire
+      const titre = sig.commentaire.length > 50
+        ? sig.commentaire.substring(0, 50) + '...'
+        : sig.commentaire;
+
+      // Déterminer le statut basé sur commentaireTraitement
+      const status: 'A_TRAITER' | 'RESOLU' =
+        sig.commentaireTraitement && sig.commentaireTraitement.trim() !== ''
+          ? 'RESOLU'
+          : 'A_TRAITER';
+
+      // Extraire le timestamp du signalementID (format: timestamp x random)
+      const timestampMatch = sig.signalementID.match(/^(\d+)x/);
+      const timestamp = timestampMatch ? parseInt(timestampMatch[1]) : Date.now();
+      const created_at = new Date(timestamp).toISOString();
+
+      return {
+        id: sig.signalementID,
+        roomId: sig.pieceID,
+        piece: pieceName,
+        etapeId: undefined,
+        titre,
+        commentaire: sig.commentaire,
+        imgUrl: sig.photo,
+        imgBase64: undefined,
+        flowType,
+        origine: 'HISTORIQUE', // Marquer comme signalement historique de l'API
+        status,
+        priorite: false,
+        created_at,
+        updated_at: created_at,
+        parcoursId: realData.parcourID, // ✅ NOUVEAU - Ajouter le parcoursId du parcours courant
+        rapportRef: sig.rapportRef, // ✅ NOUVEAU - Ajouter la référence du rapport pour dédupliquer
+      };
+    });
+  }
+
+  /**
+   * Fonction principale d'adaptation complète
+   */
+  static adaptCompleteData(realData: RealParcours, forceFlowType?: FlowType) {
+    console.log('🔄 Début adaptation complète des données:', {
+      parcourID: realData?.parcourID,
+      piecesCount: realData?.piece?.length || 0,
+      signalementsCount: realData?.signalements?.length || 0
+    });
+
+    if (!realData) {
+      throw new Error('rawData est null ou undefined');
+    }
+
+    if (!realData.piece || !Array.isArray(realData.piece)) {
+      console.error('❌ Erreur: realData.piece n\'est pas un tableau valide:', realData.piece);
+      throw new Error('Format de données invalide: piece n\'est pas un tableau');
+    }
+
+    const { roomsData, flowType } = this.adaptRealDataToExistingFormat(realData, forceFlowType);
+
+    // Génère les tâches pour chaque pièce
+    const roomsWithTasks = Object.keys(roomsData).reduce((acc, roomId) => {
+      const room = roomsData[roomId];
+      const realPiece = realData.piece.find(p =>
+        p.pieceID === roomId
+      );
+
+      if (realPiece) {
+        const tasks = this.generateTasksFromRealData(realPiece, flowType);
+        acc[roomId] = { ...room, tasks };
+      }
+
+      return acc;
+    }, {} as Record<string, Room & { tasks: Task[] }>);
+
+    // ✅ NOUVEAU - Adapter les signalements
+    const apiSignalements = this.adaptSignalements(realData, flowType);
+    console.log('✅ Signalements adaptés:', apiSignalements.length);
+
+    return {
+      roomsData: roomsWithTasks,
+      flowType,
+      parcoursInfo: {
+        name: realData.parcoursName,
+        type: realData.parcoursType,
+        logement: realData.logementName,
+        takePicture: realData.takePicture
+      },
+      apiSignalements  // ✅ NOUVEAU - Ajouter les signalements adaptés
+    };
+  }
+}

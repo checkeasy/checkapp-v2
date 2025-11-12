@@ -1,0 +1,439 @@
+{
+  "parcourID": "1758627882436x357466098713589800",
+  "parcoursName": "Parcours ménage (copie)",
+  "parcoursType": "Voyageur",
+  "logementID": "1740996924218x856550793099870200",
+  "logementInfoEntrance": "",
+  "logementInfoParking": "",
+  "logementName": "xx TheLittleHouse \n",
+  "logementAdress": "71 Rue Anatole France, 62100 Calais, France",
+  "logementWifiName": "",
+  "logementWifiPassword": "",
+  "takePicture": "checkInAndCheckOut",
+  "piece": [
+    {
+      "logementID": "1740996924218x856550793099870200",
+      "pieceID": "1758627881896x115634152878258740",
+      "nom": "Buanderie ",
+      "travelerNote": "",
+      "cleanerNote": "",
+      "infoEntrance": "",
+      "etapes": [
+        {
+          "etapeID": "1758627890338x423549750682353340",
+          "pieceID": "1758627881896x115634152878258740",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997187555x303914943891964400/IMG_3022.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627890338x980249775914648000",
+          "pieceID": "1758627881896x115634152878258740",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997195279x449835236364208900/IMG_3022.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        }
+      ]
+    },
+    {
+      "logementID": "1740996924218x856550793099870200",
+      "pieceID": "1758627881896x296998157925233660",
+      "nom": "Véranda ",
+      "travelerNote": "",
+      "cleanerNote": "",
+      "infoEntrance": "",
+      "etapes": [
+        {
+          "etapeID": "1758627892303x931827244065623400",
+          "pieceID": "1758627881896x296998157925233660",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997212107x967090009862468000/IMG_0614.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        }
+      ]
+    },
+    {
+      "logementID": "1740996924218x856550793099870200",
+      "pieceID": "1758627881896x305471701314554050",
+      "nom": "Salle à manger ",
+      "travelerNote": "",
+      "cleanerNote": "",
+      "infoEntrance": "",
+      "etapes": [
+        {
+          "etapeID": "1758627888266x870808988635736600",
+          "pieceID": "1758627881896x305471701314554050",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997139634x328942034422766460/IMG_0682.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627888266x947081625077414300",
+          "pieceID": "1758627881896x305471701314554050",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997154726x131684439085502530/IMG_0661.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        }
+      ]
+    },
+    {
+      "logementID": "1740996924218x856550793099870200",
+      "pieceID": "1758627881896x569756605849995650",
+      "nom": "🛏️ Chambre3",
+      "travelerNote": "",
+      "cleanerNote": "",
+      "infoEntrance": "",
+      "etapes": [
+        {
+          "etapeID": "1758627896352x414128111641044030",
+          "pieceID": "1758627881896x569756605849995650",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🔹 Vérifications supplémentaires :",
+          "todoOrder": "🧹 Faire la poussière  sous le lit. 🗑️ Vérifier les chauffages. 🏡 Fermer les fenêtres et ajuster les rideaux/stores.",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627896352x450861688529068800",
+          "pieceID": "1758627881896x569756605849995650",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997277023x255884139812647680/IMG_0719.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627896352x458921281687993900",
+          "pieceID": "1758627881896x569756605849995650",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997284350x725146403755696500/IMG_0724.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627896352x932854774143473400",
+          "pieceID": "1758627881896x569756605849995650",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🛏️ Refaire le lit avec des draps propres et poser 2 serviettes propres pliées sur le lit.",
+          "todoOrder": "La couette est à replier comme sur la photo. Draps housse noir et parure blanche ",
+          "todoImage": ""
+        }
+      ]
+    },
+    {
+      "logementID": "1740996924218x856550793099870200",
+      "pieceID": "1758627881896x613481244773441700",
+      "nom": "🛏️ Chambre2",
+      "travelerNote": "",
+      "cleanerNote": "",
+      "infoEntrance": "",
+      "etapes": [
+        {
+          "etapeID": "1758627894355x136148911408816580",
+          "pieceID": "1758627881896x613481244773441700",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997251218x649491715834597600/IMG_0733.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627894355x141534036369118880",
+          "pieceID": "1758627881896x613481244773441700",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🔹 Vérifications supplémentaires :",
+          "todoOrder": "🧹 Faire la poussière  sous le lit. 🗑️ Vérifier les chauffages. 🏡 Fermer les fenêtres et ajuster les rideaux/stores.",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627894355x300302897582819000",
+          "pieceID": "1758627881896x613481244773441700",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997260517x148205301306900030/IMG_0736.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627894355x867443880227857700",
+          "pieceID": "1758627881896x613481244773441700",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🛏️ Refaire le lit avec des draps propres et poser 2 serviettes propres pliées sur le lit.",
+          "todoOrder": "La couette est à replier comme sur la photo. Draps housse noir et parure blanche ",
+          "todoImage": ""
+        }
+      ]
+    },
+    {
+      "logementID": "1740996924218x856550793099870200",
+      "pieceID": "1758627881896x749155268616229900",
+      "nom": "🍽️ Cuisine",
+      "travelerNote": "",
+      "cleanerNote": "",
+      "infoEntrance": "",
+      "etapes": [
+        {
+          "etapeID": "1758627882401x180414160245794940",
+          "pieceID": "1758627881896x749155268616229900",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🔥 Nettoyer le four ",
+          "todoOrder": "Nettoyez l'intérieur et l'extérieur du four",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627882401x417285674760725000",
+          "pieceID": "1758627881896x749155268616229900",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997047454x288755994648322900/IMG_0655.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627882401x565958196507988500",
+          "pieceID": "1758627881896x749155268616229900",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "☕ Nettoyer la machine à café et laisser 3 capsules",
+          "todoOrder": "Rincer la machine et vérifier qu’il y a 3 capsules disponibles.",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627882401x789131632563682100",
+          "pieceID": "1758627881896x749155268616229900",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🧼 Vider le lave-vaisselle",
+          "todoOrder": "Vérifier qu’il reste au moins 1 pastille de lavage pour le prochain voyageur.",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627882401x830379469027902100",
+          "pieceID": "1758627881896x749155268616229900",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🧽 Vérifier les produits ménagers ",
+          "todoOrder": "Vérifier la présence des produits de base : - 1 torchon propre -  Produit vaisselle - Éponge propre",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627882401x949378130113967200",
+          "pieceID": "1758627881896x749155268616229900",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🚰 Nettoyer l'évier & le siphon ",
+          "todoOrder": "N'oubliez pas de retirer le siphon ",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627882401x960886513439236400",
+          "pieceID": "1758627881896x749155268616229900",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🗑️ Vider la poubelle et ajouter un nouveau sac poubelle",
+          "todoOrder": "Vider la poubelle et mettre un nouveau sac plastique.",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627882401x987405318340750700",
+          "pieceID": "1758627881896x749155268616229900",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🥶 Vider et nettoyer le frigo ",
+          "todoOrder": "Vider et nettoyer l’intérieur du réfrigérateur",
+          "todoImage": ""
+        }
+      ]
+    },
+    {
+      "logementID": "1740996924218x856550793099870200",
+      "pieceID": "1758627881896x780727704295857400",
+      "nom": "🛋️ Salon",
+      "travelerNote": "",
+      "cleanerNote": "",
+      "infoEntrance": "",
+      "etapes": [
+        {
+          "etapeID": "1758627886285x431693161119803400",
+          "pieceID": "1758627881896x780727704295857400",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997115723x861689386577063700/IMG_0691.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627886285x453132321931716900",
+          "pieceID": "1758627881896x780727704295857400",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997104340x612697693632355800/IMG_0701.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627886285x683443772337081000",
+          "pieceID": "1758627881896x780727704295857400",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "Vérifications générales",
+          "todoOrder": "- Faire la poussière sur les meubles et les surfaces. - Vider la poubelle et mettre un sac poubelle propre. -  Ranger correctement les coussins et objets décoratifs.",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627886285x692578863322276200",
+          "pieceID": "1758627881896x780727704295857400",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "📺 S'assurer que la télécommande est au bon endroit",
+          "todoOrder": "S’assurer que la télécommande est au bon endroit et en état de fonctionnement.",
+          "todoImage": ""
+        }
+      ]
+    },
+    {
+      "logementID": "1740996924218x856550793099870200",
+      "pieceID": "1758627881896x822529092376019300",
+      "nom": "🚿 Salle de Bain & Toilettes",
+      "travelerNote": "",
+      "cleanerNote": "",
+      "infoEntrance": "",
+      "etapes": [
+        {
+          "etapeID": "1758627884243x235734549507693900",
+          "pieceID": "1758627881896x822529092376019300",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1741005977176x912151770667490400/IMG_3144.jpeg",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🚽 Toilettes :",
+          "todoOrder": "Vérifier qu'il y a du papier toilette. Nettoyer l’abattant et la cuvette.",
+          "todoImage": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1741005977176x912151770667490400/IMG_3144.jpeg"
+        },
+        {
+          "etapeID": "1758627884243x285716192574072540",
+          "pieceID": "1758627881896x822529092376019300",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997081796x674973868026597500/IMG_0620.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627884243x530640481908577000",
+          "pieceID": "1758627881896x822529092376019300",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🕳️ Siphon de la douche :",
+          "todoOrder": "N'oubliez pas de retirer le siphon ",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627884243x720265618280182300",
+          "pieceID": "1758627881896x822529092376019300",
+          "image": "//eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1740997072315x915627477201458600/IMG_0623.jpeg",
+          "isTodo": false,
+          "todoParam": "",
+          "todoTitle": "",
+          "todoOrder": "",
+          "todoImage": ""
+        },
+        {
+          "etapeID": "1758627884243x823278356931209900",
+          "pieceID": "1758627881896x822529092376019300",
+          "image": "",
+          "isTodo": true,
+          "todoParam": "",
+          "todoTitle": "🗑️ Poubelle :",
+          "todoOrder": "Vider la poubelle et mettre un sac plastique propre",
+          "todoImage": ""
+        }
+      ]
+    }
+  ],
+  "questionSortie": [
+    {
+      "questionID": "1758627882250x199542697290554980",
+      "imageRequired": "no",
+      "questionContent": "🌡️ Les radiateurs sont-ils bien éteints ?",
+      "questionType": "boolean"
+    },
+    {
+      "questionID": "1758627882250x562301719519336060",
+      "imageRequired": "no",
+      "questionContent": "💡 Toutes les lumières et appareils électroniques inutiles ont-ils été éteints ?",
+      "questionType": "boolean"
+    },
+    {
+      "questionID": "1758627882250x894266765580705700",
+      "imageRequired": "",
+      "questionContent": "🔑 Le logement est-il bien sécurisé (portes et fenêtres fermées) après votre passage ?",
+      "questionType": "boolen"
+    },
+    {
+      "questionID": "1758627882250x997698137748978400",
+      "imageRequired": "",
+      "questionContent": "🧴 Les stocks de consommables (eau, café, thé, papier toilette) et les  les produits d’entretien (éponge, liquide vaisselle, sacs-poubelle, etc.) sont-ils suffisants pour les prochains voyageurs ? Si non, merci de préciser lesquels. Si oui, merci d'écrire 'Oui'.",
+      "questionType": "text"
+    },
+    {
+      "questionID": "1758627882250x966324558900920200",
+      "imageRequired": "",
+      "questionContent": "🔍 Avez-vous constaté des dégradations ou anomalies non signalées  ? ",
+      "questionType": "boolen"
+    },
+    {
+      "questionID": "1758627882250x711693494685517300",
+      "imageRequired": "",
+      "questionContent": "🔄 Certains équipements nécessitent-ils un remplacement ou une réparation ?",
+      "questionType": "boolen"
+    },
+    {
+      "questionID": "1758627882250x930552564285004800",
+      "imageRequired": "",
+      "questionContent": "✍️ Si vous avez remarqué un problème ou souhaitez ajouter un commentaire, merci de le préciser ici. Sinon, indiquez \"RAS\".",
+      "questionType": "text"
+    }
+  ]
+}

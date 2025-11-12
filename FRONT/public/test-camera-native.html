@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎯 Test Caméra Arrière - Méthodes Natives</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+      font-size: 2em;
+    }
+    .test-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      border: 2px solid #e9ecef;
+    }
+    .test-section h2 {
+      color: #495057;
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+    .test-section p {
+      color: #6c757d;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    button {
+      padding: 15px 30px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(45deg, #4caf50, #8bc34a);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .btn-native {
+      background: linear-gradient(45deg, #2196f3, #21cbf3);
+      box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    }
+    .btn-stop {
+      background: linear-gradient(45deg, #f44336, #e91e63);
+      box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+    }
+    video {
+      width: 100%;
+      max-width: 640px;
+      border-radius: 12px;
+      margin: 15px auto;
+      background: #000;
+      display: block;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 15px auto;
+      display: block;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    canvas {
+      display: none;
+    }
+    .log {
+      background: #1a1a1a;
+      color: #00ff41;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 20px;
+      border: 2px solid #333;
+    }
+    .status {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Test Caméra Arrière iPhone</h1>
+    
+    <!-- TEST 1: Méthode native iOS -->
+    <div class="test-section">
+      <h2>📱 TEST 1: Méthode Native iOS (input capture)</h2>
+      <p><strong>But:</strong> Tester si iOS peut ouvrir la caméra arrière via l'interface native (comme l'app Appareil Photo).</p>
+      <p><strong>Si ça marche:</strong> Le problème n'est pas dans les permissions iOS, mais dans getUserMedia.</p>
+      <p><strong>Si ça ne marche pas:</strong> Problème d'environnement (iFrame, WebView, Permissions-Policy).</p>
+      
+      <button id="captureBack" class="btn-native">📷 Prendre une photo (caméra arrière)</button>
+      <img id="preview" style="display:none;" />
+      <div id="status1" class="status info">Cliquez sur le bouton pour tester la méthode native iOS</div>
+    </div>
+
+    <!-- TEST 2: getUserMedia robuste -->
+    <div class="test-section">
+      <h2>🔧 TEST 2: getUserMedia Robuste (forçage arrière)</h2>
+      <p><strong>But:</strong> Forcer l'accès à la caméra arrière via getUserMedia avec énumération des devices.</p>
+      <p><strong>Stratégie:</strong> Essaie facingMode ideal, puis énumère et teste chaque deviceId jusqu'à trouver l'arrière.</p>
+      
+      <button id="startRobust" class="btn-native">🎥 Démarrer caméra arrière (robuste)</button>
+      <button id="shoot" style="display:none;">📸 Prendre une photo</button>
+      <button id="stopCamera" class="btn-stop" style="display:none;">⏹️ Arrêter</button>
+      
+      <video id="v" playsinline autoplay muted style="display:none;"></video>
+      <canvas id="c"></canvas>
+      <img id="photo" style="display:none;" />
+      <div id="status2" class="status info">Cliquez sur "Démarrer caméra arrière" pour tester getUserMedia</div>
+    </div>
+
+    <!-- Logs -->
+    <div id="log" class="log">🚀 Prêt pour les tests...\n</div>
+  </div>
+
+  <script>
+    let allLogs = [];
+    let currentStream = null;
+    
+    // Fonction de log
+    function log(message, type = 'info') {
+      const logDiv = document.getElementById('log');
+      const emoji = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '📝';
+      const timestamp = new Date().toLocaleTimeString();
+      const color = type === 'error' ? '#ff4444' : type === 'success' ? '#44ff44' : type === 'warning' ? '#ffaa44' : '#00ff41';
+      
+      const logEntry = `[${timestamp}] ${emoji} ${message}`;
+      allLogs.push(logEntry);
+      
+      logDiv.innerHTML += `<span style="color: #888">[${timestamp}]</span> <span style="color: ${color}">${emoji} ${message}</span>\n`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+      console.log(logEntry);
+    }
+    
+    function updateStatus(elementId, message, type = 'info') {
+      const el = document.getElementById(elementId);
+      el.className = `status ${type}`;
+      el.textContent = message;
+    }
+    
+    // Détecter l'environnement
+    function detectEnvironment() {
+      const ua = navigator.userAgent;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+      const isAndroid = /Android/.test(ua);
+      const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
+      const isInIframe = window !== window.top;
+      const isStandalone = window.navigator.standalone === true;
+      
+      log(`🔍 Environnement détecté:`);
+      log(`  📱 iOS: ${isIOS}`);
+      log(`  🤖 Android: ${isAndroid}`);
+      log(`  🌐 Safari: ${isSafari}`);
+      log(`  🖼️ Dans iFrame: ${isInIframe}`);
+      log(`  📱 PWA/Standalone: ${isStandalone}`);
+      log(`  🔗 URL: ${window.location.href}`);
+      
+      return { isIOS, isAndroid, isSafari, isInIframe, isStandalone };
+    }
+
+    // =============================================================================
+    // TEST 1: Méthode native iOS (input capture)
+    // =============================================================================
+    document.getElementById('captureBack').addEventListener('click', async () => {
+      log('\n🎬 === TEST 1: MÉTHODE NATIVE iOS ===');
+      updateStatus('status1', 'Test en cours...', 'info');
+      
+      try {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.setAttribute('capture', 'environment'); // arrière
+        input.style.display = 'none';
+        document.body.appendChild(input);
+        
+        log('📱 Création input[capture="environment"]');
+        
+        input.onchange = () => {
+          const file = input.files && input.files[0];
+          document.body.removeChild(input);
+          
+          if (file) {
+            log('✅ Photo prise avec succès !', 'success');
+            log(`📝 Fichier: ${file.name}, Taille: ${(file.size/1024/1024).toFixed(2)}MB`);
+            
+            const preview = document.getElementById('preview');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+            
+            updateStatus('status1', '✅ SUCCÈS: La caméra arrière fonctionne via méthode native !', 'success');
+          } else {
+            log('⚠️ Aucun fichier sélectionné', 'warning');
+            updateStatus('status1', '⚠️ Aucune photo prise (annulé par utilisateur)', 'error');
+          }
+        };
+        
+        input.onerror = (e) => {
+          log('❌ Erreur input file: ' + e, 'error');
+          updateStatus('status1', '❌ Erreur lors de l\'ouverture de la caméra native', 'error');
+          document.body.removeChild(input);
+        };
+        
+        log('📱 Ouverture interface caméra iOS...');
+        input.click();
+        
+      } catch (err) {
+        log(`❌ Erreur méthode native: ${err.message}`, 'error');
+        updateStatus('status1', `❌ Erreur: ${err.message}`, 'error');
+      }
+    });
+
+    // =============================================================================
+    // TEST 2: getUserMedia robuste avec forçage arrière
+    // =============================================================================
+    
+    async function isEnvironment(stream) {
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings ? track.getSettings() : {};
+      
+      log(`📝 Settings du track: ${JSON.stringify(settings)}`);
+      
+      // iOS remplit souvent facingMode correctement
+      if (settings.facingMode) {
+        const isEnv = /environment|back/i.test(settings.facingMode);
+        log(`📝 FacingMode détecté: "${settings.facingMode}" → ${isEnv ? 'ARRIÈRE' : 'AVANT'}`);
+        return isEnv;
+      }
+      
+      // Fallback: pas de facingMode détectable
+      log('⚠️ Impossible de déterminer le facingMode', 'warning');
+      return false;
+    }
+
+    async function openBackCamera() {
+      log('\n🔧 === OUVERTURE CAMÉRA ARRIÈRE ROBUSTE ===');
+      
+      // 1) Essai simple (souple)
+      log('📱 ÉTAPE 1: Essai facingMode ideal "environment"');
+      try {
+        const s = await navigator.mediaDevices.getUserMedia({
+          video: { 
+            facingMode: { ideal: 'environment' }, 
+            width: { ideal: 1920 }, 
+            height: { ideal: 1080 } 
+          },
+          audio: false
+        });
+        
+        log('✅ Stream obtenu avec facingMode ideal', 'success');
+        
+        if (await isEnvironment(s)) {
+          log('✅ SUCCÈS: Caméra arrière confirmée !', 'success');
+          return s;
+        }
+        
+        log('⚠️ Stream obtenu mais pas la caméra arrière', 'warning');
+        s.getTracks().forEach(t => t.stop());
+      } catch (err) {
+        log(`⚠️ Étape 1 échouée: ${err.message}`, 'warning');
+      }
+
+      // 2) Permission minimale puis énumération
+      log('📱 ÉTAPE 2: Permission minimale + énumération');
+      let tmp;
+      try {
+        tmp = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        log('✅ Permission caméra obtenue', 'success');
+      } catch (e) {
+        throw new Error('Permission caméra refusée ou indisponible: ' + e.message);
+      }
+      
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cams = devices.filter(d => d.kind === 'videoinput');
+      
+      log(`📝 ${cams.length} caméra(s) détectée(s):`);
+      cams.forEach((cam, i) => {
+        log(`  ${i+1}. "${cam.label}" (${cam.deviceId.substring(0, 12)}...)`);
+      });
+
+      // 3) Priorité aux labels évocateurs
+      log('📱 ÉTAPE 3: Test par priorité de labels');
+      const prefOrder = [
+        { name: 'Back/Rear/Environment', test: d => /back|rear|environment/i.test(d.label) },
+        { name: 'Wide Angle', test: d => /wide[- ]?angle/i.test(d.label) },
+        { name: 'Toutes les autres', test: d => true }
+      ];
+
+      for (const { name, test } of prefOrder) {
+        const candidates = cams.filter(test);
+        if (candidates.length === 0) continue;
+        
+        log(`📝 Test catégorie "${name}": ${candidates.length} candidat(s)`);
+        
+        for (const d of candidates) {
+          try {
+            log(`  🎯 Test "${d.label}"`);
+            const s = await navigator.mediaDevices.getUserMedia({
+              video: { deviceId: { exact: d.deviceId } },
+              audio: false
+            });
+            
+            if (await isEnvironment(s)) { 
+              tmp.getTracks().forEach(t => t.stop()); 
+              log('✅ SUCCÈS: Caméra arrière trouvée !', 'success');
+              return s; 
+            }
+            
+            log(`  ⚠️ "${d.label}" n'est pas la caméra arrière`);
+            s.getTracks().forEach(t => t.stop());
+          } catch (err) {
+            log(`  ❌ Erreur avec "${d.label}": ${err.message}`, 'error');
+          }
+        }
+      }
+
+      // 4) Dernier recours: garder tmp si c'est l'arrière
+      log('📱 ÉTAPE 4: Vérification du stream initial');
+      if (await isEnvironment(tmp)) {
+        log('✅ Le stream initial était déjà la caméra arrière !', 'success');
+        return tmp;
+      }
+
+      // Rien trouvé → on rend quand même tmp pour debug
+      log('⚠️ Aucune caméra arrière trouvée, retour du stream par défaut', 'warning');
+      return tmp;
+    }
+
+    document.getElementById('startRobust').addEventListener('click', async () => {
+      log('\n🎬 === TEST 2: getUserMedia ROBUSTE ===');
+      updateStatus('status2', 'Démarrage en cours...', 'info');
+      
+      try {
+        const stream = await openBackCamera();
+        currentStream = stream;
+        
+        const video = document.getElementById('v');
+        video.srcObject = stream;
+        video.style.display = 'block';
+        
+        try { 
+          await video.play(); 
+          log('✅ Vidéo en lecture', 'success');
+        } catch (playErr) {
+          log(`⚠️ Erreur video.play(): ${playErr.message}`, 'warning');
+        }
+        
+        // Afficher les contrôles
+        document.getElementById('shoot').style.display = 'inline-block';
+        document.getElementById('stopCamera').style.display = 'inline-block';
+        
+        // Vérifier les infos du stream
+        const track = stream.getVideoTracks()[0];
+        const settings = track.getSettings();
+        
+        log('\n📹 === INFORMATIONS FINALES DU STREAM ===');
+        log(`📝 Label: ${track.label}`);
+        log(`📝 FacingMode: ${settings.facingMode || 'N/A'}`);
+        log(`📝 Résolution: ${settings.width}x${settings.height}`);
+        log(`📝 DeviceId: ${settings.deviceId?.substring(0, 15)}...`);
+        
+        const isBack = settings.facingMode && /environment|back/i.test(settings.facingMode);
+        if (isBack) {
+          updateStatus('status2', '✅ SUCCÈS: Caméra arrière active !', 'success');
+        } else {
+          updateStatus('status2', '⚠️ Stream actif mais caméra arrière non confirmée', 'warning');
+        }
+        
+      } catch (err) {
+        log(`❌ Erreur getUserMedia robuste: ${err.message}`, 'error');
+        updateStatus('status2', `❌ Erreur: ${err.message}`, 'error');
+      }
+    });
+
+    document.getElementById('shoot').addEventListener('click', async () => {
+      log('\n📸 === PRISE DE PHOTO ===');
+      
+      const video = document.getElementById('v');
+      const canvas = document.getElementById('c');
+      const out = document.getElementById('photo');
+      
+      // S'assurer que la vidéo est prête
+      if (!video.videoWidth) {
+        await new Promise(r => video.onloadedmetadata = r);
+      }
+
+      const w = video.videoWidth || 1280;
+      const h = video.videoHeight || 720;
+      canvas.width = w; 
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+
+      log(`📝 Capture: ${w}x${h}`);
+      
+      // Pas de miroir pour l'arrière
+      ctx.drawImage(video, 0, 0, w, h);
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          log('❌ Erreur création blob', 'error');
+          return;
+        }
+        
+        log(`✅ Photo capturée: ${(blob.size/1024).toFixed(1)}KB`, 'success');
+        out.src = URL.createObjectURL(blob);
+        out.style.display = 'block';
+        
+        // Ici vous pourriez uploader:
+        // const f = new FormData(); 
+        // f.append('file', blob, 'photo.jpg');
+        // fetch('/upload', { method:'POST', body:f });
+      }, 'image/jpeg', 0.95);
+    });
+
+    document.getElementById('stopCamera').addEventListener('click', () => {
+      log('\n⏹️ === ARRÊT CAMÉRA ===');
+      
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => {
+          track.stop();
+          log(`⏹️ Track arrêté: ${track.label}`);
+        });
+        currentStream = null;
+      }
+      
+      document.getElementById('v').style.display = 'none';
+      document.getElementById('shoot').style.display = 'none';
+      document.getElementById('stopCamera').style.display = 'none';
+      
+      updateStatus('status2', 'Caméra arrêtée', 'info');
+    });
+
+    // Initialisation
+    window.addEventListener('DOMContentLoaded', () => {
+      log('🚀 Page de test chargée');
+      detectEnvironment();
+      log('\n📋 INSTRUCTIONS:');
+      log('1. Testez d\'abord la méthode native iOS');
+      log('2. Si elle fonctionne, testez getUserMedia robuste');
+      log('3. Copiez tous les logs et envoyez-les moi');
+    });
+  </script>
+</body>
+</html>

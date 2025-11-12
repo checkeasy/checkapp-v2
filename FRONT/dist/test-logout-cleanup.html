@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Logout Cleanup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #5C6BC0;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #5C6BC0;
+            margin-top: 20px;
+        }
+        button {
+            background: #5C6BC0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #4a5aa8;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        .data-section {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .data-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        .data-item:last-child {
+            border-bottom: none;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧹 Test Logout Cleanup Service</h1>
+    
+    <div class="container">
+        <h2>Instructions</h2>
+        <p>Ce test vérifie que le service de nettoyage logout supprime bien toutes les données.</p>
+        <ol>
+            <li>Cliquez sur "Ajouter des données de test" pour simuler une session utilisateur</li>
+            <li>Vérifiez que les données sont bien présentes</li>
+            <li>Cliquez sur "Simuler logout" pour nettoyer les données</li>
+            <li>Vérifiez que toutes les données ont été supprimées</li>
+        </ol>
+    </div>
+
+    <div class="container">
+        <h2>Actions</h2>
+        <button onclick="addTestData()">✅ Ajouter des données de test</button>
+        <button onclick="checkData()">🔍 Vérifier les données</button>
+        <button onclick="simulateLogout()" class="danger">🧹 Simuler logout</button>
+        <button onclick="clearAll()">🗑️ Tout effacer</button>
+    </div>
+
+    <div class="container">
+        <h2>État du localStorage</h2>
+        <div id="localStorageStatus" class="data-section">
+            <div class="data-item">Aucune donnée</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>État du sessionStorage</h2>
+        <div id="sessionStorageStatus" class="data-section">
+            <div class="data-item">Aucune donnée</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>État d'IndexedDB</h2>
+        <div id="indexedDBStatus" class="data-section">
+            <div class="data-item">Vérification en cours...</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Logs</h2>
+        <div id="logs" class="data-section">
+            <div class="data-item">Prêt pour les tests</div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const item = document.createElement('div');
+            item.className = `data-item status ${type}`;
+            item.textContent = `[${timestamp}] ${message}`;
+            logsDiv.insertBefore(item, logsDiv.firstChild);
+        }
+
+        function addTestData() {
+            log('Ajout des données de test...', 'info');
+            
+            // Ajouter des données utilisateur
+            localStorage.setItem('userInfo', JSON.stringify({
+                firstName: 'Jean',
+                lastName: 'Dupont',
+                phone: '0612345678',
+                type: 'AGENT'
+            }));
+            
+            // Ajouter des données de session
+            localStorage.setItem('activeCheckId', 'check-123-456');
+            localStorage.setItem('activeParcoursId', 'parcours-789');
+            localStorage.setItem('app-flow-state', JSON.stringify({
+                currentStage: 'checkin',
+                checkinCompleted: false
+            }));
+            
+            // Ajouter des photos simulées
+            localStorage.setItem('uploaded_image_1', 'data:image/png;base64,iVBORw0KGgo=');
+            localStorage.setItem('uploaded_image_2', 'data:image/png;base64,iVBORw0KGgo=');
+            
+            // Ajouter au sessionStorage
+            sessionStorage.setItem('temp_data', 'valeur temporaire');
+            
+            log('✅ Données de test ajoutées', 'success');
+            checkData();
+        }
+
+        function checkData() {
+            log('Vérification des données...', 'info');
+            
+            // Vérifier localStorage
+            const localStorageDiv = document.getElementById('localStorageStatus');
+            localStorageDiv.innerHTML = '';
+            
+            if (Object.keys(localStorage).length === 0) {
+                localStorageDiv.innerHTML = '<div class="data-item">✅ localStorage vide</div>';
+            } else {
+                Object.keys(localStorage).forEach(key => {
+                    const value = localStorage.getItem(key);
+                    const item = document.createElement('div');
+                    item.className = 'data-item';
+                    item.textContent = `${key}: ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}`;
+                    localStorageDiv.appendChild(item);
+                });
+            }
+            
+            // Vérifier sessionStorage
+            const sessionStorageDiv = document.getElementById('sessionStorageStatus');
+            sessionStorageDiv.innerHTML = '';
+            
+            if (Object.keys(sessionStorage).length === 0) {
+                sessionStorageDiv.innerHTML = '<div class="data-item">✅ sessionStorage vide</div>';
+            } else {
+                Object.keys(sessionStorage).forEach(key => {
+                    const value = sessionStorage.getItem(key);
+                    const item = document.createElement('div');
+                    item.className = 'data-item';
+                    item.textContent = `${key}: ${value}`;
+                    sessionStorageDiv.appendChild(item);
+                });
+            }
+            
+            // Vérifier IndexedDB
+            checkIndexedDB();
+        }
+
+        async function checkIndexedDB() {
+            const indexedDBDiv = document.getElementById('indexedDBStatus');
+            indexedDBDiv.innerHTML = '';
+            
+            try {
+                const dbs = await indexedDB.databases();
+                if (dbs.length === 0) {
+                    indexedDBDiv.innerHTML = '<div class="data-item">✅ Aucune base de données IndexedDB</div>';
+                } else {
+                    dbs.forEach(db => {
+                        const item = document.createElement('div');
+                        item.className = 'data-item';
+                        item.textContent = `Base: ${db.name} (version: ${db.version})`;
+                        indexedDBDiv.appendChild(item);
+                    });
+                }
+            } catch (error) {
+                const item = document.createElement('div');
+                item.className = 'data-item';
+                item.textContent = `Erreur: ${error.message}`;
+                indexedDBDiv.appendChild(item);
+            }
+        }
+
+        async function simulateLogout() {
+            log('Simulation du logout...', 'info');
+            
+            // Nettoyer localStorage
+            const keysToRemove = [
+                'userInfo',
+                'activeCheckId',
+                'activeParcoursId',
+                'app-flow-state',
+                'checkout-flow-state',
+                'checkin-flow-state',
+                ...Object.keys(localStorage).filter(key => key.startsWith('uploaded_image_'))
+            ];
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+            
+            log(`✅ ${keysToRemove.length} clés localStorage supprimées`, 'success');
+            
+            // Nettoyer sessionStorage
+            sessionStorage.clear();
+            log('✅ sessionStorage vidé', 'success');
+            
+            // Nettoyer IndexedDB
+            try {
+                const dbs = await indexedDB.databases();
+                for (const db of dbs) {
+                    indexedDB.deleteDatabase(db.name);
+                }
+                log(`✅ ${dbs.length} bases IndexedDB supprimées`, 'success');
+            } catch (error) {
+                log(`⚠️ Erreur nettoyage IndexedDB: ${error.message}`, 'error');
+            }
+            
+            log('🧹 Logout simulé avec succès', 'success');
+            checkData();
+        }
+
+        function clearAll() {
+            localStorage.clear();
+            sessionStorage.clear();
+            log('🗑️ Tout effacé', 'success');
+            checkData();
+        }
+
+        // Vérifier les données au chargement
+        window.addEventListener('load', () => {
+            checkData();
+        });
+    </script>
+</body>
+</html>
+

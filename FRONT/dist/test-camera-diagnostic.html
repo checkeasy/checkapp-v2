@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎥 Diagnostic Caméra - CheckEasy</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+      font-size: 2em;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+    .status {
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      background: #e3f2fd;
+      border-left: 6px solid #2196f3;
+      font-size: 1.1em;
+    }
+    .error {
+      background: #ffebee;
+      border-left-color: #f44336;
+    }
+    .success {
+      background: #e8f5e9;
+      border-left-color: #4caf50;
+    }
+    video {
+      width: 100%;
+      max-width: 640px;
+      border-radius: 12px;
+      margin: 20px auto;
+      background: #000;
+      display: block;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .button-group {
+      text-align: center;
+      margin: 25px 0;
+    }
+    button {
+      padding: 15px 30px;
+      margin: 8px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(45deg, #2196f3, #21cbf3);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-rear {
+      background: linear-gradient(45deg, #4caf50, #8bc34a);
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    .btn-front {
+      background: linear-gradient(45deg, #ff9800, #ffc107);
+      box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+    }
+    .btn-stop {
+      background: linear-gradient(45deg, #f44336, #e91e63);
+      box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+    }
+    .log {
+      background: #1a1a1a;
+      color: #00ff41;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 500px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 20px;
+      border: 2px solid #333;
+    }
+    .cameras-list {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 2px solid #e9ecef;
+    }
+    .camera-item {
+      padding: 15px;
+      background: white;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      transition: all 0.3s ease;
+    }
+    .camera-item.active {
+      border-color: #4caf50;
+      background: #e8f5e9;
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    }
+    .camera-label {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .instructions {
+      background: #fff3cd;
+      border: 2px solid #ffeaa7;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .instructions h3 {
+      color: #856404;
+      margin-bottom: 10px;
+    }
+    .instructions ol {
+      color: #856404;
+      margin-left: 20px;
+    }
+    .instructions li {
+      margin: 8px 0;
+    }
+    .copy-btn {
+      background: linear-gradient(45deg, #9c27b0, #e91e63);
+      box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎥 Diagnostic Caméra</h1>
+    <p class="subtitle">Test des caméras iPhone/Android pour CheckEasy</p>
+    
+    <div class="instructions">
+      <h3>📋 Instructions :</h3>
+      <ol>
+        <li><strong>Cliquez</strong> sur "📷 Tester Caméra ARRIÈRE"</li>
+        <li><strong>Autorisez</strong> l'accès à la caméra dans la popup</li>
+        <li><strong>Vérifiez</strong> si la vidéo s'affiche</li>
+        <li><strong>Cliquez</strong> sur "📋 Copier les logs" et envoyez-les moi</li>
+      </ol>
+    </div>
+    
+    <div id="deviceInfo" class="status"></div>
+    
+    <div class="button-group">
+      <button class="btn-rear" onclick="testCamera('environment')">📷 Tester Caméra ARRIÈRE</button>
+      <button class="btn-front" onclick="testCamera('user')">🤳 Tester Caméra AVANT</button>
+      <button class="btn-stop" onclick="stopCamera()">⏹️ Arrêter</button>
+      <button class="copy-btn" onclick="copyLogs()">📋 Copier les logs</button>
+    </div>
+    
+    <video id="video" autoplay playsinline muted></video>
+    
+    <div id="camerasList" class="cameras-list" style="display:none;"></div>
+    
+    <div id="log" class="log">🚀 Prêt pour le diagnostic...\n</div>
+  </div>
+
+  <script>
+    let currentStream = null;
+    let availableCameras = [];
+    let allLogs = [];
+    
+    // Fonction de log avec couleurs
+    function log(message, type = 'info') {
+      const logDiv = document.getElementById('log');
+      const emoji = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '📝';
+      const timestamp = new Date().toLocaleTimeString();
+      const color = type === 'error' ? '#ff4444' : type === 'success' ? '#44ff44' : type === 'warning' ? '#ffaa44' : '#00ff41';
+      
+      const logEntry = `[${timestamp}] ${emoji} ${message}`;
+      allLogs.push(logEntry);
+      
+      logDiv.innerHTML += `<span style="color: #888">[${timestamp}]</span> <span style="color: ${color}">${emoji} ${message}</span>\n`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+      console.log(logEntry);
+    }
+    
+    // Copier les logs dans le presse-papiers
+    function copyLogs() {
+      const logsText = allLogs.join('\n');
+      navigator.clipboard.writeText(logsText).then(() => {
+        alert('📋 Logs copiés dans le presse-papiers !\n\nVous pouvez maintenant les coller et me les envoyer.');
+      }).catch(() => {
+        // Fallback pour les navigateurs qui ne supportent pas clipboard API
+        const textarea = document.createElement('textarea');
+        textarea.value = logsText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('📋 Logs copiés ! (méthode fallback)\n\nVous pouvez maintenant les coller et me les envoyer.');
+      });
+    }
+    
+    // Détecter l'appareil avec plus de détails
+    function detectDevice() {
+      const ua = navigator.userAgent;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+      const isAndroid = /Android/.test(ua);
+      const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
+      const isChrome = /Chrome/.test(ua);
+      const isFirefox = /Firefox/.test(ua);
+      
+      let browser = 'Inconnu';
+      if (isIOS) browser = 'Safari iOS';
+      else if (isAndroid && isChrome) browser = 'Chrome Android';
+      else if (isAndroid) browser = 'Android Browser';
+      else if (isChrome) browser = 'Chrome Desktop';
+      else if (isFirefox) browser = 'Firefox';
+      else if (isSafari) browser = 'Safari Desktop';
+      
+      const info = {
+        platform: navigator.platform,
+        userAgent: ua,
+        isIOS,
+        isAndroid,
+        isSafari,
+        isChrome,
+        browser
+      };
+      
+      document.getElementById('deviceInfo').innerHTML = `
+        <strong>🔍 Appareil détecté:</strong> ${info.browser}<br>
+        <strong>🖥️ Plateforme:</strong> ${info.platform}<br>
+        <strong>📱 User Agent:</strong> ${ua.substring(0, 100)}...
+      `;
+      
+      log(`🔍 Device: ${info.browser} / ${info.platform}`);
+      log(`📱 iOS: ${isIOS}, Android: ${isAndroid}, Safari: ${isSafari}`);
+      return info;
+    }
+    
+    // Énumérer les caméras avec détection intelligente
+    async function enumerateCameras() {
+      try {
+        log('🔍 === ÉNUMÉRATION DES CAMÉRAS ===', 'info');
+        
+        // D'abord demander la permission générale
+        log('📱 Demande permission caméra générale...');
+        const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        log('✅ Permission caméra accordée !', 'success');
+        
+        // Arrêter le stream temporaire
+        tempStream.getTracks().forEach(track => track.stop());
+        await new Promise(resolve => setTimeout(resolve, 500)); // Délai plus long
+        
+        // Maintenant énumérer les devices
+        log('📱 Énumération des devices...');
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        availableCameras = devices.filter(d => d.kind === 'videoinput');
+        
+        log(`✅ ${availableCameras.length} caméra(s) détectée(s) !`, 'success');
+        
+        // Afficher la liste des caméras
+        const camerasList = document.getElementById('camerasList');
+        camerasList.style.display = 'block';
+        camerasList.innerHTML = '<h3>📹 Caméras disponibles :</h3>';
+        
+        availableCameras.forEach((cam, index) => {
+          const label = cam.label || `Caméra ${index + 1}`;
+          const id = cam.deviceId.substring(0, 15);
+          
+          // Détection intelligente du type de caméra
+          const labelLower = label.toLowerCase();
+          let facing = '❓ Type inconnu';
+          let facingClass = '';
+          
+          if (labelLower.includes('front') || labelLower.includes('face') || labelLower.includes('user') || labelLower.includes('selfie')) {
+            facing = '🤳 CAMÉRA AVANT';
+            facingClass = 'front';
+          } else if (labelLower.includes('back') || labelLower.includes('rear') || labelLower.includes('environment') || labelLower.includes('main')) {
+            facing = '📷 CAMÉRA ARRIÈRE';
+            facingClass = 'rear';
+          }
+          
+          camerasList.innerHTML += `
+            <div class="camera-item ${facingClass}" id="cam-${index}">
+              <div class="camera-label">${facing}</div>
+              <strong>📝 Nom:</strong> ${label}<br>
+              <strong>🆔 ID:</strong> ${id}...
+            </div>
+          `;
+          
+          log(`  ${facing} - "${label}" (${id}...)`);
+        });
+        
+        return availableCameras;
+      } catch (err) {
+        log(`❌ ERREUR énumération: ${err.name} - ${err.message}`, 'error');
+        log(`❌ Stack: ${err.stack}`, 'error');
+        throw err;
+      }
+    }
+    
+    // Tester une caméra avec toutes les stratégies
+    async function testCamera(facingMode) {
+      log(`\n🎬 ========== TEST CAMÉRA ${facingMode.toUpperCase()} ==========`, 'info');
+      
+      stopCamera();
+      
+      const video = document.getElementById('video');
+      const deviceInfo = detectDevice();
+      
+      try {
+        // Énumérer les caméras si pas encore fait
+        if (availableCameras.length === 0) {
+          await enumerateCameras();
+        }
+        
+        let stream = null;
+        let successStrategy = null;
+        
+        // === STRATÉGIE 1: facingMode avec ideal (recommandé WebRTC) ===
+        if (!stream) {
+          log(`📱 STRATÉGIE 1: facingMode ideal "${facingMode}"`, 'info');
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              audio: false,
+              video: {
+                facingMode: { ideal: facingMode },
+                width: { ideal: deviceInfo.isIOS ? 1280 : 1920 },
+                height: { ideal: deviceInfo.isIOS ? 720 : 1080 }
+              }
+            });
+            successStrategy = 'Stratégie 1 (ideal facingMode)';
+            log('✅ STRATÉGIE 1 RÉUSSIE !', 'success');
+          } catch (err) {
+            log(`⚠️ Stratégie 1 échouée: ${err.name} - ${err.message}`, 'warning');
+          }
+        }
+        
+        // === STRATÉGIE 2: facingMode direct ===
+        if (!stream) {
+          log(`📱 STRATÉGIE 2: facingMode direct "${facingMode}"`, 'info');
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              audio: false,
+              video: {
+                facingMode: facingMode,
+                width: { ideal: deviceInfo.isIOS ? 1280 : 1920 }
+              }
+            });
+            successStrategy = 'Stratégie 2 (direct facingMode)';
+            log('✅ STRATÉGIE 2 RÉUSSIE !', 'success');
+          } catch (err) {
+            log(`⚠️ Stratégie 2 échouée: ${err.name} - ${err.message}`, 'warning');
+          }
+        }
+        
+        // === STRATÉGIE 3: deviceId exact ===
+        if (!stream && availableCameras.length > 0) {
+          log(`📱 STRATÉGIE 3: deviceId exact`, 'info');
+          const wantFront = facingMode === 'user';
+          
+          const targetCamera = availableCameras.find(cam => {
+            const label = cam.label.toLowerCase();
+            if (wantFront) {
+              return label.includes('front') || label.includes('face') || label.includes('user') || label.includes('selfie');
+            } else {
+              return label.includes('back') || label.includes('rear') || label.includes('environment') || label.includes('main');
+            }
+          });
+          
+          if (targetCamera) {
+            log(`  🎯 Ciblage caméra: "${targetCamera.label}"`);
+            try {
+              stream = await navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: { deviceId: { exact: targetCamera.deviceId } }
+              });
+              successStrategy = 'Stratégie 3 (deviceId exact)';
+              log('✅ STRATÉGIE 3 RÉUSSIE !', 'success');
+            } catch (err) {
+              log(`⚠️ Stratégie 3 échouée: ${err.name} - ${err.message}`, 'warning');
+            }
+          } else {
+            log(`⚠️ Aucune caméra trouvée pour "${facingMode}"`, 'warning');
+          }
+        }
+        
+        // === STRATÉGIE 4: facingMode basique ===
+        if (!stream) {
+          log(`📱 STRATÉGIE 4: facingMode basique`, 'info');
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              audio: false,
+              video: { facingMode: facingMode }
+            });
+            successStrategy = 'Stratégie 4 (facingMode basique)';
+            log('✅ STRATÉGIE 4 RÉUSSIE !', 'success');
+          } catch (err) {
+            log(`⚠️ Stratégie 4 échouée: ${err.name} - ${err.message}`, 'warning');
+          }
+        }
+        
+        // === STRATÉGIE 5: deviceId ideal (fallback) ===
+        if (!stream && availableCameras.length > 0) {
+          log(`📱 STRATÉGIE 5: deviceId ideal (fallback)`, 'info');
+          const wantFront = facingMode === 'user';
+          
+          const targetCamera = availableCameras.find(cam => {
+            const label = cam.label.toLowerCase();
+            if (wantFront) {
+              return label.includes('front') || label.includes('face') || label.includes('user');
+            } else {
+              return label.includes('back') || label.includes('rear') || label.includes('environment');
+            }
+          });
+          
+          if (targetCamera) {
+            try {
+              stream = await navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: { deviceId: { ideal: targetCamera.deviceId } }
+              });
+              successStrategy = 'Stratégie 5 (deviceId ideal)';
+              log('✅ STRATÉGIE 5 RÉUSSIE !', 'success');
+            } catch (err) {
+              log(`⚠️ Stratégie 5 échouée: ${err.name} - ${err.message}`, 'warning');
+            }
+          }
+        }
+        
+        // Vérifier si on a un stream
+        if (!stream) {
+          throw new Error('❌ TOUTES LES STRATÉGIES ONT ÉCHOUÉ !');
+        }
+        
+        // === SUCCÈS: Configurer la vidéo ===
+        log(`\n🎉 === SUCCÈS avec ${successStrategy} ===`, 'success');
+        
+        currentStream = stream;
+        video.srcObject = stream;
+        
+        // Lecture de la vidéo
+        try {
+          await video.play();
+          log('✅ Vidéo en lecture !', 'success');
+        } catch (playErr) {
+          log(`⚠️ Erreur video.play(): ${playErr.message}`, 'warning');
+          // Essayer de forcer la lecture après un délai
+          setTimeout(() => {
+            video.play().catch(e => log(`⚠️ Deuxième tentative play() échouée: ${e.message}`, 'warning'));
+          }, 200);
+        }
+        
+        // === INFORMATIONS DU STREAM ===
+        const track = stream.getVideoTracks()[0];
+        const settings = track.getSettings();
+        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+        
+        log(`\n📹 === INFORMATIONS DU STREAM ===`, 'info');
+        log(`📝 Label: ${track.label}`);
+        log(`📝 FacingMode: ${settings.facingMode || 'N/A'}`);
+        log(`📝 Résolution: ${settings.width}x${settings.height}`);
+        log(`📝 DeviceId: ${settings.deviceId?.substring(0, 15)}...`);
+        log(`📝 FrameRate: ${settings.frameRate || 'N/A'}`);
+        
+        if (capabilities.facingMode) {
+          log(`📝 Capabilities facingMode: ${JSON.stringify(capabilities.facingMode)}`);
+        }
+        
+        // Mettre à jour l'UI
+        document.querySelectorAll('.camera-item').forEach(el => el.classList.remove('active'));
+        const activeIndex = availableCameras.findIndex(cam => cam.deviceId === settings.deviceId);
+        if (activeIndex >= 0) {
+          document.getElementById(`cam-${activeIndex}`).classList.add('active');
+          log(`✅ Caméra active: Index ${activeIndex}`, 'success');
+        }
+        
+        log(`\n🎯 === TEST TERMINÉ AVEC SUCCÈS ===`, 'success');
+        
+      } catch (err) {
+        log(`\n💥 === ÉCHEC TOTAL ===`, 'error');
+        log(`❌ Erreur: ${err.name} - ${err.message}`, 'error');
+        log(`❌ Stack: ${err.stack}`, 'error');
+        
+        // Afficher une alerte utilisateur
+        alert(`❌ Erreur caméra: ${err.message}\n\nVérifiez les logs en bas pour plus de détails.`);
+      }
+    }
+    
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => {
+          track.stop();
+          log(`⏹️ Track arrêté: ${track.label}`);
+        });
+        currentStream = null;
+        document.getElementById('video').srcObject = null;
+        log('⏹️ Caméra arrêtée', 'info');
+        
+        // Retirer la classe active
+        document.querySelectorAll('.camera-item').forEach(el => el.classList.remove('active'));
+      }
+    }
+    
+    // Initialisation au chargement
+    window.addEventListener('DOMContentLoaded', () => {
+      log('🚀 Page de diagnostic chargée');
+      const deviceInfo = detectDevice();
+      log('📱 Cliquez sur "📷 Tester Caméra ARRIÈRE" pour commencer');
+      log('⚠️ IMPORTANT: Utilisez le bouton "📋 Copier les logs" pour me les envoyer !');
+    });
+    
+    // Gestion des erreurs globales
+    window.addEventListener('error', (e) => {
+      log(`❌ Erreur JavaScript: ${e.message}`, 'error');
+    });
+    
+    window.addEventListener('unhandledrejection', (e) => {
+      log(`❌ Promise rejetée: ${e.reason}`, 'error');
+    });
+  </script>
+</body>
+</html>

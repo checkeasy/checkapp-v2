@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Force Redirect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .error { background: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; }
+        .info { background: rgba(33, 150, 243, 0.2); border: 1px solid #2196F3; }
+        pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Test Force Redirect</h1>
+        <p>Test pour forcer la redirection depuis /welcome avec checkid</p>
+        
+        <div class="status info">
+            <strong>URL Actuelle:</strong> <span id="current-url"></span>
+        </div>
+        
+        <div class="status info">
+            <strong>Paramètres:</strong>
+            <pre id="url-params"></pre>
+        </div>
+        
+        <button onclick="forceRedirectToCheckinHome()">Forcer Redirection vers CheckinHome</button>
+        <button onclick="forceRedirectToCheckin()">Forcer Redirection vers Checkin</button>
+        <button onclick="testRouteRestoration()">Tester Route Restoration</button>
+        
+        <div class="status error">
+            <strong>🚨 PROBLÈME IDENTIFIÉ:</strong> RouteRestoration ne redirige pas depuis /welcome malgré la présence de checkid.
+        </div>
+        
+        <h3>📋 Étapes de Debug</h3>
+        <ol>
+            <li>Ouvrez la console de votre navigateur</li>
+            <li>Rechargez votre app sur /welcome avec les paramètres</li>
+            <li>Cherchez les logs RouteRestoration</li>
+            <li>Vérifiez si vous voyez : <code>🔄 RouteRestoration: useEffect triggered</code></li>
+            <li>Vérifiez si vous voyez : <code>✅ RouteRestoration: Conditions met!</code></li>
+        </ol>
+        
+        <h3>🔍 Logs à Chercher</h3>
+        <ul>
+            <li><code>🔄 RouteRestoration: useEffect triggered</code></li>
+            <li><code>⏳ RouteRestoration: Waiting for authentication...</code></li>
+            <li><code>🔄 RouteRestoration: Starting restoration process</code></li>
+            <li><code>🔍 RouteRestoration: Checking redirection conditions</code></li>
+            <li><code>✅ RouteRestoration: Conditions met!</code></li>
+            <li><code>❌ RouteRestoration: Redirection conditions NOT met</code></li>
+        </ul>
+    </div>
+
+    <script>
+        function updateInfo() {
+            document.getElementById('current-url').textContent = window.location.href;
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const params = {
+                parcours: urlParams.get('parcours'),
+                checkid: urlParams.get('checkid'),
+                hasParcoursParam: urlParams.has('parcours'),
+                hasCheckidParam: urlParams.has('checkid')
+            };
+            document.getElementById('url-params').textContent = JSON.stringify(params, null, 2);
+        }
+        
+        function forceRedirectToCheckinHome() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours');
+            const checkid = urlParams.get('checkid');
+            
+            let targetUrl = '/checkin-home';
+            if (parcours && checkid) {
+                targetUrl += `?parcours=${parcours}&checkid=${checkid}`;
+            }
+            
+            console.log('🔄 Force redirect to:', targetUrl);
+            window.location.href = targetUrl;
+        }
+        
+        function forceRedirectToCheckin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours');
+            const checkid = urlParams.get('checkid');
+            
+            let targetUrl = '/checkin';
+            if (parcours && checkid) {
+                targetUrl += `?parcours=${parcours}&checkid=${checkid}`;
+            }
+            
+            console.log('🔄 Force redirect to:', targetUrl);
+            window.location.href = targetUrl;
+        }
+        
+        function testRouteRestoration() {
+            console.log('🧪 Testing Route Restoration Logic');
+            console.log('Current location:', window.location.href);
+            console.log('localStorage data:', {
+                activeCheckId: localStorage.getItem('activeCheckId'),
+                lastPath: localStorage.getItem('checkeasy_last_path'),
+                urlParams: localStorage.getItem('checkeasy_url_params'),
+                userInfo: localStorage.getItem('userInfo')
+            });
+            
+            // Simuler la logique de RouteRestoration
+            const currentPath = window.location.pathname;
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasCheckid = urlParams.has('checkid');
+            
+            console.log('Route Restoration conditions:', {
+                currentPath,
+                isWelcome: currentPath === '/welcome',
+                hasCheckid,
+                shouldRedirect: currentPath === '/welcome' && hasCheckid
+            });
+        }
+        
+        updateInfo();
+        
+        console.log('🚨 Test Force Redirect chargé');
+        console.log('📍 URL actuelle:', window.location.href);
+    </script>
+</body>
+</html>

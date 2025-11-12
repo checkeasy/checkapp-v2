@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic IndexedDB - CheckEasy</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 0; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        .info { color: #17a2b8; }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .danger {
+            background: #dc3545;
+        }
+        .danger:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnostic IndexedDB - CheckEasy</h1>
+    
+    <div class="card">
+        <h2>Actions rapides</h2>
+        <button onclick="checkAllDatabases()">🔄 Vérifier toutes les bases</button>
+        <button onclick="clearCheckEasyCache()" class="danger">🗑️ Vider CheckEasyCache</button>
+        <button onclick="clearCheckeasyDb()" class="danger">🗑️ Vider checkeasy_db</button>
+        <button onclick="resetAll()" class="danger">⚠️ TOUT RÉINITIALISER</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        async function checkAllDatabases() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="card"><h2>Vérification en cours...</h2></div>';
+            
+            let html = '';
+            
+            // Vérifier CheckEasyCache
+            html += await checkDatabase('CheckEasyCache', 2, 'parcours');
+            
+            // Vérifier checkeasy_db
+            html += await checkDatabase('checkeasy_db', 2, 'checkSessions');
+            
+            results.innerHTML = html;
+        }
+
+        async function checkDatabase(dbName, expectedVersion, storeName) {
+            return new Promise((resolve) => {
+                let html = `<div class="card"><h2>📂 ${dbName}</h2>`;
+                
+                const request = indexedDB.open(dbName);
+                
+                request.onerror = () => {
+                    html += `<p class="error">❌ Erreur d'ouverture: ${request.error}</p></div>`;
+                    resolve(html);
+                };
+                
+                request.onsuccess = () => {
+                    const db = request.result;
+                    const actualVersion = db.version;
+                    
+                    html += `<p><strong>Version actuelle:</strong> ${actualVersion}</p>`;
+                    html += `<p><strong>Version attendue:</strong> ${expectedVersion}</p>`;
+                    
+                    if (actualVersion !== expectedVersion) {
+                        html += `<p class="warning">⚠️ Version différente de celle attendue!</p>`;
+                    } else {
+                        html += `<p class="success">✅ Version correcte</p>`;
+                    }
+                    
+                    html += `<p><strong>Stores disponibles:</strong> ${Array.from(db.objectStoreNames).join(', ') || 'Aucun'}</p>`;
+                    
+                    if (db.objectStoreNames.contains(storeName)) {
+                        html += `<p class="success">✅ Store "${storeName}" trouvé</p>`;
+                        
+                        // Compter les entrées
+                        const transaction = db.transaction([storeName], 'readonly');
+                        const store = transaction.objectStore(storeName);
+                        const countRequest = store.count();
+                        
+                        countRequest.onsuccess = () => {
+                            html += `<p><strong>Nombre d'entrées:</strong> ${countRequest.result}</p>`;
+                            
+                            // Lister les clés
+                            const getAllKeysRequest = store.getAllKeys();
+                            getAllKeysRequest.onsuccess = () => {
+                                const keys = getAllKeysRequest.result;
+                                if (keys.length > 0) {
+                                    html += `<p><strong>Clés:</strong></p><pre>${JSON.stringify(keys, null, 2)}</pre>`;
+                                    
+                                    // Afficher le premier élément comme exemple
+                                    const getRequest = store.get(keys[0]);
+                                    getRequest.onsuccess = () => {
+                                        html += `<p><strong>Exemple de données (première entrée):</strong></p>`;
+                                        html += `<pre>${JSON.stringify(getRequest.result, null, 2)}</pre>`;
+                                        html += '</div>';
+                                        db.close();
+                                        resolve(html);
+                                    };
+                                } else {
+                                    html += `<p class="warning">⚠️ Aucune donnée dans le store</p></div>`;
+                                    db.close();
+                                    resolve(html);
+                                }
+                            };
+                        };
+                    } else {
+                        html += `<p class="error">❌ Store "${storeName}" non trouvé</p></div>`;
+                        db.close();
+                        resolve(html);
+                    }
+                };
+            });
+        }
+
+        async function clearCheckEasyCache() {
+            if (!confirm('Êtes-vous sûr de vouloir vider CheckEasyCache ?')) return;
+            
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.deleteDatabase('CheckEasyCache');
+                
+                request.onsuccess = () => {
+                    alert('✅ CheckEasyCache vidée avec succès');
+                    checkAllDatabases();
+                    resolve();
+                };
+                
+                request.onerror = () => {
+                    alert('❌ Erreur lors de la suppression de CheckEasyCache');
+                    reject(request.error);
+                };
+            });
+        }
+
+        async function clearCheckeasyDb() {
+            if (!confirm('Êtes-vous sûr de vouloir vider checkeasy_db ?')) return;
+            
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.deleteDatabase('checkeasy_db');
+                
+                request.onsuccess = () => {
+                    alert('✅ checkeasy_db vidée avec succès');
+                    checkAllDatabases();
+                    resolve();
+                };
+                
+                request.onerror = () => {
+                    alert('❌ Erreur lors de la suppression de checkeasy_db');
+                    reject(request.error);
+                };
+            });
+        }
+
+        async function resetAll() {
+            if (!confirm('⚠️ ATTENTION: Cela va supprimer TOUTES les données IndexedDB. Continuer ?')) return;
+            
+            try {
+                await clearCheckEasyCache();
+                await clearCheckeasyDb();
+                
+                // Vider aussi localStorage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                alert('✅ Toutes les données ont été réinitialisées');
+                checkAllDatabases();
+            } catch (error) {
+                alert('❌ Erreur lors de la réinitialisation: ' + error.message);
+            }
+        }
+
+        // Vérification automatique au chargement
+        window.addEventListener('load', checkAllDatabases);
+    </script>
+</body>
+</html>
+

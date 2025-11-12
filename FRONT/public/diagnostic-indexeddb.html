@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnostic IndexedDB - CheckEasy</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #1a1a1a;
+      color: #00ff00;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #ffff00;
+      border-bottom: 2px solid #ffff00;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #00ffff;
+      margin-top: 30px;
+    }
+    .section {
+      background: #2a2a2a;
+      padding: 15px;
+      margin: 20px 0;
+      border-left: 4px solid #00ff00;
+      border-radius: 4px;
+    }
+    .error {
+      color: #ff0000;
+      background: #4a0000;
+      padding: 10px;
+      border-left: 4px solid #ff0000;
+    }
+    .success {
+      color: #00ff00;
+      background: #004a00;
+      padding: 10px;
+      border-left: 4px solid #00ff00;
+    }
+    .warning {
+      color: #ffaa00;
+      background: #4a3a00;
+      padding: 10px;
+      border-left: 4px solid #ffaa00;
+    }
+    button {
+      background: #00ff00;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #00cc00;
+    }
+    pre {
+      background: #000;
+      padding: 15px;
+      overflow-x: auto;
+      border: 1px solid #333;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .stat-box {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 4px;
+      border: 2px solid #00ff00;
+    }
+    .stat-label {
+      color: #00ffff;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    .stat-value {
+      color: #ffff00;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    input {
+      background: #000;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      width: 400px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 DIAGNOSTIC INDEXEDDB - CheckEasy</h1>
+  
+  <div class="section">
+    <h2>📋 Session à analyser</h2>
+    <input type="text" id="checkIdInput" placeholder="check_1759691658695_ditqteqhx" value="check_1759691658695_ditqteqhx">
+    <button onclick="analyzeSession()">🔍 Analyser la session</button>
+    <button onclick="listAllSessions()">📊 Lister toutes les sessions</button>
+    <button onclick="listAllDatabases()">🗄️ Voir toutes les bases IndexedDB</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script>
+    const DB_NAME = 'checkeasy_db';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'checkSessions';
+
+    async function openDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+          const db = request.result;
+          // Vérifier que l'objectStore existe
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            reject(new Error(`Le store "${STORE_NAME}" n'existe pas dans la base "${DB_NAME}". Stores disponibles: ${Array.from(db.objectStoreNames).join(', ')}`));
+            return;
+          }
+          resolve(db);
+        };
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: 'checkId' });
+          }
+        };
+      });
+    }
+
+    async function getSession(checkId) {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readonly');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.get(checkId);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      });
+    }
+
+    async function getAllSessions() {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readonly');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.getAll();
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      });
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function analyzePhotoData(photo) {
+      const hasData = !!photo.photoData;
+      const hasUrl = !!photo.url;
+      const hasDataUrl = !!photo.dataUrl;
+      
+      let dataType = 'AUCUNE';
+      let dataSize = 0;
+      
+      if (hasData) {
+        dataType = photo.photoData.startsWith('data:image') ? 'BASE64' : 
+                   photo.photoData.startsWith('http') ? 'URL' : 'AUTRE';
+        dataSize = photo.photoData.length;
+      } else if (hasUrl) {
+        dataType = photo.url.startsWith('data:image') ? 'BASE64' : 
+                   photo.url.startsWith('http') ? 'URL' : 'AUTRE';
+        dataSize = photo.url.length;
+      } else if (hasDataUrl) {
+        dataType = photo.dataUrl.startsWith('data:image') ? 'BASE64' : 
+                   photo.dataUrl.startsWith('http') ? 'URL' : 'AUTRE';
+        dataSize = photo.dataUrl.length;
+      }
+
+      return { hasData, hasUrl, hasDataUrl, dataType, dataSize };
+    }
+
+    async function analyzeSession() {
+      const checkId = document.getElementById('checkIdInput').value.trim();
+      const resultsDiv = document.getElementById('results');
+      
+      if (!checkId) {
+        resultsDiv.innerHTML = '<div class="error">❌ Veuillez entrer un CheckID</div>';
+        return;
+      }
+
+      resultsDiv.innerHTML = '<div class="warning">⏳ Analyse en cours...</div>';
+
+      try {
+        const session = await getSession(checkId);
+        
+        if (!session) {
+          resultsDiv.innerHTML = `
+            <div class="error">
+              <h2>❌ SESSION INTROUVABLE</h2>
+              <p>Le CheckID <code>${checkId}</code> n'existe pas dans IndexedDB.</p>
+              <p>💡 Utilisez le bouton "Lister toutes les sessions" pour voir les CheckIDs disponibles.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Analyse des interactions
+        const interactions = session.progress?.interactions || {};
+        const photosTaken = interactions.photosTaken || {};
+        const checkboxStates = interactions.checkboxStates || {};
+        const buttonClicks = interactions.buttonClicks || {};
+        const signalements = interactions.signalements || {};
+
+        // Statistiques photos
+        const photoIds = Object.keys(photosTaken);
+        const totalPhotos = photoIds.length;
+        let totalPhotoSize = 0;
+        let photosWithData = 0;
+        let photosWithoutData = 0;
+
+        const photoDetails = [];
+        photoIds.forEach(photoId => {
+          const photoArray = Array.isArray(photosTaken[photoId]) ? photosTaken[photoId] : [photosTaken[photoId]];
+          photoArray.forEach(photo => {
+            const analysis = analyzePhotoData(photo);
+            if (analysis.hasData || analysis.hasUrl || analysis.hasDataUrl) {
+              photosWithData++;
+              totalPhotoSize += analysis.dataSize;
+            } else {
+              photosWithoutData++;
+            }
+            photoDetails.push({ photoId, ...photo, ...analysis });
+          });
+        });
+
+        // Génération du rapport
+        let html = `
+          <div class="success">
+            <h2>✅ SESSION TROUVÉE</h2>
+            <p><strong>CheckID:</strong> ${checkId}</p>
+            <p><strong>Status:</strong> ${session.status}</p>
+            <p><strong>Flow Type:</strong> ${session.flowType}</p>
+            <p><strong>Créée le:</strong> ${new Date(session.createdAt).toLocaleString()}</p>
+            <p><strong>Dernière activité:</strong> ${new Date(session.lastActiveAt).toLocaleString()}</p>
+          </div>
+
+          <div class="section">
+            <h2>📊 STATISTIQUES GLOBALES</h2>
+            <div class="stats">
+              <div class="stat-box">
+                <div class="stat-label">📸 Photos totales</div>
+                <div class="stat-value">${totalPhotos}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">✅ Photos avec données</div>
+                <div class="stat-value">${photosWithData}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">❌ Photos sans données</div>
+                <div class="stat-value">${photosWithoutData}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">💾 Taille totale photos</div>
+                <div class="stat-value">${formatBytes(totalPhotoSize)}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">☑️ Checkboxes</div>
+                <div class="stat-value">${Object.keys(checkboxStates).length}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">🖱️ Button Clicks</div>
+                <div class="stat-value">${Object.keys(buttonClicks).length}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">🚨 Signalements</div>
+                <div class="stat-value">${Object.keys(signalements).length}</div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Diagnostic des photos
+        if (totalPhotos > 0) {
+          html += `
+            <div class="section">
+              <h2>📸 DÉTAIL DES PHOTOS (${totalPhotos})</h2>
+          `;
+
+          if (photosWithoutData > 0) {
+            html += `
+              <div class="error">
+                <strong>⚠️ PROBLÈME DÉTECTÉ:</strong> ${photosWithoutData} photo(s) n'ont AUCUNE donnée sauvegardée !
+                <br>Ces photos ne pourront PAS être restaurées après F5.
+              </div>
+            `;
+          }
+
+          photoDetails.forEach((photo, index) => {
+            const statusClass = (photo.hasData || photo.hasUrl || photo.hasDataUrl) ? 'success' : 'error';
+            const statusIcon = (photo.hasData || photo.hasUrl || photo.hasDataUrl) ? '✅' : '❌';
+            
+            html += `
+              <div class="${statusClass}" style="margin: 10px 0;">
+                <strong>${statusIcon} Photo ${index + 1}: ${photo.photoId}</strong><br>
+                TaskID: <code>${photo.taskId || 'N/A'}</code><br>
+                PieceID: <code>${photo.pieceId || 'N/A'}</code><br>
+                EtapeID: <code>${photo.etapeId || 'N/A'}</code><br>
+                Type de données: <strong>${photo.dataType}</strong><br>
+                Taille: ${formatBytes(photo.dataSize)}<br>
+                Timestamp: ${photo.timestamp || 'N/A'}<br>
+                <details>
+                  <summary style="cursor: pointer; color: #00ffff;">🔍 Voir la structure complète</summary>
+                  <pre>${JSON.stringify(photo, null, 2)}</pre>
+                </details>
+              </div>
+            `;
+          });
+
+          html += `</div>`;
+        } else {
+          html += `
+            <div class="warning">
+              <h2>⚠️ AUCUNE PHOTO SAUVEGARDÉE</h2>
+              <p>Le champ <code>progress.interactions.photosTaken</code> est vide.</p>
+              <p><strong>Cause possible:</strong></p>
+              <ul>
+                <li>Les photos n'ont jamais été prises</li>
+                <li>Le système de sauvegarde ne fonctionne pas</li>
+                <li>interactionTracker n'est pas synchronisé avec le CheckID</li>
+              </ul>
+            </div>
+          `;
+        }
+
+        // Checkboxes
+        if (Object.keys(checkboxStates).length > 0) {
+          html += `
+            <div class="section">
+              <h2>☑️ CHECKBOXES (${Object.keys(checkboxStates).length})</h2>
+              <pre>${JSON.stringify(checkboxStates, null, 2)}</pre>
+            </div>
+          `;
+        }
+
+        // Button Clicks
+        if (Object.keys(buttonClicks).length > 0) {
+          html += `
+            <div class="section">
+              <h2>🖱️ BUTTON CLICKS (${Object.keys(buttonClicks).length})</h2>
+              <pre>${JSON.stringify(Object.keys(buttonClicks), null, 2)}</pre>
+            </div>
+          `;
+        }
+
+        // Signalements
+        if (Object.keys(signalements).length > 0) {
+          html += `
+            <div class="section">
+              <h2>🚨 SIGNALEMENTS (${Object.keys(signalements).length})</h2>
+              <pre>${JSON.stringify(signalements, null, 2)}</pre>
+            </div>
+          `;
+        }
+
+        // Structure complète
+        html += `
+          <div class="section">
+            <h2>🗂️ STRUCTURE COMPLÈTE DE LA SESSION</h2>
+            <details>
+              <summary style="cursor: pointer; color: #00ffff;">🔍 Voir la structure complète</summary>
+              <pre>${JSON.stringify(session, null, 2)}</pre>
+            </details>
+          </div>
+        `;
+
+        // Diagnostic automatique
+        html += `
+          <div class="section">
+            <h2>🔬 DIAGNOSTIC AUTOMATIQUE</h2>
+        `;
+
+        const diagnostics = [];
+        
+        if (totalPhotos === 0) {
+          diagnostics.push({
+            severity: 'error',
+            message: '❌ CRITIQUE: Aucune photo n\'est sauvegardée dans IndexedDB',
+            solution: 'Vérifiez que interactionTracker.setCurrentCheckId() est appelé AVANT la prise de photo'
+          });
+        } else if (photosWithoutData > 0) {
+          diagnostics.push({
+            severity: 'error',
+            message: `❌ CRITIQUE: ${photosWithoutData} photo(s) sans données`,
+            solution: 'Les photos sont trackées mais les données (base64/URL) ne sont pas sauvegardées'
+          });
+        } else if (photosWithData > 0) {
+          diagnostics.push({
+            severity: 'success',
+            message: `✅ OK: ${photosWithData} photo(s) avec données complètes`,
+            solution: 'Les photos SONT sauvegardées. Si elles ne s\'affichent pas, le problème est dans la RESTAURATION.'
+          });
+        }
+
+        if (Object.keys(checkboxStates).length === 0) {
+          diagnostics.push({
+            severity: 'warning',
+            message: '⚠️ Aucune checkbox sauvegardée',
+            solution: 'Soit aucune checkbox n\'a été cochée, soit le tracking ne fonctionne pas'
+          });
+        }
+
+        diagnostics.forEach(diag => {
+          html += `
+            <div class="${diag.severity}">
+              <strong>${diag.message}</strong><br>
+              💡 Solution: ${diag.solution}
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+
+        resultsDiv.innerHTML = html;
+
+      } catch (error) {
+        resultsDiv.innerHTML = `
+          <div class="error">
+            <h2>❌ ERREUR</h2>
+            <p>${error.message}</p>
+            <pre>${error.stack}</pre>
+          </div>
+        `;
+      }
+    }
+
+    async function listAllSessions() {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '<div class="warning">⏳ Chargement des sessions...</div>';
+
+      try {
+        const sessions = await getAllSessions();
+        
+        if (sessions.length === 0) {
+          resultsDiv.innerHTML = `
+            <div class="warning">
+              <h2>⚠️ AUCUNE SESSION TROUVÉE</h2>
+              <p>IndexedDB ne contient aucune session CheckEasy.</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = `
+          <div class="success">
+            <h2>📊 ${sessions.length} SESSION(S) TROUVÉE(S)</h2>
+          </div>
+        `;
+
+        sessions.forEach((session, index) => {
+          const interactions = session.progress?.interactions || {};
+          const photosCount = Object.keys(interactions.photosTaken || {}).length;
+          const checkboxesCount = Object.keys(interactions.checkboxStates || {}).length;
+          const buttonsCount = Object.keys(interactions.buttonClicks || {}).length;
+
+          html += `
+            <div class="section">
+              <h3>Session ${index + 1}</h3>
+              <p><strong>CheckID:</strong> <code>${session.checkId}</code> 
+                <button onclick="document.getElementById('checkIdInput').value='${session.checkId}';analyzeSession()">🔍 Analyser</button>
+              </p>
+              <p><strong>Type:</strong> ${session.flowType} | <strong>Status:</strong> ${session.status}</p>
+              <p><strong>Créée:</strong> ${new Date(session.createdAt).toLocaleString()}</p>
+              <p><strong>Photos:</strong> ${photosCount} | <strong>Checkboxes:</strong> ${checkboxesCount} | <strong>Boutons:</strong> ${buttonsCount}</p>
+            </div>
+          `;
+        });
+
+        resultsDiv.innerHTML = html;
+
+      } catch (error) {
+        resultsDiv.innerHTML = `
+          <div class="error">
+            <h2>❌ ERREUR</h2>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    async function listAllDatabases() {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '<div class="warning">⏳ Scan des bases IndexedDB...</div>';
+
+      try {
+        // Obtenir toutes les bases de données
+        const databases = await indexedDB.databases();
+        
+        if (databases.length === 0) {
+          resultsDiv.innerHTML = `
+            <div class="warning">
+              <h2>⚠️ AUCUNE BASE INDEXEDDB TROUVÉE</h2>
+              <p>Aucune base IndexedDB n'existe dans ce navigateur.</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = `
+          <div class="success">
+            <h2>🗄️ ${databases.length} BASE(S) INDEXEDDB TROUVÉE(S)</h2>
+          </div>
+        `;
+
+        // Analyser chaque base
+        for (const dbInfo of databases) {
+          const dbName = dbInfo.name;
+          const dbVersion = dbInfo.version;
+
+          html += `
+            <div class="section">
+              <h3>📦 ${dbName}</h3>
+              <p><strong>Version:</strong> ${dbVersion}</p>
+          `;
+
+          try {
+            // Ouvrir la base pour voir ses stores
+            const db = await new Promise((resolve, reject) => {
+              const request = indexedDB.open(dbName);
+              request.onerror = () => reject(request.error);
+              request.onsuccess = () => resolve(request.result);
+            });
+
+            const storeNames = Array.from(db.objectStoreNames);
+            
+            if (storeNames.length === 0) {
+              html += `<p class="warning">⚠️ Aucun object store dans cette base</p>`;
+            } else {
+              html += `<p><strong>Object Stores (${storeNames.length}):</strong></p><ul>`;
+              
+              for (const storeName of storeNames) {
+                // Compter les entrées dans chaque store
+                const count = await new Promise((resolve, reject) => {
+                  const transaction = db.transaction([storeName], 'readonly');
+                  const store = transaction.objectStore(storeName);
+                  const countRequest = store.count();
+                  countRequest.onerror = () => reject(countRequest.error);
+                  countRequest.onsuccess = () => resolve(countRequest.result);
+                });
+
+                const isTargetStore = (dbName === DB_NAME && storeName === STORE_NAME);
+                const storeClass = isTargetStore ? 'success' : '';
+                const storeIcon = isTargetStore ? '🎯' : '📋';
+                
+                html += `<li class="${storeClass}">${storeIcon} <strong>${storeName}</strong>: ${count} entrée(s)`;
+                if (isTargetStore) {
+                  html += ` <span style="color: #00ff00;">← STORE CIBLE</span>`;
+                }
+                html += `</li>`;
+              }
+              
+              html += `</ul>`;
+            }
+
+            db.close();
+
+          } catch (error) {
+            html += `<p class="error">❌ Erreur lors de l'analyse: ${error.message}</p>`;
+          }
+
+          html += `</div>`;
+        }
+
+        // Ajouter un résumé
+        html += `
+          <div class="section">
+            <h2>🎯 Configuration attendue</h2>
+            <p>Base de données: <code>${DB_NAME}</code></p>
+            <p>Object Store: <code>${STORE_NAME}</code></p>
+        `;
+
+        const targetDb = databases.find(db => db.name === DB_NAME);
+        if (!targetDb) {
+          html += `
+            <div class="error">
+              <strong>❌ PROBLÈME: La base "${DB_NAME}" n'existe pas !</strong><br>
+              💡 Solution: Démarrer l'application CheckEasy pour créer la base
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="success">
+              ✅ La base "${DB_NAME}" existe (version ${targetDb.version})
+            </div>
+          `;
+        }
+
+        html += `</div>`;
+
+        resultsDiv.innerHTML = html;
+
+      } catch (error) {
+        resultsDiv.innerHTML = `
+          <div class="error">
+            <h2>❌ ERREUR</h2>
+            <p>${error.message}</p>
+            <pre>${error.stack}</pre>
+          </div>
+        `;
+      }
+    }
+
+    // Auto-analyse au chargement si un CheckID est fourni dans l'URL
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const checkId = urlParams.get('checkid');
+      if (checkId) {
+        document.getElementById('checkIdInput').value = checkId;
+        analyzeSession();
+      }
+    });
+  </script>
+</body>
+</html>
+

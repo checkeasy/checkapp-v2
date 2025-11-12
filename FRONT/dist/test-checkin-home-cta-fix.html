@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CheckinHome CTA Fix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success { background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; }
+        .error { background: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; }
+        .info { background: rgba(33, 150, 243, 0.2); border: 1px solid #2196F3; }
+        .warning { background: rgba(255, 193, 7, 0.2); border: 1px solid #FFC107; }
+        pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .scenario {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .scenario h4 {
+            color: #FFD700;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Test CheckinHome CTA Fix</h1>
+        <p>Ce test vérifie que le bouton CTA dans CheckinHome affiche la bonne action selon le contexte du parcours.</p>
+        
+        <div class="test-section">
+            <h3>📋 Scénarios de Test</h3>
+            
+            <div class="scenario">
+                <h4>Scénario 1: Client avec checkInAndCheckOut</h4>
+                <p><strong>Attendu:</strong> "Continuer mon état des lieux d'entrée" → /checkin</p>
+                <p><strong>Avant le fix:</strong> "Faire mon check out" → /checkout ❌</p>
+            </div>
+            
+            <div class="scenario">
+                <h4>Scénario 2: Client avec checkInOnly</h4>
+                <p><strong>Attendu:</strong> "Continuer mon check-in" → /checkin</p>
+                <p><strong>Avant le fix:</strong> "Faire mon check out" → /checkout ❌</p>
+            </div>
+            
+            <div class="scenario">
+                <h4>Scénario 3: Agent avec checkInAndCheckOut</h4>
+                <p><strong>Attendu:</strong> "Continuer le contrôle d'entrée" → /checkin</p>
+                <p><strong>Avant le fix:</strong> "Finaliser mon ménage" → /checkout ❌</p>
+            </div>
+            
+            <div class="scenario">
+                <h4>Scénario 4: Client avec checkOutOnly</h4>
+                <p><strong>Attendu:</strong> "Faire mon check out" → /checkout</p>
+                <p><strong>Avant le fix:</strong> "Faire mon check out" → /checkout ✅ (correct par hasard)</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Modifications Apportées</h3>
+            <ul>
+                <li>✅ Ajout d'une fonction <code>getCtaConfig()</code> dans CheckinHome.tsx</li>
+                <li>✅ Logique dynamique basée sur <code>user.type</code> et <code>parcours.takePicture</code></li>
+                <li>✅ Import de l'icône <code>Camera</code> pour les actions CheckIn</li>
+                <li>✅ Remplacement du CTA hardcodé par un CTA dynamique</li>
+                <li>✅ Logging détaillé pour le debugging</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Test Manuel</h3>
+            <p>Pour tester le fix :</p>
+            <ol>
+                <li>Allez sur votre application CheckEasy</li>
+                <li>Connectez-vous avec différents types d'utilisateurs (CLIENT, AGENT)</li>
+                <li>Démarrez un parcours CheckIn</li>
+                <li>Cliquez sur le bouton Home (🏠) pour revenir à CheckinHome</li>
+                <li>Vérifiez que le bouton CTA en bas affiche le bon texte et navigue vers la bonne page</li>
+                <li>Ouvrez la console pour voir les logs de debugging</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Code de la Fix</h3>
+            <pre><code>// 🎯 NOUVEAU: Déterminer la bonne action CTA selon le contexte du parcours
+const getCtaConfig = () => {
+  const userType = user?.type;
+  const parcoursInfo = currentParcours?.rawData;
+  
+  // SCÉNARIO 1: Agent/Gestionnaire avec checkInAndCheckOut → Continuer CheckIn
+  if ((isAgent || isGestionnaire) && isCheckInAndOut) {
+    return {
+      label: "Continuer le contrôle d'entrée",
+      action: () => navigatePreservingParams(navigate, '/checkin', currentCheckId),
+      icon: &lt;Camera className="h-4 w-4" /&gt;
+    };
+  }
+
+  // SCÉNARIO 2: Client avec checkInAndCheckOut → Continuer CheckIn
+  if (isClient && isCheckInAndOut) {
+    return {
+      label: "Continuer mon état des lieux d'entrée",
+      action: () => navigatePreservingParams(navigate, '/checkin', currentCheckId),
+      icon: &lt;Camera className="h-4 w-4" /&gt;
+    };
+  }
+
+  // ... autres scénarios
+};</code></pre>
+        </div>
+
+        <div class="status info">
+            <strong>✅ Fix Appliqué:</strong> Le bouton CTA dans CheckinHome utilise maintenant une logique dynamique pour déterminer la bonne action selon le type d'utilisateur et le type de parcours.
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Debugging</h3>
+            <p>Si le problème persiste, vérifiez dans la console les logs :</p>
+            <ul>
+                <li><code>🎯 CheckinHome: Détermination CTA:</code> - Affiche le contexte utilisé</li>
+                <li><code>🎯 CheckinHome: Navigation CTA dynamique:</code> - Affiche l'action exécutée</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        console.log('🎯 Test CheckinHome CTA Fix - Page chargée');
+        console.log('📝 Instructions:');
+        console.log('1. Testez avec différents types d\'utilisateurs');
+        console.log('2. Vérifiez que le CTA affiche le bon texte');
+        console.log('3. Vérifiez que la navigation va vers la bonne page');
+        console.log('4. Consultez les logs dans la console de l\'app');
+    </script>
+</body>
+</html>

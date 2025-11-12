@@ -1,0 +1,28 @@
+{
+  "rewrites": [
+    {
+      "source": "/:lang(en|fr|es|de|pt|ar)/:path*",
+      "destination": "/:path*"
+    },
+    {
+      "source": "/:lang(en|fr|es|de|pt|ar)",
+      "destination": "/"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=3600"
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,140 @@
+🌍 SÉLECTEURS CSS POUR WEGLOT - COPIER-COLLER
+
+Copie chaque ligne ci-dessous et ajoute-la dans Weglot Dashboard → Settings → App Settings → Add Dynamic
+
+---
+
+SECTION 1: TITRES ET TEXTES PRINCIPAUX
+=====================================
+
+Sélecteur: .page-title
+Description: Titres principaux (Séjour en cours, Check-in en cours, État des lieux)
+
+Sélecteur: .page-subtitle
+Description: Adresse et informations secondaires
+
+Sélecteur: .card-title
+Description: Titres des sections (Informations utiles, Voir les pièces, Consigne pour le ménage)
+
+Sélecteur: h1
+Description: Titres niveau 1 (Bienvenue, etc.)
+
+Sélecteur: h2
+Description: Titres niveau 2
+
+Sélecteur: h3
+Description: Titres niveau 3
+
+Sélecteur: h4
+Description: Titres niveau 4 (Consignes ménage, etc.)
+
+---
+
+SECTION 2: ÉLÉMENTS INTERACTIFS
+================================
+
+Sélecteur: button
+Description: Tous les boutons (CTA, Retour, Signaler, Voltar a, etc.)
+
+Sélecteur: [role="button"]
+Description: Éléments cliquables avec rôle button
+
+Sélecteur: a
+Description: Tous les liens
+
+Sélecteur: label
+Description: Labels des formulaires (Prénom, Nom, Dates du séjour, etc.)
+
+---
+
+SECTION 3: BADGES ET ÉTIQUETTES
+================================
+
+Sélecteur: .badge
+Description: Badges (WiFi, Parking, Accès, Horaires, Adresse, Check-in/out)
+
+Sélecteur: [class*="badge"]
+Description: Tous les éléments avec "badge" dans la classe
+
+---
+
+SECTION 4: TEXTE ET CONTENU
+============================
+
+Sélecteur: .caption
+Description: Texte petit (Heure d'arrivée, Photos à l'entrée, etc.)
+
+Sélecteur: .text-foreground
+Description: Texte principal
+
+Sélecteur: .text-muted-foreground
+Description: Texte secondaire (Réseau:, Mot de passe:, Check-in:, Check-out:)
+
+Sélecteur: p
+Description: Tous les paragraphes
+
+Sélecteur: span
+Description: Tous les spans (texte inline)
+
+Sélecteur: li
+Description: Éléments de liste (instructions, checkpoints)
+
+---
+
+SECTION 5: FORMULAIRES ET INPUTS
+=================================
+
+Sélecteur: input::placeholder
+Description: Placeholders (Votre prénom, Votre nom de famille, etc.)
+
+Sélecteur: [placeholder]
+Description: Tous les éléments avec placeholder
+
+---
+
+SECTION 6: DIALOGUES ET MODALES
+================================
+
+Sélecteur: [role="dialog"]
+Description: Contenu des dialogues et modales
+
+Sélecteur: [role="alertdialog"]
+Description: Dialogues d'alerte
+
+---
+
+SECTION 7: SECTIONS SPÉCIFIQUES
+================================
+
+Sélecteur: .typography
+Description: Tous les éléments Typography
+
+Sélecteur: [class*="title"]
+Description: Tous les éléments avec "title" dans la classe
+
+Sélecteur: [class*="label"]
+Description: Tous les éléments avec "label" dans la classe
+
+Sélecteur: [class*="heading"]
+Description: Tous les éléments avec "heading" dans la classe
+
+---
+
+SECTION 8: CONTENU DYNAMIQUE
+=============================
+
+Sélecteur: .card-content
+Description: Contenu des cartes
+
+Sélecteur: .dialog-content
+Description: Contenu des dialogues
+
+Sélecteur: [data-testid]
+Description: Éléments avec data-testid (pour les tests)
+
+---
+
+TOTAL: 30 sélecteurs
+TEMPS D'AJOUT: ~10-15 minutes
+COUVERTURE: ~99% des éléments non traduits
+

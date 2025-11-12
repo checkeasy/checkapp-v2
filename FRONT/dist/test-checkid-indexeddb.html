@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CheckID IndexedDB</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test CheckID IndexedDB</h1>
+    <p>Vérification des CheckID dans IndexedDB (checkeasy_db)</p>
+    
+    <div>
+        <button class="btn" onclick="checkIndexedDB()">1. Vérifier IndexedDB</button>
+        <button class="btn" onclick="listAllSessions()">2. Lister toutes les sessions</button>
+        <button class="btn" onclick="createTestSession()">3. Créer session test</button>
+        <button class="btn" onclick="checkLocalStorage()">4. Vérifier LocalStorage</button>
+        <button class="btn" onclick="clearAll()">5. Tout effacer</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function addResult(message, type = 'result') {
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            results.innerHTML = '';
+        }
+
+        // 1. Vérifier si IndexedDB existe
+        async function checkIndexedDB() {
+            clearResults();
+            addResult('<h3>🔍 Vérification IndexedDB...</h3>');
+
+            try {
+                const databases = await indexedDB.databases();
+                addResult(`<strong>Bases de données trouvées:</strong> ${databases.length}`, 'success');
+                
+                databases.forEach(db => {
+                    addResult(`
+                        <strong>Base:</strong> ${db.name} (version ${db.version})
+                    `);
+                });
+
+                // Vérifier checkeasy_db
+                const hasCheckeasyDB = databases.some(db => db.name === 'checkeasy_db');
+                if (hasCheckeasyDB) {
+                    addResult('✅ checkeasy_db trouvée!', 'success');
+                    await openAndInspectDB();
+                } else {
+                    addResult('❌ checkeasy_db NOT FOUND', 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        // Ouvrir et inspecter la DB
+        async function openAndInspectDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('checkeasy_db', 1);
+
+                request.onsuccess = (event) => {
+                    const db = event.target.result;
+                    const stores = Array.from(db.objectStoreNames);
+                    
+                    addResult(`
+                        <strong>Object Stores:</strong><br>
+                        ${stores.join('<br>') || 'Aucun store trouvé'}
+                    `);
+
+                    if (stores.includes('checkSessions')) {
+                        addResult('✅ Store checkSessions existe!', 'success');
+                    } else {
+                        addResult('❌ Store checkSessions MANQUANT', 'error');
+                    }
+
+                    db.close();
+                    resolve();
+                };
+
+                request.onerror = () => {
+                    addResult(`❌ Erreur ouverture DB: ${request.error}`, 'error');
+                    reject(request.error);
+                };
+            });
+        }
+
+        // 2. Lister toutes les sessions
+        async function listAllSessions() {
+            clearResults();
+            addResult('<h3>📋 Liste des sessions CheckID...</h3>');
+
+            try {
+                const sessions = await getAllSessions();
+                
+                if (sessions.length === 0) {
+                    addResult('⚠️ Aucune session trouvée dans IndexedDB', 'error');
+                    return;
+                }
+
+                addResult(`<strong>Sessions trouvées:</strong> ${sessions.length}`, 'success');
+
+                sessions.forEach((session, index) => {
+                    addResult(`
+                        <strong>Session ${index + 1}:</strong><br>
+                        <pre>${JSON.stringify(session, null, 2)}</pre>
+                    `);
+                });
+            } catch (error) {
+                addResult(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        // Récupérer toutes les sessions
+        async function getAllSessions() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('checkeasy_db', 1);
+
+                request.onsuccess = (event) => {
+                    const db = event.target.result;
+                    
+                    if (!db.objectStoreNames.contains('checkSessions')) {
+                        db.close();
+                        resolve([]);
+                        return;
+                    }
+
+                    const transaction = db.transaction(['checkSessions'], 'readonly');
+                    const store = transaction.objectStore('checkSessions');
+                    const getAllRequest = store.getAll();
+
+                    getAllRequest.onsuccess = () => {
+                        db.close();
+                        resolve(getAllRequest.result);
+                    };
+
+                    getAllRequest.onerror = () => {
+                        db.close();
+                        reject(getAllRequest.error);
+                    };
+                };
+
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // 3. Créer une session test
+        async function createTestSession() {
+            clearResults();
+            addResult('<h3>🆕 Création session test...</h3>');
+
+            const testSession = {
+                checkId: `check_test_${Date.now()}`,
+                userId: '0612345678',
+                parcoursId: 'test_parcours_123',
+                flowType: 'checkout',
+                status: 'active',
+                isFlowCompleted: false,
+                createdAt: new Date().toISOString(),
+                lastActiveAt: new Date().toISOString(),
+                progress: {
+                    currentPieceId: '',
+                    currentTaskIndex: 0,
+                    interactions: {}
+                }
+            };
+
+            try {
+                await saveSession(testSession);
+                addResult('✅ Session test créée avec succès!', 'success');
+                addResult(`
+                    <strong>CheckID:</strong> ${testSession.checkId}<br>
+                    <strong>UserId:</strong> ${testSession.userId}<br>
+                    <strong>FlowType:</strong> ${testSession.flowType}
+                `);
+            } catch (error) {
+                addResult(`❌ Erreur création session: ${error.message}`, 'error');
+            }
+        }
+
+        // Sauvegarder une session
+        async function saveSession(session) {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('checkeasy_db', 1);
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('checkSessions')) {
+                        const store = db.createObjectStore('checkSessions', { keyPath: 'checkId' });
+                        store.createIndex('userId', 'userId', { unique: false });
+                        store.createIndex('parcoursId', 'parcoursId', { unique: false });
+                        addResult('✅ Store checkSessions créé!', 'success');
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    const db = event.target.result;
+                    const transaction = db.transaction(['checkSessions'], 'readwrite');
+                    const store = transaction.objectStore('checkSessions');
+                    const putRequest = store.put(session);
+
+                    putRequest.onsuccess = () => {
+                        db.close();
+                        resolve();
+                    };
+
+                    putRequest.onerror = () => {
+                        db.close();
+                        reject(putRequest.error);
+                    };
+                };
+
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // 4. Vérifier LocalStorage
+        function checkLocalStorage() {
+            clearResults();
+            addResult('<h3>💾 Vérification LocalStorage...</h3>');
+
+            const activeCheckId = localStorage.getItem('activeCheckId');
+            const checkSessionData = localStorage.getItem('checkSessionData');
+            const migrationDone = localStorage.getItem('checkSessions_migrated_to_indexeddb');
+
+            addResult(`
+                <strong>activeCheckId:</strong> ${activeCheckId || '❌ Non défini'}<br>
+                <strong>checkSessionData:</strong> ${checkSessionData ? '✅ Existe' : '❌ Vide'}<br>
+                <strong>Migration effectuée:</strong> ${migrationDone === 'true' ? '✅ Oui' : '❌ Non'}
+            `);
+
+            if (checkSessionData) {
+                try {
+                    const data = JSON.parse(checkSessionData);
+                    const keys = Object.keys(data);
+                    addResult(`<strong>Sessions dans LocalStorage:</strong> ${keys.length}`, keys.length > 0 ? 'success' : 'error');
+                    
+                    if (keys.length > 0) {
+                        addResult(`<pre>${JSON.stringify(data, null, 2)}</pre>`);
+                    }
+                } catch (e) {
+                    addResult(`❌ Erreur parsing: ${e.message}`, 'error');
+                }
+            }
+        }
+
+        // 5. Tout effacer
+        async function clearAll() {
+            if (!confirm('⚠️ Êtes-vous sûr de vouloir tout effacer?')) return;
+
+            clearResults();
+            addResult('<h3>🗑️ Nettoyage...</h3>');
+
+            try {
+                // Supprimer IndexedDB
+                await new Promise((resolve, reject) => {
+                    const request = indexedDB.deleteDatabase('checkeasy_db');
+                    request.onsuccess = resolve;
+                    request.onerror = reject;
+                });
+                addResult('✅ IndexedDB supprimée', 'success');
+
+                // Nettoyer LocalStorage
+                localStorage.removeItem('activeCheckId');
+                localStorage.removeItem('checkSessionData');
+                localStorage.removeItem('checkSessions_migrated_to_indexeddb');
+                addResult('✅ LocalStorage nettoyé', 'success');
+
+            } catch (error) {
+                addResult(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-check au chargement
+        window.addEventListener('load', () => {
+            addResult('<p><em>Page chargée. Cliquez sur un bouton pour commencer les tests.</em></p>');
+        });
+    </script>
+</body>
+</html>
+

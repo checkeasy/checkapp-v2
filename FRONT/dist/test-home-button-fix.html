@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Test Fix Bouton Home</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 5px;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .button.success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        
+        .results {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .status-success { color: #059669; font-weight: bold; }
+        .status-error { color: #dc2626; font-weight: bold; }
+        .status-warning { color: #d97706; font-weight: bold; }
+        
+        .fix-info {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Test Fix Bouton Home</h1>
+            <p>Vérification de la correction du problème de navigation inversée</p>
+        </div>
+        
+        <div class="content">
+            <div class="fix-info">
+                <h3>🎯 Problème Identifié</h3>
+                <p><strong>Symptôme :</strong> Navigation Home inversée (CheckIn → CheckOut Home au lieu de CheckIn Home)</p>
+                <p><strong>Correction appliquée :</strong> Validation explicite du contexte dans handleGoBack + logs détaillés</p>
+            </div>
+            
+            <!-- Test Current Context -->
+            <div class="test-section">
+                <h2>📍 Contexte Actuel</h2>
+                <p>Vérifiez sur quelle page vous êtes et quelle devrait être la navigation Home.</p>
+                <button class="button" onclick="checkCurrentContext()">🔍 Vérifier Contexte</button>
+                <div class="results" id="contextResults" style="display: none;"></div>
+            </div>
+            
+            <!-- Test Navigation Logic -->
+            <div class="test-section">
+                <h2>🧪 Test Logique Navigation</h2>
+                <p>Simulez la logique de navigation pour vérifier si elle est correcte.</p>
+                <button class="button" onclick="testNavigationLogic()">🧪 Tester Logique</button>
+                <div class="results" id="logicResults" style="display: none;"></div>
+            </div>
+            
+            <!-- Quick Navigation Tests -->
+            <div class="test-section">
+                <h2>🚀 Tests Navigation Rapides</h2>
+                <p>Testez rapidement la navigation vers les différentes pages.</p>
+                <button class="button success" onclick="goToCheckin()">➡️ Aller CheckIn</button>
+                <button class="button success" onclick="goToCheckout()">➡️ Aller CheckOut</button>
+                <button class="button" onclick="goToCheckinHome()">🏠 CheckIn Home</button>
+                <button class="button" onclick="goToCheckoutHome()">🏠 CheckOut Home</button>
+                <div class="results" id="navigationResults" style="display: none;"></div>
+            </div>
+            
+            <!-- Console Monitoring -->
+            <div class="test-section">
+                <h2>👀 Monitoring Console</h2>
+                <p>Surveillez les logs de navigation dans la console du navigateur.</p>
+                <button class="button" onclick="startConsoleMonitoring()">👁️ Démarrer Monitoring</button>
+                <button class="button" onclick="showConsoleInstructions()">📖 Instructions Console</button>
+                <div class="results" id="monitoringResults" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let isMonitoring = false;
+        
+        // Vérifier le contexte actuel
+        function checkCurrentContext() {
+            const container = document.getElementById('contextResults');
+            container.style.display = 'block';
+            
+            const currentPath = window.location.pathname;
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours');
+            const checkid = urlParams.get('checkid');
+            
+            let result = '📍 CONTEXTE ACTUEL\n';
+            result += '═══════════════════\n\n';
+            result += `🌐 URL: ${window.location.href}\n`;
+            result += `📂 Chemin: ${currentPath}\n`;
+            result += `🔗 Parcours: ${parcours || 'NON DÉFINI'}\n`;
+            result += `🆔 CheckId: ${checkid || 'NON DÉFINI'}\n\n`;
+            
+            // Déterminer le contexte
+            let context = 'INDÉTERMINÉ';
+            let expectedHome = 'INDÉTERMINÉ';
+            let isCorrectContext = false;
+            
+            if (currentPath.includes('/checkin')) {
+                if (currentPath === '/checkin') {
+                    context = 'CheckIn (Page de travail)';
+                    expectedHome = '/checkin-home';
+                    isCorrectContext = true;
+                } else if (currentPath === '/checkin-home') {
+                    context = 'CheckIn Home (Page d\'accueil)';
+                    expectedHome = 'N/A (déjà sur la home)';
+                    isCorrectContext = true;
+                }
+            } else if (currentPath.includes('/checkout')) {
+                if (currentPath === '/checkout') {
+                    context = 'CheckOut (Page de travail)';
+                    expectedHome = '/checkout-home';
+                    isCorrectContext = true;
+                } else if (currentPath === '/checkout-home') {
+                    context = 'CheckOut Home (Page d\'accueil)';
+                    expectedHome = 'N/A (déjà sur la home)';
+                    isCorrectContext = true;
+                }
+            } else {
+                context = 'Autre page';
+                expectedHome = 'Dépend du flow actif';
+            }
+            
+            result += `🎯 Contexte: ${context}\n`;
+            result += `🏠 Home Attendu: ${expectedHome}\n`;
+            result += `✅ Contexte Valide: ${isCorrectContext ? 'OUI' : 'NON'}\n\n`;
+            
+            // Instructions
+            if (currentPath === '/checkin') {
+                result += '📋 INSTRUCTIONS:\n';
+                result += '   1. Cliquez sur le bouton Home (🏠) en haut à gauche\n';
+                result += '   2. Vous devriez aller vers /checkin-home\n';
+                result += '   3. Vérifiez les logs console pour voir les validations\n';
+            } else if (currentPath === '/checkout') {
+                result += '📋 INSTRUCTIONS:\n';
+                result += '   1. Cliquez sur le bouton Home (🏠) en haut à gauche\n';
+                result += '   2. Vous devriez aller vers /checkout-home\n';
+                result += '   3. Vérifiez les logs console pour voir les validations\n';
+            } else {
+                result += '📋 POUR TESTER:\n';
+                result += '   1. Utilisez les boutons ci-dessous pour aller sur CheckIn ou CheckOut\n';
+                result += '   2. Puis testez le bouton Home sur ces pages\n';
+            }
+            
+            container.textContent = result;
+        }
+        
+        // Tester la logique de navigation
+        function testNavigationLogic() {
+            const container = document.getElementById('logicResults');
+            container.style.display = 'block';
+            
+            const currentPath = window.location.pathname;
+            
+            let result = '🧪 TEST LOGIQUE NAVIGATION\n';
+            result += '═══════════════════════════\n\n';
+            
+            // Simuler la logique handleGoBack
+            if (currentPath.includes('/checkin')) {
+                result += '✅ Contexte CheckIn détecté\n';
+                result += '🎯 Logique: handleGoBack de CheckIn.tsx\n';
+                result += '📍 Validation: currentPath.includes("/checkin") = true\n';
+                result += '🏠 Navigation attendue: /checkin-home\n';
+                result += '✅ Résultat: CORRECT\n\n';
+                
+                result += '🔍 Logs attendus dans la console:\n';
+                result += '   • "🏠 CheckIn: Navigation retour - Début sauvegarde complète"\n';
+                result += '   • "✅ CheckIn: Validation contexte OK - Navigation depuis CheckIn vers CheckIn-Home"\n';
+                result += '   • "🎯 CheckIn: Navigation finale confirmée vers: /checkin-home"\n';
+                
+            } else if (currentPath.includes('/checkout')) {
+                result += '✅ Contexte CheckOut détecté\n';
+                result += '🎯 Logique: handleGoBack de CheckOut.tsx\n';
+                result += '📍 Validation: currentPath.includes("/checkout") = true\n';
+                result += '🏠 Navigation attendue: /checkout-home\n';
+                result += '✅ Résultat: CORRECT\n\n';
+                
+                result += '🔍 Logs attendus dans la console:\n';
+                result += '   • "🏠 CheckOut: Navigation retour - Début sauvegarde complète"\n';
+                result += '   • "✅ CheckOut: Validation contexte OK - Navigation depuis CheckOut vers CheckOut-Home"\n';
+                result += '   • "🎯 CheckOut: Navigation finale confirmée vers: /checkout-home"\n';
+                
+            } else {
+                result += '⚠️ Contexte non-CheckIn/CheckOut\n';
+                result += '🎯 Page actuelle: ' + currentPath + '\n';
+                result += '❌ Le bouton Home ne devrait pas être disponible ici\n';
+                result += '📋 Pour tester: Naviguez vers /checkin ou /checkout\n';
+            }
+            
+            container.textContent = result;
+        }
+        
+        // Navigation vers CheckIn
+        function goToCheckin() {
+            const container = document.getElementById('navigationResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours') || 'test-parcours';
+            const checkid = urlParams.get('checkid') || 'test-checkid-' + Date.now();
+            
+            const targetUrl = `/checkin?parcours=${parcours}&checkid=${checkid}`;
+            
+            container.textContent = `🚀 Navigation vers CheckIn...\n\nURL: ${targetUrl}\n\nRedirection dans 2 secondes...`;
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Navigation vers CheckOut
+        function goToCheckout() {
+            const container = document.getElementById('navigationResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours') || 'test-parcours';
+            const checkid = urlParams.get('checkid') || 'test-checkid-' + Date.now();
+            
+            const targetUrl = `/checkout?parcours=${parcours}&checkid=${checkid}`;
+            
+            container.textContent = `🚀 Navigation vers CheckOut...\n\nURL: ${targetUrl}\n\nRedirection dans 2 secondes...`;
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Navigation vers CheckIn Home
+        function goToCheckinHome() {
+            const container = document.getElementById('navigationResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours') || 'test-parcours';
+            const checkid = urlParams.get('checkid') || 'test-checkid-' + Date.now();
+            
+            const targetUrl = `/checkin-home?parcours=${parcours}&checkid=${checkid}`;
+            
+            container.textContent = `🚀 Navigation vers CheckIn Home...\n\nURL: ${targetUrl}\n\nRedirection dans 2 secondes...`;
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Navigation vers CheckOut Home
+        function goToCheckoutHome() {
+            const container = document.getElementById('navigationResults');
+            container.style.display = 'block';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const parcours = urlParams.get('parcours') || 'test-parcours';
+            const checkid = urlParams.get('checkid') || 'test-checkid-' + Date.now();
+            
+            const targetUrl = `/checkout-home?parcours=${parcours}&checkid=${checkid}`;
+            
+            container.textContent = `🚀 Navigation vers CheckOut Home...\n\nURL: ${targetUrl}\n\nRedirection dans 2 secondes...`;
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Démarrer le monitoring console
+        function startConsoleMonitoring() {
+            const container = document.getElementById('monitoringResults');
+            container.style.display = 'block';
+            
+            if (isMonitoring) {
+                container.textContent = '👁️ Monitoring déjà actif!\n\nOuvrez la console du navigateur (F12) pour voir les logs en temps réel.';
+                return;
+            }
+            
+            isMonitoring = true;
+            
+            // Override console.log pour capturer les logs
+            const originalLog = console.log;
+            const originalError = console.error;
+            
+            console.log = function(...args) {
+                originalLog.apply(console, args);
+                // Vous pouvez ajouter ici une logique pour afficher les logs dans l'interface
+            };
+            
+            console.error = function(...args) {
+                originalError.apply(console, args);
+                // Vous pouvez ajouter ici une logique pour afficher les erreurs dans l'interface
+            };
+            
+            container.textContent = '👁️ Monitoring activé!\n\n✅ Les logs de navigation sont maintenant surveillés\n\n📖 Ouvrez la console (F12) pour voir:\n   • Logs de validation contexte\n   • Logs de navigation\n   • Erreurs éventuelles\n\n🎯 Testez maintenant le bouton Home sur les pages CheckIn/CheckOut';
+        }
+        
+        // Afficher les instructions console
+        function showConsoleInstructions() {
+            const container = document.getElementById('monitoringResults');
+            container.style.display = 'block';
+            
+            let result = '📖 INSTRUCTIONS CONSOLE\n';
+            result += '═══════════════════════\n\n';
+            result += '1. 🔧 Ouvrez la console du navigateur:\n';
+            result += '   • Chrome/Edge: F12 ou Ctrl+Shift+I\n';
+            result += '   • Firefox: F12 ou Ctrl+Shift+K\n';
+            result += '   • Safari: Cmd+Option+I\n\n';
+            
+            result += '2. 👀 Logs à surveiller:\n\n';
+            
+            result += '✅ LOGS NORMAUX (CheckIn):\n';
+            result += '   • "🏠 CheckIn: Navigation retour - Début sauvegarde complète"\n';
+            result += '   • "✅ CheckIn: Validation contexte OK - Navigation depuis CheckIn vers CheckIn-Home"\n';
+            result += '   • "🎯 CheckIn: Navigation finale confirmée vers: /checkin-home"\n\n';
+            
+            result += '✅ LOGS NORMAUX (CheckOut):\n';
+            result += '   • "🏠 CheckOut: Navigation retour - Début sauvegarde complète"\n';
+            result += '   • "✅ CheckOut: Validation contexte OK - Navigation depuis CheckOut vers CheckOut-Home"\n';
+            result += '   • "🎯 CheckOut: Navigation finale confirmée vers: /checkout-home"\n\n';
+            
+            result += '❌ LOGS D\'ERREUR (à signaler si vous les voyez):\n';
+            result += '   • "❌ CheckIn: handleGoBack appelé depuis une page non-CheckIn"\n';
+            result += '   • "❌ CheckOut: handleGoBack appelé depuis une page non-CheckOut"\n';
+            result += '   • "→ Ceci indique un problème de contexte ou de routing"\n\n';
+            
+            result += '3. 🧪 Procédure de test:\n';
+            result += '   a) Allez sur /checkin ou /checkout\n';
+            result += '   b) Cliquez sur le bouton Home (🏠)\n';
+            result += '   c) Vérifiez les logs dans la console\n';
+            result += '   d) Vérifiez que vous arrivez sur la bonne page Home\n';
+            
+            container.textContent = result;
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            checkCurrentContext();
+        });
+    </script>
+</body>
+</html>

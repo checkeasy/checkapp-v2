@@ -1,0 +1,660 @@
+{
+"progress": {
+"currentPieceId": "1741001141406x215889389561265920", "currentTaskIndex": 2, "interactions": {
+"buttonClicks": {
+"1741001141372x910963440258031700_1741001141372x910963440258031700_etat-initial-1741001141372x910963440258031700-correct_1759324180349": [
+{
+"buttonId": "etat-initial-1741001141372x910963440258031700-correct", "pieceId": "1741001141372x910963440258031700", "etapeId": "1741001141372x910963440258031700", "actionType": "correct", "timestamp": "2025-10-01T13:09:40.349Z", "metadata": {
+"page": "etat-initial", "roomName": "Chambre", "timestamp": "2025-10-01T13:09:40.349Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "etat-initial-1741001141372x910963440258031700-correct"
+}
+}
+], "1741001141385x601873800832474500_1741001141385x601873800832474500_etat-initial-1741001141385x601873800832474500-correct_1759324180807": [
+{
+"buttonId": "etat-initial-1741001141385x601873800832474500-correct", "pieceId": "1741001141385x601873800832474500", "etapeId": "1741001141385x601873800832474500", "actionType": "correct", "timestamp": "2025-10-01T13:09:40.807Z", "metadata": {
+"page": "etat-initial", "roomName": "Cuisine", "timestamp": "2025-10-01T13:09:40.807Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "etat-initial-1741001141385x601873800832474500-correct"
+}
+}
+], "1741001141396x639870752679919900_1741001141396x639870752679919900_etat-initial-1741001141396x639870752679919900-correct_1759324181303": [
+{
+"buttonId": "etat-initial-1741001141396x639870752679919900-correct", "pieceId": "1741001141396x639870752679919900", "etapeId": "1741001141396x639870752679919900", "actionType": "correct", "timestamp": "2025-10-01T13:09:41.302Z", "metadata": {
+"page": "etat-initial", "roomName": "Salle de Bain & Toilettes", "timestamp": "2025-10-01T13:09:41.302Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "etat-initial-1741001141396x639870752679919900-correct"
+}
+}
+], "1741001141406x215889389561265920_1741001141406x215889389561265920_etat-initial-1741001141406x215889389561265920-deplorable_1759324193638": [
+{
+"buttonId": "etat-initial-1741001141406x215889389561265920-deplorable", "pieceId": "1741001141406x215889389561265920", "etapeId": "1741001141406x215889389561265920", "actionType": "deplorable", "timestamp": "2025-10-01T13:09:53.638Z", "metadata": {
+"page": "etat-initial", "roomName": "Salon", "comment": "MENAGE DEGEUX", "photosCount": 1, "photoUrls": [
+"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAisAAAJ5CAMAAABYNoDmAAAABG...[BASE64 TRUNCATED 78314 chars]"
+], "timestamp": "2025-10-01T13:09:53.638Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "etat-initial-1741001141406x215889389561265920-deplorable"
+}
+}
+], "1741001141372x910963440258031700_etat-initial-1741001141372x910963440258031700-correct_completion": [
+{
+"buttonId": "btn_complete_1741001141372x910963440258031700_etat-initial-1741001141372x910963440258031700-correct", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141372x910963440258031700_etat-initial-1741001141372x910963440258031700-correct", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141385x601873800832474500_etat-initial-1741001141385x601873800832474500-correct_completion": [
+{
+"buttonId": "btn_complete_1741001141385x601873800832474500_etat-initial-1741001141385x601873800832474500-correct", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141385x601873800832474500_etat-initial-1741001141385x601873800832474500-correct", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141396x639870752679919900_etat-initial-1741001141396x639870752679919900-correct_completion": [
+{
+"buttonId": "btn_complete_1741001141396x639870752679919900_etat-initial-1741001141396x639870752679919900-correct", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141396x639870752679919900_etat-initial-1741001141396x639870752679919900-correct", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141406x215889389561265920_etat-initial-1741001141406x215889389561265920-deplorable_completion": [
+{
+"buttonId": "btn_complete_1741001141406x215889389561265920_etat-initial-1741001141406x215889389561265920-deplorable", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141406x215889389561265920_etat-initial-1741001141406x215889389561265920-deplorable", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141372x910963440258031700_1741001177926x202942714835370000_photo_intent_1741001177926x202942714835370000_1759324198402": [
+{
+"buttonId": "photo_intent_1741001177926x202942714835370000", "pieceId": "1741001141372x910963440258031700", "taskId": 0, "etapeId": "1741001177926x202942714835370000", "actionType": "photo_intent", "timestamp": "2025-10-01T13:09:58.402Z", "metadata": {
+"page": "checkout", "taskType": "reference_photos", "pieceName": "Chambre", "timestamp": "2025-10-01T13:09:58.402Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "photo_intent_1741001177926x202942714835370000"
+}
+}
+], "1741001177926x202942714835370000_completion": [
+{
+"buttonId": "btn_complete_1741001177926x202942714835370000", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001177926x202942714835370000", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141372x910963440258031700_1741001177926x202942714835370000_1741001177926x202942714835370000_1759324207422": [
+{
+"buttonId": "1741001177926x202942714835370000", "pieceId": "1741001141372x910963440258031700", "taskId": 0, "etapeId": "1741001177926x202942714835370000", "actionType": "task_complete", "timestamp": "2025-10-01T13:10:07.422Z", "metadata": {
+"page": "checkout", "taskType": "reference_photos", "pieceName": "Chambre", "completed": true, "timestamp": "2025-10-01T13:10:07.422Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "1741001177926x202942714835370000"
+}
+}
+], "1741001141626x781198436469890000_completion": [
+{
+"buttonId": "btn_complete_1741001141626x781198436469890000", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141626x781198436469890000", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141636x955452313920919400_completion": [
+{
+"buttonId": "btn_complete_1741001141636x955452313920919400", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141636x955452313920919400", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1759312740187x578338920270921700_completion": [
+{
+"buttonId": "btn_complete_1759312740187x578338920270921700", "pieceId": "1741001141406x215889389561265920", "taskId": "1759312740187x578338920270921700", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141385x601873800832474500_1741001209435x630039238277857300_photo_intent_1741001209435x630039238277857300_1759324220164": [
+{
+"buttonId": "photo_intent_1741001209435x630039238277857300", "pieceId": "1741001141385x601873800832474500", "taskId": 0, "etapeId": "1741001209435x630039238277857300", "actionType": "photo_intent", "timestamp": "2025-10-01T13:10:20.164Z", "metadata": {
+"page": "checkout", "taskType": "reference_photos", "pieceName": "Cuisine", "timestamp": "2025-10-01T13:10:20.164Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "photo_intent_1741001209435x630039238277857300"
+}
+}
+], "1741001209435x630039238277857300_completion": [
+{
+"buttonId": "btn_complete_1741001209435x630039238277857300", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001209435x630039238277857300", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141385x601873800832474500_1741001209435x630039238277857300_1741001209435x630039238277857300_1759324229377": [
+{
+"buttonId": "1741001209435x630039238277857300", "pieceId": "1741001141385x601873800832474500", "taskId": 0, "etapeId": "1741001209435x630039238277857300", "actionType": "task_complete", "timestamp": "2025-10-01T13:10:29.377Z", "metadata": {
+"page": "checkout", "taskType": "reference_photos", "pieceName": "Cuisine", "completed": true, "timestamp": "2025-10-01T13:10:29.377Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "1741001209435x630039238277857300"
+}
+}
+], "1741001141647x446480396214012500_completion": [
+{
+"buttonId": "btn_complete_1741001141647x446480396214012500", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141647x446480396214012500", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141655x186422753323506560_completion": [
+{
+"buttonId": "btn_complete_1741001141655x186422753323506560", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141655x186422753323506560", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141667x501504051103283140_completion": [
+{
+"buttonId": "btn_complete_1741001141667x501504051103283140", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141667x501504051103283140", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141678x644029656367187200_completion": [
+{
+"buttonId": "btn_complete_1741001141678x644029656367187200", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141678x644029656367187200", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141688x417209808640597500_completion": [
+{
+"buttonId": "btn_complete_1741001141688x417209808640597500", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141688x417209808640597500", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141701x240913814628767940_completion": [
+{
+"buttonId": "btn_complete_1741001141701x240913814628767940", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141701x240913814628767940", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141712x770943170928556500_completion": [
+{
+"buttonId": "btn_complete_1741001141712x770943170928556500", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141712x770943170928556500", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141396x639870752679919900_1741001264865x187153030503727100_photo_intent_1741001264865x187153030503727100_1759324236172": [
+{
+"buttonId": "photo_intent_1741001264865x187153030503727100", "pieceId": "1741001141396x639870752679919900", "taskId": 0, "etapeId": "1741001264865x187153030503727100", "actionType": "photo_intent", "timestamp": "2025-10-01T13:10:36.172Z", "metadata": {
+"page": "checkout", "taskType": "reference_photos", "pieceName": "Salle de Bain & Toilettes", "timestamp": "2025-10-01T13:10:36.172Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "photo_intent_1741001264865x187153030503727100"
+}
+}
+], "1741001264865x187153030503727100_completion": [
+{
+"buttonId": "btn_complete_1741001264865x187153030503727100", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001264865x187153030503727100", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141396x639870752679919900_1741001264865x187153030503727100_1741001264865x187153030503727100_1759324241793": [
+{
+"buttonId": "1741001264865x187153030503727100", "pieceId": "1741001141396x639870752679919900", "taskId": 0, "etapeId": "1741001264865x187153030503727100", "actionType": "task_complete", "timestamp": "2025-10-01T13:10:41.793Z", "metadata": {
+"page": "checkout", "taskType": "reference_photos", "pieceName": "Salle de Bain & Toilettes", "completed": true, "timestamp": "2025-10-01T13:10:41.793Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "1741001264865x187153030503727100"
+}
+}
+], "1741001141722x151721157271145200_completion": [
+{
+"buttonId": "btn_complete_1741001141722x151721157271145200", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141722x151721157271145200", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141775x155778686009513820_completion": [
+{
+"buttonId": "btn_complete_1741001141775x155778686009513820", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141775x155778686009513820", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141783x696375691759258200_completion": [
+{
+"buttonId": "btn_complete_1741001141783x696375691759258200", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141783x696375691759258200", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141406x215889389561265920_1741001292203x908242699016994800_photo_intent_1741001292203x908242699016994800_1759324246080": [
+{
+"buttonId": "photo_intent_1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "taskId": 0, "etapeId": "1741001292203x908242699016994800", "actionType": "photo_intent", "timestamp": "2025-10-01T13:10:46.080Z", "metadata": {
+"page": "checkout", "taskType": "reference_photos", "pieceName": "Salon", "timestamp": "2025-10-01T13:10:46.080Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "photo_intent_1741001292203x908242699016994800"
+}
+}
+], "1741001292203x908242699016994800_completion": [
+{
+"buttonId": "btn_complete_1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001292203x908242699016994800", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141406x215889389561265920_1741001292203x908242699016994800_1741001292203x908242699016994800_1759324252255": [
+{
+"buttonId": "1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "taskId": 0, "etapeId": "1741001292203x908242699016994800", "actionType": "task_complete", "timestamp": "2025-10-01T13:10:52.255Z", "metadata": {
+"page": "checkout", "taskType": "reference_photos", "pieceName": "Salon", "completed": true, "timestamp": "2025-10-01T13:10:52.255Z", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true, "etapeId": "1741001292203x908242699016994800"
+}
+}
+], "1741001141792x250014480695760930_completion": [
+{
+"buttonId": "btn_complete_1741001141792x250014480695760930", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141792x250014480695760930", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+], "1741001141802x401790331798215900_completion": [
+{
+"buttonId": "btn_complete_1741001141802x401790331798215900", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141802x401790331798215900", "actionType": "complete", "timestamp": "2025-10-01T13:10:54.927Z", "metadata": {
+"syncedFromFlow": true, "flowType": "checkout"
+}
+}
+]
+}, "photosTaken": {
+"photo_1759324187164_bajxxde2a": [
+{
+"photoId": "photo_1759324187164_bajxxde2a", "taskId": "etat_initial_1741001141406x215889389561265920", "pieceId": "1741001141406x215889389561265920", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324197896x616001218279725200/File.jpg", "timestamp": "2025-10-01T13:10:04.219Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324197896x616001218279725200/File.jpg", "pieceId": "1741001141406x215889389561265920", "taskId": "etat_initial_1741001141406x215889389561265920", "referencePhotoId": "ref_1741001141406x215889389561265920", "uploadedAt": "2025-10-01T13:10:04.219Z", "savedImmediately": true, "width": 1920, "height": 1440, "takenAt": "2025-10-01T13:09:47.164Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "1741001177926x202942714835370000": [
+{
+"photoId": "1741001177926x202942714835370000", "taskId": "1741001141372x910963440258031700_1741001177926x202942714835370000", "pieceId": "1741001141372x910963440258031700", "etapeId": "1741001177926x202942714835370000", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324209967x590706562217647200/File.jpg", "timestamp": "2025-10-01T13:10:10.919Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324209967x590706562217647200/File.jpg", "pieceId": "1741001141372x910963440258031700", "taskId": "1741001141372x910963440258031700_1741001177926x202942714835370000", "referencePhotoId": "1741001177926x202942714835370000", "uploadedAt": "2025-10-01T13:10:10.919Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:02.793Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "photo_1759324207414_h5ejvf": [
+{
+"photoId": "photo_1759324207414_h5ejvf", "taskId": "1741001177926x202942714835370000", "pieceId": "1741001141372x910963440258031700", "etapeId": "1741001177926x202942714835370000", "photoData": 0, "timestamp": "2025-10-01T13:10:07.414Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 22982 chars]", "timestamp": "2025-10-01T13:10:07.414Z", "page": "checkout", "taskId": "1741001141372x910963440258031700_1741001177926x202942714835370000", "pieceId": "1741001141372x910963440258031700", "etapeId": "1741001177926x202942714835370000", "pieceName": "Chambre", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "photo_1759324207420_4gz2hv": [
+{
+"photoId": "photo_1759324207420_4gz2hv", "taskId": "1741001191747x590514268837249000", "pieceId": "1741001141372x910963440258031700", "etapeId": "1741001191747x590514268837249000", "photoData": 0, "timestamp": "2025-10-01T13:10:07.420Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 26246 chars]", "timestamp": "2025-10-01T13:10:07.420Z", "page": "checkout", "taskId": "1741001141372x910963440258031700_1741001177926x202942714835370000", "pieceId": "1741001141372x910963440258031700", "etapeId": "1741001191747x590514268837249000", "pieceName": "Chambre", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "1741001191747x590514268837249000": [
+{
+"photoId": "1741001191747x590514268837249000", "taskId": "1741001141372x910963440258031700_1741001177926x202942714835370000", "pieceId": "1741001141372x910963440258031700", "etapeId": "1741001177926x202942714835370000", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324208901x808356627900636400/File.jpg", "timestamp": "2025-10-01T13:10:09.381Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324208901x808356627900636400/File.jpg", "pieceId": "1741001141372x910963440258031700", "taskId": "1741001141372x910963440258031700_1741001177926x202942714835370000", "referencePhotoId": "1741001191747x590514268837249000", "uploadedAt": "2025-10-01T13:10:09.381Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:04.711Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "photo_1759324218705_xuy7ox": [
+{
+"photoId": "photo_1759324218705_xuy7ox", "taskId": "1759312740187x578338920270921700", "pieceId": "1741001141372x910963440258031700", "etapeId": "1759312740187x578338920270921700", "photoData": 3, "timestamp": "2025-10-01T13:10:18.705Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 25458 chars]", "timestamp": "2025-10-01T13:10:18.705Z", "page": "checkout", "taskId": "1741001141372x910963440258031700_1759312740187x578338920270921700", "pieceId": "1741001141372x910963440258031700", "etapeId": "1759312740187x578338920270921700", "pieceName": "Chambre", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "1759312740187x578338920270921700": [
+{
+"photoId": "1759312740187x578338920270921700", "taskId": "1741001141372x910963440258031700_1759312740187x578338920270921700", "pieceId": "1741001141372x910963440258031700", "etapeId": "1759312740187x578338920270921700", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324220422x369878073194555460/File.jpg", "timestamp": "2025-10-01T13:10:20.977Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324220422x369878073194555460/File.jpg", "pieceId": "1741001141372x910963440258031700", "taskId": "1741001141372x910963440258031700_1759312740187x578338920270921700", "referencePhotoId": "1759312740187x578338920270921700", "uploadedAt": "2025-10-01T13:10:20.977Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:17.006Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "1741001209435x630039238277857300": [
+{
+"photoId": "1741001209435x630039238277857300", "taskId": "1741001141385x601873800832474500_1741001209435x630039238277857300", "pieceId": "1741001141385x601873800832474500", "etapeId": "1741001209435x630039238277857300", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324233489x727638921881036700/File.jpg", "timestamp": "2025-10-01T13:10:34.034Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324233489x727638921881036700/File.jpg", "pieceId": "1741001141385x601873800832474500", "taskId": "1741001141385x601873800832474500_1741001209435x630039238277857300", "referencePhotoId": "1741001209435x630039238277857300", "uploadedAt": "2025-10-01T13:10:34.034Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:22.411Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "photo_1759324229366_uqppcu": [
+{
+"photoId": "photo_1759324229366_uqppcu", "taskId": "1741001209435x630039238277857300", "pieceId": "1741001141385x601873800832474500", "etapeId": "1741001209435x630039238277857300", "photoData": 0, "timestamp": "2025-10-01T13:10:29.366Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 26558 chars]", "timestamp": "2025-10-01T13:10:29.366Z", "page": "checkout", "taskId": "1741001141385x601873800832474500_1741001209435x630039238277857300", "pieceId": "1741001141385x601873800832474500", "etapeId": "1741001209435x630039238277857300", "pieceName": "Cuisine", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "photo_1759324229372_f8bnr6": [
+{
+"photoId": "photo_1759324229372_f8bnr6", "taskId": "1741001227284x182077217879883780", "pieceId": "1741001141385x601873800832474500", "etapeId": "1741001227284x182077217879883780", "photoData": 0, "timestamp": "2025-10-01T13:10:29.372Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 28166 chars]", "timestamp": "2025-10-01T13:10:29.372Z", "page": "checkout", "taskId": "1741001141385x601873800832474500_1741001209435x630039238277857300", "pieceId": "1741001141385x601873800832474500", "etapeId": "1741001227284x182077217879883780", "pieceName": "Cuisine", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "1741001227284x182077217879883780": [
+{
+"photoId": "1741001227284x182077217879883780", "taskId": "1741001141385x601873800832474500_1741001209435x630039238277857300", "pieceId": "1741001141385x601873800832474500", "etapeId": "1741001209435x630039238277857300", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324230963x935835256815986000/File.jpg", "timestamp": "2025-10-01T13:10:31.316Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324230963x935835256815986000/File.jpg", "pieceId": "1741001141385x601873800832474500", "taskId": "1741001141385x601873800832474500_1741001209435x630039238277857300", "referencePhotoId": "1741001227284x182077217879883780", "uploadedAt": "2025-10-01T13:10:31.316Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:27.354Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "1741001264865x187153030503727100": [
+{
+"photoId": "1741001264865x187153030503727100", "taskId": "1741001141396x639870752679919900_1741001264865x187153030503727100", "pieceId": "1741001141396x639870752679919900", "etapeId": "1741001264865x187153030503727100", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243375x487065249949547140/File.jpg", "timestamp": "2025-10-01T13:10:44.010Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243375x487065249949547140/File.jpg", "pieceId": "1741001141396x639870752679919900", "taskId": "1741001141396x639870752679919900_1741001264865x187153030503727100", "referencePhotoId": "1741001264865x187153030503727100", "uploadedAt": "2025-10-01T13:10:44.010Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:38.313Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "1752064119162x455001352230928400": [
+{
+"photoId": "1752064119162x455001352230928400", "taskId": "1741001141396x639870752679919900_1741001264865x187153030503727100", "pieceId": "1741001141396x639870752679919900", "etapeId": "1741001264865x187153030503727100", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243572x973462231439937700/File.jpg", "timestamp": "2025-10-01T13:10:43.512Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243572x973462231439937700/File.jpg", "pieceId": "1741001141396x639870752679919900", "taskId": "1741001141396x639870752679919900_1741001264865x187153030503727100", "referencePhotoId": "1752064119162x455001352230928400", "uploadedAt": "2025-10-01T13:10:43.512Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:39.490Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "photo_1759324241782_9kzj9m": [
+{
+"photoId": "photo_1759324241782_9kzj9m", "taskId": "1741001264865x187153030503727100", "pieceId": "1741001141396x639870752679919900", "etapeId": "1741001264865x187153030503727100", "photoData": 0, "timestamp": "2025-10-01T13:10:41.782Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 32418 chars]", "timestamp": "2025-10-01T13:10:41.782Z", "page": "checkout", "taskId": "1741001141396x639870752679919900_1741001264865x187153030503727100", "pieceId": "1741001141396x639870752679919900", "etapeId": "1741001264865x187153030503727100", "pieceName": "Salle de Bain & Toilettes", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "photo_1759324241789_7kmrqk": [
+{
+"photoId": "photo_1759324241789_7kmrqk", "taskId": "1752064119162x455001352230928400", "pieceId": "1741001141396x639870752679919900", "etapeId": "1752064119162x455001352230928400", "photoData": 0, "timestamp": "2025-10-01T13:10:41.789Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 37734 chars]", "timestamp": "2025-10-01T13:10:41.788Z", "page": "checkout", "taskId": "1741001141396x639870752679919900_1741001264865x187153030503727100", "pieceId": "1741001141396x639870752679919900", "etapeId": "1752064119162x455001352230928400", "pieceName": "Salle de Bain & Toilettes", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "1741001292203x908242699016994800": [
+{
+"photoId": "1741001292203x908242699016994800", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "etapeId": "1741001292203x908242699016994800", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324253890x213375015075667900/File.jpg", "timestamp": "2025-10-01T13:10:54.269Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324253890x213375015075667900/File.jpg", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "referencePhotoId": "1741001292203x908242699016994800", "uploadedAt": "2025-10-01T13:10:54.269Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:48.246Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "1752064107306x715755458087354400": [
+{
+"photoId": "1752064107306x715755458087354400", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "etapeId": "1741001292203x908242699016994800", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324256740x422381388451734660/File.jpg", "timestamp": "2025-10-01T13:10:57.207Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324256740x422381388451734660/File.jpg", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "referencePhotoId": "1752064107306x715755458087354400", "uploadedAt": "2025-10-01T13:10:57.207Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:50.182Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+], "photo_1759324252231_nqmz7v": [
+{
+"photoId": "photo_1759324252231_nqmz7v", "taskId": "1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "etapeId": "1741001292203x908242699016994800", "photoData": 0, "timestamp": "2025-10-01T13:10:52.231Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 47806 chars]", "timestamp": "2025-10-01T13:10:52.231Z", "page": "checkout", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "etapeId": "1741001292203x908242699016994800", "pieceName": "Salon", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "photo_1759324252237_3boruy": [
+{
+"photoId": "photo_1759324252237_3boruy", "taskId": "1752064105756x104472289380925440", "pieceId": "1741001141406x215889389561265920", "etapeId": "1752064105756x104472289380925440", "photoData": 0, "timestamp": "2025-10-01T13:10:52.237Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 47786 chars]", "timestamp": "2025-10-01T13:10:52.237Z", "page": "checkout", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "etapeId": "1752064105756x104472289380925440", "pieceName": "Salon", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "photo_1759324252250_hrbe9a": [
+{
+"photoId": "photo_1759324252250_hrbe9a", "taskId": "1752064107306x715755458087354400", "pieceId": "1741001141406x215889389561265920", "etapeId": "1752064107306x715755458087354400", "photoData": 0, "timestamp": "2025-10-01T13:10:52.250Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 43574 chars]", "timestamp": "2025-10-01T13:10:52.250Z", "page": "checkout", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "etapeId": "1752064107306x715755458087354400", "pieceName": "Salon", "checkId": "check_1759324177584_lvj2vgsvmh", "autoSaved": true
+}
+}
+], "1752064105756x104472289380925440": [
+{
+"photoId": "1752064105756x104472289380925440", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "pieceId": "1741001141406x215889389561265920", "etapeId": "1741001292203x908242699016994800", "photoData": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324254183x473420835117370750/File.jpg", "timestamp": "2025-10-01T13:10:54.490Z", "validated": false, "retakeCount": 0, "metadata": {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324254183x473420835117370750/File.jpg", "pieceId": "1741001141406x215889389561265920", "taskId": "1741001141406x215889389561265920_1741001292203x908242699016994800", "referencePhotoId": "1752064105756x104472289380925440", "uploadedAt": "2025-10-01T13:10:54.490Z", "savedImmediately": true, "width": 640, "height": 480, "takenAt": "2025-10-01T13:10:49.195Z", "checkId": "check_1759324177584_lvj2vgsvmh"
+}
+}
+]
+}, "checkboxStates": {}, "signalements": {}, "pieceStates": {
+"1741001141372x910963440258031700": {
+"pieceId": "1741001141372x910963440258031700", "status": "in_progress", "completionPercentage": 0, "totalInteractions": 10, "photosCount": 2, "checkboxesCount": 8, "signalementsCount": 0
+}, "1741001141406x215889389561265920": {
+"pieceId": "1741001141406x215889389561265920", "status": "completed", "completionPercentage": 0, "totalInteractions": 24, "photosCount": 1, "checkboxesCount": 23, "signalementsCount": 0, "completedAt": "2025-10-01T13:10:54.927Z"
+}, "1741001141385x601873800832474500": {
+"pieceId": "1741001141385x601873800832474500", "status": "in_progress", "completionPercentage": 0, "totalInteractions": 16, "photosCount": 0, "checkboxesCount": 16, "signalementsCount": 0
+}, "1741001141396x639870752679919900": {
+"pieceId": "1741001141396x639870752679919900", "status": "in_progress", "completionPercentage": 0, "totalInteractions": 20, "photosCount": 0, "checkboxesCount": 20, "signalementsCount": 0
+}
+}, "navigation": {
+"visitedPieces": [], "timeSpentPerPiece": {}, "totalTimeSpent": 0, "navigationHistory": []
+}
+}, "statistics": {
+"totalTasks": 0, "completedTasks": 0, "totalPhotos": 21, "photosTaken": 21, "totalCheckboxes": 0, "checkboxesChecked": 0, "totalSignalements": 0, "openSignalements": 0, "progressPercentage": 0
+}, "completedTaskIds": [
+"1741001141372x910963440258031700_etat-initial-1741001141372x910963440258031700-correct", "1741001141385x601873800832474500_etat-initial-1741001141385x601873800832474500-correct", "1741001141396x639870752679919900_etat-initial-1741001141396x639870752679919900-correct", "1741001141406x215889389561265920_etat-initial-1741001141406x215889389561265920-deplorable", "1741001177926x202942714835370000", "1741001141626x781198436469890000", "1741001141636x955452313920919400", "1759312740187x578338920270921700", "1741001209435x630039238277857300", "1741001141647x446480396214012500", "1741001141655x186422753323506560", "1741001141667x501504051103283140", "1741001141678x644029656367187200", "1741001141688x417209808640597500", "1741001141701x240913814628767940", "1741001141712x770943170928556500", "1741001264865x187153030503727100", "1741001141722x151721157271145200", "1741001141775x155778686009513820", "1741001141783x696375691759258200", "1741001292203x908242699016994800", "1741001141792x250014480695760930", "1741001141802x401790331798215900"
+], "completedTasks": {}, "completedSteps": [], "takenPhotos": {}, "completedTasksCount": 23, "progressPercentage": 0
+}
+}
+⚙️ Configuration Endpoint
+
+Inclure "/initialize" dans l'endpoint
+Environnement:
+
+🧪 Version Test
+URL complète:
+🎯 UNIFIÉ (Recommandé):
+https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/checkendpoint/initialize
+📥 CheckIn (Déprécié):
+https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/checkinendpoint/initialize
+📤 CheckOut (Déprécié):
+https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/checkinendpoint/initialize
+🔧 Tester Configuration
+🔄 Reset
+🚀 Envoi vers Bubble API
+Endpoints configurés
+🎯 Unifié: checkendpoint/initialize | CheckIn: checkinendpoint/initialize | CheckOut: checkinendpoint/initialize (TEST)
+CheckID sélectionné
+0
+ID Webhook (généré)
+-
+État session
+checkin
+Raison détection
+Par défaut (aucun indicateur checkout détecté)
+🔍 Test État Session
+🏠 Test Structure CheckIn
+🧹 Test Structure CheckOut
+📸 Debug Photos
+👤 Debug Utilisateur
+🏠 Debug Parcours/Logement
+🎯 Debug Étapes
+🧹 Test Nettoyage EtapeId
+🔍 Récupérer Données Parcours
+🔄 Test Génération EtapeId
+📡 Charger Données API
+🗺️ Test Mapping EtapeId
+🔬 Vérifier Source Étapes
+🏗️ Preview Structure Étapes
+📥 Générer CheckIn
+📤 Générer CheckOut
+🎯 Générer Webhook Unifié
+🎯 ENVOYER WEBHOOK COMPLET (CHECKIN + CHECKOUT)
+⚠️ Anciens webhooks séparés (déprécié) :
+
+🚀 Envoyer CheckIn
+🚀 Envoyer CheckOut
+📥 Données CheckIn générées
+JSON
+Cliquez sur "Générer données CheckIn"
+📤 Données CheckOut générées
+JSON
+Cliquez sur "Générer données CheckOut"
+🎯 Données Webhook UNIFIÉ (CHECKIN + CHECKOUT)
+JSON Complet
+{
+"webhook_version": "2.0", "schema": "unified_checkin_checkout", "checkID": "persistent_x5lxa4", "parcours_id": "1741001140685x877041083186413600", "logement_id": null, "logement_name": "* AAAA Madrilène-", "agent": {
+"id": "078831296", "firstname": "antoine", "lastname": "Van Der spuy", "phone": "078831296", "type": "AGENT", "type_label": "Agent", "verification_status": "verifie_session"
+}, "parcours": {
+"id": "1741001140685x877041083186413600", "name": "LE PARCOUR DE TEST ULTIME", "type": "🏠 Contrôle logement", "start_time": "2025-10-01T13:11:07.933Z", "current_time": "2025-10-01T13:11:07.933Z", "duration_minutes": 0, "completion_percentage": 94, "total_pieces": 4, "completed_pieces": 0, "pieces_with_issues": 12
+}, "checkin": {
+"pieces": [
+{
+"piece_id": "1741001141372x910963440258031700", "nom": "1741001141372x910963440258031700", "status": "non_defini", "etapes": [
+{
+"etape_id": "1741001141372x910963440258031700", "type": "button_click", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:09:40.349Z", "is_todo": false, "todo_title": "", "action": "correct", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001191747x590514268837249000", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:07.420Z", "is_todo": false, "todo_title": "", "photo_id": "photo_1759324207420_4gz2hv", "photo_url": "", "photo_base64": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 29 chars]", "validated": false, "retake_count": 0
+}, {
+"etape_id": "1741001177926x202942714835370000", "type": "button_click", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:07.422Z", "is_todo": false, "todo_title": "", "action": "task_complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001177926x202942714835370000", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:10.919Z", "is_todo": false, "todo_title": "", "photo_id": "1741001177926x202942714835370000", "photo_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324209967x590706562217647200/File.jpg", "photo_base64": null, "validated": false, "retake_count": 0
+}, {
+"etape_id": "1759312740187x578338920270921700", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:20.977Z", "is_todo": false, "todo_title": "", "photo_id": "1759312740187x578338920270921700", "photo_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324220422x369878073194555460/File.jpg", "photo_base64": null, "validated": false, "retake_count": 0
+}
+]
+}, {
+"piece_id": "1741001141385x601873800832474500", "nom": "1741001141385x601873800832474500", "status": "non_defini", "etapes": [
+{
+"etape_id": "1741001141385x601873800832474500", "type": "button_click", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:09:40.807Z", "is_todo": false, "todo_title": "", "action": "correct", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001227284x182077217879883780", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:29.372Z", "is_todo": false, "todo_title": "", "photo_id": "photo_1759324229372_f8bnr6", "photo_url": "", "photo_base64": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 29 chars]", "validated": false, "retake_count": 0
+}, {
+"etape_id": "1741001209435x630039238277857300", "type": "button_click", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:29.377Z", "is_todo": false, "todo_title": "", "action": "task_complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001209435x630039238277857300", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:34.034Z", "is_todo": false, "todo_title": "", "photo_id": "1741001209435x630039238277857300", "photo_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324233489x727638921881036700/File.jpg", "photo_base64": null, "validated": false, "retake_count": 0
+}
+]
+}, {
+"piece_id": "1741001141396x639870752679919900", "nom": "1741001141396x639870752679919900", "status": "non_defini", "etapes": [
+{
+"etape_id": "1741001141396x639870752679919900", "type": "button_click", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:09:41.302Z", "is_todo": false, "todo_title": "", "action": "correct", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1752064119162x455001352230928400", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:41.789Z", "is_todo": false, "todo_title": "", "photo_id": "photo_1759324241789_7kmrqk", "photo_url": "", "photo_base64": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 29 chars]", "validated": false, "retake_count": 0
+}, {
+"etape_id": "1741001264865x187153030503727100", "type": "button_click", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:41.793Z", "is_todo": false, "todo_title": "", "action": "task_complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001264865x187153030503727100", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:44.010Z", "is_todo": false, "todo_title": "", "photo_id": "1741001264865x187153030503727100", "photo_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243375x487065249949547140/File.jpg", "photo_base64": null, "validated": false, "retake_count": 0
+}
+]
+}, {
+"piece_id": "1741001141406x215889389561265920", "nom": "1741001141406x215889389561265920", "status": "non_defini", "etapes": [
+{
+"etape_id": "1741001141406x215889389561265920", "type": "button_click", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:09:53.638Z", "is_todo": false, "todo_title": "", "action": "deplorable", "comment": "MENAGE DEGEUX", "photos_attached": [
+"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAisA...[TRONQUÉ 78386 cara...[BASE64 TRUNCATED 7 chars]"
+]
+}, {
+"etape_id": "etat_initial_1741001141406x215889389561265920", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:04.219Z", "is_todo": false, "todo_title": "", "photo_id": "photo_1759324187164_bajxxde2a", "photo_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324197896x616001218279725200/File.jpg", "photo_base64": null, "validated": false, "retake_count": 0
+}, {
+"etape_id": "1752064105756x104472289380925440", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:52.237Z", "is_todo": false, "todo_title": "", "photo_id": "photo_1759324252237_3boruy", "photo_url": "", "photo_base64": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 29 chars]", "validated": false, "retake_count": 0
+}, {
+"etape_id": "1752064107306x715755458087354400", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:52.250Z", "is_todo": false, "todo_title": "", "photo_id": "photo_1759324252250_hrbe9a", "photo_url": "", "photo_base64": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQ...[BASE64 TRUNCATED 29 chars]", "validated": false, "retake_count": 0
+}, {
+"etape_id": "1741001292203x908242699016994800", "type": "button_click", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:52.255Z", "is_todo": false, "todo_title": "", "action": "task_complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001292203x908242699016994800", "type": "photo_taken", "etape_type": "checkin", "status": "completed", "timestamp": "2025-10-01T13:10:57.207Z", "is_todo": false, "todo_title": "", "photo_id": "1752064107306x715755458087354400", "photo_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324256740x422381388451734660/File.jpg", "photo_base64": null, "validated": false, "retake_count": 0
+}
+]
+}
+], "stats": {
+"total_pieces": 4, "total_photos": 11, "total_tasks": 19, "completed_tasks": 19, "completion_rate": 100
+}, "timestamp": "2025-10-01T13:11:07.933Z"
+}, "checkout": {
+"pieces": [
+{
+"piece_id": "1741001141372x910963440258031700", "nom": "1741001141372x910963440258031700", "status": "non_defini", "etapes": [
+{
+"etape_id": "1741001141372x910963440258031700", "type": "etat_initial", "etape_type": "checkout", "status": "pending", "timestamp": "2025-10-01T13:11:07.925Z", "is_todo": false, "todo_title": ""
+}
+]
+}, {
+"piece_id": "1741001141385x601873800832474500", "nom": "1741001141385x601873800832474500", "status": "non_defini", "etapes": [
+{
+"etape_id": "1741001141385x601873800832474500", "type": "etat_initial", "etape_type": "checkout", "status": "pending", "timestamp": "2025-10-01T13:11:07.927Z", "is_todo": false, "todo_title": ""
+}
+]
+}, {
+"piece_id": "1741001141396x639870752679919900", "nom": "1741001141396x639870752679919900", "status": "non_defini", "etapes": [
+{
+"etape_id": "1741001141396x639870752679919900", "type": "etat_initial", "etape_type": "checkout", "status": "pending", "timestamp": "2025-10-01T13:11:07.928Z", "is_todo": false, "todo_title": ""
+}
+]
+}, {
+"piece_id": "1741001141406x215889389561265920", "nom": "1741001141406x215889389561265920", "status": "non_defini", "etapes": [
+{
+"etape_id": "1741001141372x910963440258031700_etat-initial-1741001141372x910963440258031700-correct", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141385x601873800832474500_etat-initial-1741001141385x601873800832474500-correct", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141396x639870752679919900_etat-initial-1741001141396x639870752679919900-correct", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141406x215889389561265920_etat-initial-1741001141406x215889389561265920-deplorable", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001177926x202942714835370000", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141626x781198436469890000", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141636x955452313920919400", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1759312740187x578338920270921700", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001209435x630039238277857300", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141647x446480396214012500", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141655x186422753323506560", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141667x501504051103283140", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141678x644029656367187200", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141688x417209808640597500", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141701x240913814628767940", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141712x770943170928556500", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001264865x187153030503727100", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141722x151721157271145200", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141775x155778686009513820", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141783x696375691759258200", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001292203x908242699016994800", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141792x250014480695760930", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}, {
+"etape_id": "1741001141802x401790331798215900", "type": "button_click", "etape_type": "checkout", "status": "completed", "timestamp": "2025-10-01T13:10:54.927Z", "is_todo": false, "todo_title": "", "action": "complete", "comment": "", "photos_attached": []
+}
+]
+}
+], "stats": {
+"total_pieces": 4, "total_photos": 0, "total_tasks": 26, "completed_tasks": 23, "completion_rate": 88
+}, "timestamp": "2025-10-01T13:11:07.933Z"
+}, "signalements": [
+{
+"signalement_id": "signalement-photo-1741001177926x202942714835370000", "etape_id": "1741001177926x202942714835370000", "room_id": "1741001141372x910963440258031700", "titre": "Photo non validée - 1741001141372x910963440258031700", "commentaire": "", "img_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324209967x590706562217647200/File.jpg", "img_base64": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324209967x590706562217647200/File.jpg", "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:10.919Z", "updated_at": "2025-10-01T13:10:10.919Z", "description": "Photo non validée - 1741001141372x910963440258031700", "comment": "", "timestamp": "2025-10-01T13:10:10.919Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324209967x590706562217647200/File.jpg", "timestamp": "2025-10-01T13:10:10.919Z", "photo_id": "1741001177926x202942714835370000", "etape_id": "1741001177926x202942714835370000", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 23055 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:07.414Z", "photo_id": "photo_1759324207414_h5ejvf", "etape_id": "1741001177926x202942714835370000", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324208901x808356627900636400/File.jpg", "timestamp": "2025-10-01T13:10:09.381Z", "photo_id": "1741001191747x590514268837249000", "etape_id": "1741001177926x202942714835370000", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-photo_1759324207420_4gz2hv", "etape_id": "1741001191747x590514268837249000", "room_id": "1741001141372x910963440258031700", "titre": "Photo non validée - Chambre", "commentaire": "", "img_url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 26319 carac...[BASE64 TRUNCATED 6 chars]", "img_base64": null, "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:07.420Z", "updated_at": "2025-10-01T13:10:07.420Z", "description": "Photo non validée - Chambre", "comment": "", "timestamp": "2025-10-01T13:10:07.420Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 26319 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:07.420Z", "photo_id": "photo_1759324207420_4gz2hv", "etape_id": "1741001191747x590514268837249000", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-photo_1759324218705_xuy7ox", "etape_id": "1759312740187x578338920270921700", "room_id": "1741001141372x910963440258031700", "titre": "Photo non validée - Chambre", "commentaire": "", "img_url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 25531 carac...[BASE64 TRUNCATED 6 chars]", "img_base64": 3, "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:18.705Z", "updated_at": "2025-10-01T13:10:18.705Z", "description": "Photo non validée - Chambre", "comment": "", "timestamp": "2025-10-01T13:10:18.705Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 25531 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:18.705Z", "photo_id": "photo_1759324218705_xuy7ox", "etape_id": "1759312740187x578338920270921700", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324220422x369878073194555460/File.jpg", "timestamp": "2025-10-01T13:10:20.977Z", "photo_id": "1759312740187x578338920270921700", "etape_id": "1759312740187x578338920270921700", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-1741001209435x630039238277857300", "etape_id": "1741001209435x630039238277857300", "room_id": "1741001141385x601873800832474500", "titre": "Photo non validée - 1741001141385x601873800832474500", "commentaire": "", "img_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324233489x727638921881036700/File.jpg", "img_base64": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324233489x727638921881036700/File.jpg", "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:34.034Z", "updated_at": "2025-10-01T13:10:34.034Z", "description": "Photo non validée - 1741001141385x601873800832474500", "comment": "", "timestamp": "2025-10-01T13:10:34.034Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324233489x727638921881036700/File.jpg", "timestamp": "2025-10-01T13:10:34.034Z", "photo_id": "1741001209435x630039238277857300", "etape_id": "1741001209435x630039238277857300", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 26631 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:29.366Z", "photo_id": "photo_1759324229366_uqppcu", "etape_id": "1741001209435x630039238277857300", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324230963x935835256815986000/File.jpg", "timestamp": "2025-10-01T13:10:31.316Z", "photo_id": "1741001227284x182077217879883780", "etape_id": "1741001209435x630039238277857300", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-photo_1759324229372_f8bnr6", "etape_id": "1741001227284x182077217879883780", "room_id": "1741001141385x601873800832474500", "titre": "Photo non validée - Cuisine", "commentaire": "", "img_url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 28239 carac...[BASE64 TRUNCATED 6 chars]", "img_base64": null, "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:29.372Z", "updated_at": "2025-10-01T13:10:29.372Z", "description": "Photo non validée - Cuisine", "comment": "", "timestamp": "2025-10-01T13:10:29.372Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 28239 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:29.372Z", "photo_id": "photo_1759324229372_f8bnr6", "etape_id": "1741001227284x182077217879883780", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-1741001264865x187153030503727100", "etape_id": "1741001264865x187153030503727100", "room_id": "1741001141396x639870752679919900", "titre": "Photo non validée - 1741001141396x639870752679919900", "commentaire": "", "img_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243375x487065249949547140/File.jpg", "img_base64": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243375x487065249949547140/File.jpg", "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:44.010Z", "updated_at": "2025-10-01T13:10:44.010Z", "description": "Photo non validée - 1741001141396x639870752679919900", "comment": "", "timestamp": "2025-10-01T13:10:44.010Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243375x487065249949547140/File.jpg", "timestamp": "2025-10-01T13:10:44.010Z", "photo_id": "1741001264865x187153030503727100", "etape_id": "1741001264865x187153030503727100", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324243572x973462231439937700/File.jpg", "timestamp": "2025-10-01T13:10:43.512Z", "photo_id": "1752064119162x455001352230928400", "etape_id": "1741001264865x187153030503727100", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 32491 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:41.782Z", "photo_id": "photo_1759324241782_9kzj9m", "etape_id": "1741001264865x187153030503727100", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-photo_1759324241789_7kmrqk", "etape_id": "1752064119162x455001352230928400", "room_id": "1741001141396x639870752679919900", "titre": "Photo non validée - Salle de Bain & Toilettes", "commentaire": "", "img_url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 37807 carac...[BASE64 TRUNCATED 6 chars]", "img_base64": null, "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:41.789Z", "updated_at": "2025-10-01T13:10:41.789Z", "description": "Photo non validée - Salle de Bain & Toilettes", "comment": "", "timestamp": "2025-10-01T13:10:41.789Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 37807 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:41.789Z", "photo_id": "photo_1759324241789_7kmrqk", "etape_id": "1752064119162x455001352230928400", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-1741001141406x215889389561265920", "etape_id": "1741001141406x215889389561265920", "room_id": "1741001141406x215889389561265920", "titre": "MENAGE DEGEUX", "commentaire": "MENAGE DEGEUX", "img_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAisA...[TRONQUÉ 78386 cara...[BASE64 TRUNCATED 7 chars]", "img_base64": null, "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:09:53.638Z", "updated_at": "2025-10-01T13:09:53.638Z", "description": "MENAGE DEGEUX", "comment": "MENAGE DEGEUX", "timestamp": "2025-10-01T13:09:53.638Z", "severity": "normal", "signalement_type": "button_with_issue", "action_type": "deplorable", "button_id": "etat-initial-1741001141406x215889389561265920-deplorable", "photos": [
+{
+"photo_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAisA...[TRONQUÉ 78386 cara...[BASE64 TRUNCATED 7 chars]", "photo_base64": null, "timestamp": "2025-10-01T13:09:53.638Z", "etape_id": "1741001141406x215889389561265920", "source": "button_click"
+}
+]
+}, {
+"signalement_id": "signalement-photo-photo_1759324187164_bajxxde2a", "etape_id": null, "room_id": "1741001141406x215889389561265920", "titre": "Photo non validée - 1741001141406x215889389561265920", "commentaire": "", "img_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324197896x616001218279725200/File.jpg", "img_base64": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324197896x616001218279725200/File.jpg", "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:04.219Z", "updated_at": "2025-10-01T13:10:04.219Z", "description": "Photo non validée - 1741001141406x215889389561265920", "comment": "", "timestamp": "2025-10-01T13:10:04.219Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324197896x616001218279725200/File.jpg", "timestamp": "2025-10-01T13:10:04.219Z", "photo_id": "photo_1759324187164_bajxxde2a", "etape_id": undefined, "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-1741001292203x908242699016994800", "etape_id": "1741001292203x908242699016994800", "room_id": "1741001141406x215889389561265920", "titre": "Photo non validée - 1741001141406x215889389561265920", "commentaire": "", "img_url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324253890x213375015075667900/File.jpg", "img_base64": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324253890x213375015075667900/File.jpg", "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:54.269Z", "updated_at": "2025-10-01T13:10:54.269Z", "description": "Photo non validée - 1741001141406x215889389561265920", "comment": "", "timestamp": "2025-10-01T13:10:54.269Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324253890x213375015075667900/File.jpg", "timestamp": "2025-10-01T13:10:54.269Z", "photo_id": "1741001292203x908242699016994800", "etape_id": "1741001292203x908242699016994800", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324256740x422381388451734660/File.jpg", "timestamp": "2025-10-01T13:10:57.207Z", "photo_id": "1752064107306x715755458087354400", "etape_id": "1741001292203x908242699016994800", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 47879 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:52.231Z", "photo_id": "photo_1759324252231_nqmz7v", "etape_id": "1741001292203x908242699016994800", "validated": false, "retake_count": 0, "source": "photo_taken"
+}, {
+"url": "https://eb0bcaf95c312d7fe9372017cb5f1835.cdn.bubble.io/f1759324254183x473420835117370750/File.jpg", "timestamp": "2025-10-01T13:10:54.490Z", "photo_id": "1752064105756x104472289380925440", "etape_id": "1741001292203x908242699016994800", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-photo_1759324252237_3boruy", "etape_id": "1752064105756x104472289380925440", "room_id": "1741001141406x215889389561265920", "titre": "Photo non validée - Salon", "commentaire": "", "img_url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 47859 carac...[BASE64 TRUNCATED 6 chars]", "img_base64": null, "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:52.237Z", "updated_at": "2025-10-01T13:10:52.237Z", "description": "Photo non validée - Salon", "comment": "", "timestamp": "2025-10-01T13:10:52.237Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 47859 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:52.237Z", "photo_id": "photo_1759324252237_3boruy", "etape_id": "1752064105756x104472289380925440", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}, {
+"signalement_id": "signalement-photo-photo_1759324252250_hrbe9a", "etape_id": "1752064107306x715755458087354400", "room_id": "1741001141406x215889389561265920", "titre": "Photo non validée - Salon", "commentaire": "", "img_url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 43647 carac...[BASE64 TRUNCATED 6 chars]", "img_base64": null, "flow_type": "checkin", "origine": "CLIENT", "status": "A_TRAITER", "priorite": false, "created_at": "2025-10-01T13:10:52.250Z", "updated_at": "2025-10-01T13:10:52.250Z", "description": "Photo non validée - Salon", "comment": "", "timestamp": "2025-10-01T13:10:52.250Z", "severity": "normal", "signalement_type": "photo_issue", "photos": [
+{
+"url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...[TRONQUÉ 43647 carac...[BASE64 TRUNCATED 6 chars]", "timestamp": "2025-10-01T13:10:52.250Z", "photo_id": "photo_1759324252250_hrbe9a", "etape_id": "1752064107306x715755458087354400", "validated": false, "retake_count": 0, "source": "photo_taken"
+}
+]
+}
+], "stats": {
+"total_pieces": 4, "total_photos_checkin": 11, "total_photos_checkout": 0, "total_photos": 11, "total_signalements": 12, "completion_rate": 94
+}
+}
